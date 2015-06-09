@@ -30,15 +30,14 @@ import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
-import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 
-@APICommand(name = "modifySolidFireVirtualNetwork", responseObject = ApiSolidFireVirtualNetworkResponse.class, description = "Modify SolidFire Virtual Network",
+@APICommand(name = "updateSolidFireVirtualNetwork", responseObject = ApiSolidFireVirtualNetworkResponse.class, description = "Update SolidFire Virtual Network",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class ModifySolidFireVirtualNetworkCmd extends BaseCmd {
-    private static final Logger s_logger = Logger.getLogger(ModifySolidFireVirtualNetworkCmd.class.getName());
-    private static final String s_name = "modifysolidfirevirtualnetworkresponse";
+public class UpdateSolidFireVirtualNetworkCmd extends BaseCmd {
+    private static final Logger s_logger = Logger.getLogger(UpdateSolidFireVirtualNetworkCmd.class.getName());
+    private static final String s_name = "updatesolidfirevirtualnetworkresponse";
 
     @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "SolidFire virtual network ID", required = true)
     private long id;
@@ -74,10 +73,10 @@ public class ModifySolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        Account account = CallContext.current().getCallingAccount();
+        SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, id);
 
-        if (account != null) {
-            return account.getId();
+        if (sfVirtualNetwork != null) {
+            sfVirtualNetwork.getAccountId();
         }
 
         return Account.ACCOUNT_ID_SYSTEM; // no account info given, parent this command to SYSTEM so ERROR events are tracked
@@ -85,15 +84,15 @@ public class ModifySolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("ModifySolidFireVirtualNetworkCmd.execute invoked");
+        s_logger.info("UpdateSolidFireVirtualNetworkCmd.execute invoked");
 
         try {
-            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.modifySolidFireVirtualNetwork(id, name, tag, startIp, size, netmask, svip);
+            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.updateSolidFireVirtualNetwork(id, name, tag, startIp, size, netmask, svip);
 
             ApiSolidFireVirtualNetworkResponse response = ApiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork);
 
             response.setResponseName(getCommandName());
-            response.setObjectName("apimodifysolidfirevirtualnetwork");
+            response.setObjectName("apiupdatesolidfirevirtualnetwork");
 
             setResponseObject(response);
         }

@@ -30,15 +30,14 @@ import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
-import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 
-@APICommand(name = "modifyReferenceToSolidFireCluster", responseObject = ApiSolidFireClusterResponse.class, description = "Modify Reference to SolidFire Cluster",
+@APICommand(name = "updateReferenceToSolidFireCluster", responseObject = ApiSolidFireClusterResponse.class, description = "Update Reference to SolidFire Cluster",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class ModifyReferenceToSolidFireClusterCmd extends BaseCmd {
-    private static final Logger s_logger = Logger.getLogger(ModifyReferenceToSolidFireClusterCmd.class.getName());
-    private static final String s_name = "modifyreferencetosolidfireclusterresponse";
+public class UpdateReferenceToSolidFireClusterCmd extends BaseCmd {
+    private static final Logger s_logger = Logger.getLogger(UpdateReferenceToSolidFireClusterCmd.class.getName());
+    private static final String s_name = "updatereferencetosolidfireclusterresponse";
 
     @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "SolidFire cluster name", required = true)
     private String name;
@@ -68,27 +67,21 @@ public class ModifyReferenceToSolidFireClusterCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        Account account = CallContext.current().getCallingAccount();
-
-        if (account != null) {
-            return account.getId();
-        }
-
-        return Account.ACCOUNT_ID_SYSTEM; // no account info given, parent this command to SYSTEM so ERROR events are tracked
+        return Account.ACCOUNT_ID_SYSTEM;
     }
 
     @Override
     public void execute() {
-        s_logger.info("ModifyReferenceToSolidFireClusterCmd.execute invoked");
+        s_logger.info("UpdateReferenceToSolidFireClusterCmd.execute invoked");
 
         try {
-            SfCluster sfCluster = _apiSolidFireService2.modifyReferenceToSolidFireCluster(name, totalCapacity,
+            SfCluster sfCluster = _apiSolidFireService2.updateReferenceToSolidFireCluster(name, totalCapacity,
                     totalMinIops, totalMaxIops, totalBurstIops);
 
             ApiSolidFireClusterResponse response = ApiHelper.getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
-            response.setObjectName("apimodifyreferencetosolidfirecluster");
+            response.setObjectName("apiupdatereferencetosolidfirecluster");
 
             setResponseObject(response);
         }

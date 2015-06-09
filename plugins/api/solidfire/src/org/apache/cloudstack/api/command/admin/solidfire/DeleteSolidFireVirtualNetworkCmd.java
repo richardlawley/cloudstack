@@ -30,7 +30,6 @@ import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
-import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 
@@ -56,10 +55,10 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        Account account = CallContext.current().getCallingAccount();
+        SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, id);
 
-        if (account != null) {
-            return account.getId();
+        if (sfVirtualNetwork != null) {
+            sfVirtualNetwork.getAccountId();
         }
 
         return Account.ACCOUNT_ID_SYSTEM; // no account info given, parent this command to SYSTEM so ERROR events are tracked

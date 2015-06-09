@@ -16,8 +16,6 @@
 // under the License.
 package org.apache.cloudstack.api.command.admin.solidfire;
 
-import com.cloud.user.Account;
-
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -25,18 +23,17 @@ import org.apache.log4j.Logger;
 import org.apache.cloudstack.api.ApiConstants;
 import org.apache.cloudstack.api.APICommand;
 import org.apache.cloudstack.api.ApiErrorCode;
-import org.apache.cloudstack.api.BaseCmd;
+import org.apache.cloudstack.api.BaseListCmd;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
-import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 
 @APICommand(name = "listSolidFireCluster", responseObject = ApiSolidFireClusterResponse.class, description = "List SolidFire Cluster",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class ListSolidFireClusterCmd extends BaseCmd {
+public class ListSolidFireClusterCmd extends BaseListCmd {
     private static final Logger s_logger = Logger.getLogger(ListSolidFireClusterCmd.class.getName());
     private static final String s_name = "listsolidfireclusterresponse";
 
@@ -52,17 +49,6 @@ public class ListSolidFireClusterCmd extends BaseCmd {
     @Override
     public String getCommandName() {
         return s_name;
-    }
-
-    @Override
-    public long getEntityOwnerId() {
-        Account account = CallContext.current().getCallingAccount();
-
-        if (account != null) {
-            return account.getId();
-        }
-
-        return Account.ACCOUNT_ID_SYSTEM; // no account info given, parent this command to SYSTEM so ERROR events are tracked
     }
 
     @Override

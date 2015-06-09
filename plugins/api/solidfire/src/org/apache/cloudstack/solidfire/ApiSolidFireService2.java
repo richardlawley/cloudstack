@@ -33,7 +33,7 @@ public interface ApiSolidFireService2 extends PluggableService {
     SfCluster createReferenceToSolidFireCluster(String mvip, String username, String password, long totalCapacity,
             long totalMinIops, long totalMaxIops, long totalBurstIops, long zoneId);
 
-    SfCluster modifyReferenceToSolidFireCluster(String clusterName, long totalCapacity,
+    SfCluster updateReferenceToSolidFireCluster(String clusterName, long totalCapacity,
             long totalMinIops, long totalMaxIops, long totalBurstIops);
 
     SfCluster deleteReferenceToSolidFireCluster(String clusterName);
@@ -47,7 +47,7 @@ public interface ApiSolidFireService2 extends PluggableService {
     SfVirtualNetwork createSolidFireVirtualNetwork(String clusterName, String name, String tag, String startIp, int size,
             String netmask, String svip, long accountId);
 
-    SfVirtualNetwork modifySolidFireVirtualNetwork(long id, String name, String tag, String startIp, int size,
+    SfVirtualNetwork updateSolidFireVirtualNetwork(long id, String name, String tag, String startIp, int size,
             String netmask, String svip);
 
     SfVirtualNetwork deleteSolidFireVirtualNetwork(long id);

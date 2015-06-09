@@ -32,8 +32,8 @@ import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireClusterCmd
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireClustersCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireVirtualNetworksCmd;
-import org.apache.cloudstack.api.command.admin.solidfire.ModifyReferenceToSolidFireClusterCmd;
-import org.apache.cloudstack.api.command.admin.solidfire.ModifySolidFireVirtualNetworkCmd;
+import org.apache.cloudstack.api.command.admin.solidfire.UpdateReferenceToSolidFireClusterCmd;
+import org.apache.cloudstack.api.command.admin.solidfire.UpdateSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
@@ -108,9 +108,9 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     @Override
-    public SfCluster modifyReferenceToSolidFireCluster(String clusterName, long totalCapacity,
+    public SfCluster updateReferenceToSolidFireCluster(String clusterName, long totalCapacity,
             long totalMinIops, long totalMaxIops, long totalBurstIops) {
-        s_logger.info("modifyReferenceToSolidFireCluster invoked");
+        s_logger.info("updateReferenceToSolidFireCluster invoked");
 
         verifyRootAdmin();
 
@@ -202,9 +202,9 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     @Override
-    public SfVirtualNetwork modifySolidFireVirtualNetwork(long id, String name, String tag, String startIp, int size,
+    public SfVirtualNetwork updateSolidFireVirtualNetwork(long id, String name, String tag, String startIp, int size,
             String netmask, String svip) {
-        s_logger.info("modifySolidFireVirtualNetwork invoked");
+        s_logger.info("updateSolidFireVirtualNetwork invoked");
 
         verifyRootAdmin();
 
@@ -265,12 +265,12 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         cmdList.add(ListSolidFireClusterCmd.class);
         cmdList.add(ListSolidFireClustersCmd.class);
         cmdList.add(CreateReferenceToSolidFireClusterCmd.class);
-        cmdList.add(ModifyReferenceToSolidFireClusterCmd.class);
+        cmdList.add(UpdateReferenceToSolidFireClusterCmd.class);
         cmdList.add(DeleteReferenceToSolidFireClusterCmd.class);
         cmdList.add(ListSolidFireVirtualNetworkCmd.class);
         cmdList.add(ListSolidFireVirtualNetworksCmd.class);
         cmdList.add(CreateSolidFireVirtualNetworkCmd.class);
-        cmdList.add(ModifySolidFireVirtualNetworkCmd.class);
+        cmdList.add(UpdateSolidFireVirtualNetworkCmd.class);
         cmdList.add(DeleteSolidFireVirtualNetworkCmd.class);
 
         return cmdList;
