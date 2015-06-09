@@ -16,14 +16,35 @@
 // under the License.
 package org.apache.cloudstack.solidfire.dataaccess.dao;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfVirtualNetworkVO;
 import org.springframework.stereotype.Component;
 
 import com.cloud.utils.db.GenericDaoBase;
+import com.cloud.utils.db.SearchBuilder;
+import com.cloud.utils.db.SearchCriteria;
+import com.cloud.utils.db.SearchCriteria.Op;
 
 @Component
 @Local(value = SfVirtualNetworkVO.class)
 public class SfVirtualNetworkDaoImpl extends GenericDaoBase<SfVirtualNetworkVO, Long> implements SfVirtualNetworkDao {
+    @Override
+    public List<SfVirtualNetworkVO> findByCluster(long clusterId) {
+        String columnName = "sf_cluster_id";
+
+        SearchBuilder<SfVirtualNetworkVO> searchBuilder = createSearchBuilder();
+
+        searchBuilder.and(columnName, searchBuilder.entity().getSfClusterId(), Op.EQ);
+
+        searchBuilder.done();
+
+        SearchCriteria<SfVirtualNetworkVO> sc = searchBuilder.create();
+
+        sc.setParameters(columnName, clusterId);
+
+        return listBy(sc);
+    }
 }

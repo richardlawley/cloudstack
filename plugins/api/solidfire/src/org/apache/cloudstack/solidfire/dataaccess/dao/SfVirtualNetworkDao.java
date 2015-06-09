@@ -16,9 +16,12 @@
 // under the License.
 package org.apache.cloudstack.solidfire.dataaccess.dao;
 
+import java.util.List;
+
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfVirtualNetworkVO;
 
 import com.cloud.utils.db.GenericDao;
 
 public interface SfVirtualNetworkDao extends GenericDao<SfVirtualNetworkVO, Long> {
+    List<SfVirtualNetworkVO> findByCluster(long clusterId);
 }

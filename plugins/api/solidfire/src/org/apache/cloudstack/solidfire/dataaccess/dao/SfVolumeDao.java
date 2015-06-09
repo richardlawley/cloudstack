@@ -16,9 +16,12 @@
 // under the License.
 package org.apache.cloudstack.solidfire.dataaccess.dao;
 
+import java.util.List;
+
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfVolumeVO;
 
 import com.cloud.utils.db.GenericDao;
 
 public interface SfVolumeDao extends GenericDao<SfVolumeVO, Long> {
+    List<SfVolumeVO> findByCluster(long clusterId);
 }

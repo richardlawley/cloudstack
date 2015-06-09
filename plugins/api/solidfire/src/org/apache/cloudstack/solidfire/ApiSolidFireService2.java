@@ -18,8 +18,6 @@ package org.apache.cloudstack.solidfire;
 
 import java.util.List;
 
-import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
-import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 
@@ -38,6 +36,8 @@ public interface ApiSolidFireService2 extends PluggableService {
     SfCluster modifyReferenceToSolidFireCluster(String clusterName, long totalCapacity,
             long totalMinIops, long totalMaxIops, long totalBurstIops);
 
+    SfCluster deleteReferenceToSolidFireCluster(String clusterName);
+
     // ********** VLAN-related commands **********
 
     SfVirtualNetwork listSolidFireVirtualNetwork(long id);
@@ -50,13 +50,5 @@ public interface ApiSolidFireService2 extends PluggableService {
     SfVirtualNetwork modifySolidFireVirtualNetwork(long id, String name, String tag, String startIp, int size,
             String netmask, String svip);
 
-    // ********** API response helpers **********
-
-    ApiSolidFireClusterResponse getApiSolidFireClusterResponse(SfCluster sfCluster);
-
-    List<ApiSolidFireClusterResponse> getApiSolidFireClusterResponse(List<SfCluster> sfClusters);
-
-    ApiSolidFireVirtualNetworkResponse getApiSolidFireVirtualNetworkResponse(SfVirtualNetwork sfVirtualNetwork);
-
-    List<ApiSolidFireVirtualNetworkResponse> getApiSolidFireVirtualNetworkResponse(List<SfVirtualNetwork> sfVirtualNetworks);
+    SfVirtualNetwork deleteSolidFireVirtualNetwork(long id);
 }

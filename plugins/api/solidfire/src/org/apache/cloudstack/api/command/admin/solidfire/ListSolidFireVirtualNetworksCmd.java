@@ -28,6 +28,7 @@ import org.apache.cloudstack.api.APICommand;
 import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.ServerApiException;
+import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
 import org.apache.cloudstack.api.response.ListResponse;
 import org.apache.cloudstack.context.CallContext;
@@ -69,7 +70,7 @@ public class ListSolidFireVirtualNetworksCmd extends BaseCmd {
         try {
             List<SfVirtualNetwork> sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks();
 
-            List<ApiSolidFireVirtualNetworkResponse> responses = _apiSolidFireService2.getApiSolidFireVirtualNetworkResponse(sfVirtualNetworks);
+            List<ApiSolidFireVirtualNetworkResponse> responses = ApiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetworks);
 
             ListResponse<ApiSolidFireVirtualNetworkResponse> listReponse = new ListResponse<>();
 

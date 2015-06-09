@@ -29,19 +29,19 @@ import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
-import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
+import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
 import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
-import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
+import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 
-@APICommand(name = "listSolidFireVirtualNetwork", responseObject = ApiSolidFireVirtualNetworkResponse.class, description = "List SolidFire Virtual Network",
+@APICommand(name = "deleteReferenceToSolidFireCluster", responseObject = ApiSolidFireClusterResponse.class, description = "Delete Reference to SolidFire Cluster",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class ListSolidFireVirtualNetworkCmd extends BaseCmd {
-    private static final Logger s_logger = Logger.getLogger(ListSolidFireVirtualNetworkCmd.class.getName());
-    private static final String s_name = "listsolidfirevirtualnetworkresponse";
+public class DeleteReferenceToSolidFireClusterCmd extends BaseCmd {
+    private static final Logger s_logger = Logger.getLogger(DeleteReferenceToSolidFireClusterCmd.class.getName());
+    private static final String s_name = "deletereferencetosolidfireclusterresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "SolidFire virtual network ID", required = true)
-    private long id;
+    @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "SolidFire cluster name", required = true)
+    private String name;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -67,15 +67,15 @@ public class ListSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("ListSolidFireVirtualNetworkCmd.execute invoked");
+        s_logger.info("DeleteReferenceToSolidFireClusterCmd.execute invoked");
 
         try {
-            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.listSolidFireVirtualNetwork(id);
+            SfCluster sfCluster = _apiSolidFireService2.deleteReferenceToSolidFireCluster(name);
 
-            ApiSolidFireVirtualNetworkResponse response = ApiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork);
+            ApiSolidFireClusterResponse response = ApiHelper.getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
-            response.setObjectName("apilistsolidfirevirtualnetwork");
+            response.setObjectName("apideletereferencetosolidfirecluster");
 
             setResponseObject(response);
         }

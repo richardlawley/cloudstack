@@ -26,21 +26,23 @@ import org.apache.log4j.Logger;
 import org.apache.cloudstack.acl.APIChecker;
 import org.apache.cloudstack.api.command.admin.solidfire.CreateReferenceToSolidFireClusterCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.CreateSolidFireVirtualNetworkCmd;
+import org.apache.cloudstack.api.command.admin.solidfire.DeleteReferenceToSolidFireClusterCmd;
+import org.apache.cloudstack.api.command.admin.solidfire.DeleteSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireClusterCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireClustersCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireVirtualNetworksCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ModifyReferenceToSolidFireClusterCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ModifySolidFireVirtualNetworkCmd;
-import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
-import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
 import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 import org.apache.cloudstack.solidfire.dataaccess.dao.SfClusterDao;
 import org.apache.cloudstack.solidfire.dataaccess.dao.SfVirtualNetworkDao;
+import org.apache.cloudstack.solidfire.dataaccess.dao.SfVolumeDao;
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfClusterVO;
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfVirtualNetworkVO;
+import org.apache.cloudstack.solidfire.dataaccess.vo.SfVolumeVO;
 import org.apache.cloudstack.solidfire.util.SolidFireConnection;
 import org.springframework.stereotype.Component;
 
@@ -59,6 +61,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     @Inject private AccountManager _accountMgr;
     @Inject private SfClusterDao _sfClusterDao;
     @Inject private SfVirtualNetworkDao _sfVirtualNetworkDao;
+    @Inject private SfVolumeDao _sfVolumeDao;
 
     @Override
     public SfCluster listSolidFireCluster(String clusterName) {
@@ -122,7 +125,34 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             return sfClusterVO;
         }
 
-        throw new CloudRuntimeException("Unable to update the cluster table.");
+        throw new CloudRuntimeException("Unable to update the cluster table");
+    }
+
+    @Override
+    public SfCluster deleteReferenceToSolidFireCluster(String clusterName) {
+        s_logger.info("deleteReferenceToSolidFireCluster invoked");
+
+        verifyRootAdmin();
+
+        SfCluster sfCluster = getSfCluster(clusterName);
+
+        List<SfVirtualNetworkVO> sfVirtualNetworks = _sfVirtualNetworkDao.findByCluster(sfCluster.getId());
+
+        if (sfVirtualNetworks == null || sfVirtualNetworks.size() <= 0) {
+            throw new CloudRuntimeException("Unable to delete a cluster that has one or more virtual networks");
+        }
+
+        List<SfVolumeVO> sfVolumes = _sfVolumeDao.findByCluster(sfCluster.getId());
+
+        if (sfVolumes == null || sfVolumes.size() <= 0) {
+            throw new CloudRuntimeException("Unable to delete a cluster that has one or more volumes");
+        }
+
+        if (!_sfClusterDao.remove(sfCluster.getId())) {
+            throw new CloudRuntimeException("Unable to remove the following cluster: " + clusterName);
+        }
+
+        return sfCluster;
     }
 
     @Override
@@ -195,72 +225,22 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             return sfVirtualNetworkVO;
         }
 
-        throw new CloudRuntimeException("Unable to update the virtual network table.");
+        throw new CloudRuntimeException("Unable to update the virtual network table");
     }
 
     @Override
-    public ApiSolidFireClusterResponse getApiSolidFireClusterResponse(SfCluster sfCluster) {
-        ApiSolidFireClusterResponse sfResponse = new ApiSolidFireClusterResponse();
+    public SfVirtualNetwork deleteSolidFireVirtualNetwork(long id) {
+        s_logger.info("deleteSolidFireVirtualNetwork invoked");
 
-        sfResponse.setId(sfCluster.getId());
-        sfResponse.setUuid(sfCluster.getUuid());
-        sfResponse.setName(sfCluster.getName());
-        sfResponse.setMvip(sfCluster.getMvip());
-        sfResponse.setUsername(sfCluster.getUsername());
-        sfResponse.setTotalCapacity(sfCluster.getTotalCapacity());
-        sfResponse.setTotalMinIops(sfCluster.getTotalMinIops());
-        sfResponse.setTotalMaxIops(sfCluster.getTotalMaxIops());
-        sfResponse.setTotalBurstIops(sfCluster.getTotalBurstIops());
-        sfResponse.setZoneId(sfCluster.getDataCenterId());
+        verifyRootAdmin();
 
-        return sfResponse;
-    }
+        SfVirtualNetwork sfVirtualNetwork = getSfVirtualNetwork(id);
 
-    @Override
-    public List<ApiSolidFireClusterResponse> getApiSolidFireClusterResponse(List<SfCluster> sfClusters) {
-        List<ApiSolidFireClusterResponse> sfResponse = new ArrayList<>();
-
-        if (sfClusters != null) {
-            for (SfCluster sfCluster : sfClusters) {
-                ApiSolidFireClusterResponse response = getApiSolidFireClusterResponse(sfCluster);
-
-                sfResponse.add(response);
-            }
+        if (!_sfVirtualNetworkDao.remove(id)) {
+            throw new CloudRuntimeException("Unable to remove the following virtual network:" + id);
         }
 
-        return sfResponse;
-    }
-
-    @Override
-    public ApiSolidFireVirtualNetworkResponse getApiSolidFireVirtualNetworkResponse(SfVirtualNetwork sfVirtualNetwork) {
-        ApiSolidFireVirtualNetworkResponse sfResponse = new ApiSolidFireVirtualNetworkResponse();
-
-        sfResponse.setId(sfVirtualNetwork.getId());
-        sfResponse.setUuid(sfVirtualNetwork.getUuid());
-        sfResponse.setName(sfVirtualNetwork.getName());
-        sfResponse.setTag(sfVirtualNetwork.getTag());
-        sfResponse.setStartIp(sfVirtualNetwork.getStartIp());
-        sfResponse.setSize(sfVirtualNetwork.getSize());
-        sfResponse.setNetmask(sfVirtualNetwork.getNetmask());
-        sfResponse.setSvip(sfVirtualNetwork.getSvip());
-        sfResponse.setAccountId(sfVirtualNetwork.getAccountId());
-
-        return sfResponse;
-    }
-
-    @Override
-    public List<ApiSolidFireVirtualNetworkResponse> getApiSolidFireVirtualNetworkResponse(List<SfVirtualNetwork> sfVirtualNetworks) {
-        List<ApiSolidFireVirtualNetworkResponse> sfResponse = new ArrayList<>();
-
-        if (sfVirtualNetworks != null) {
-            for (SfVirtualNetwork sfVirtualNetwork : sfVirtualNetworks) {
-                ApiSolidFireVirtualNetworkResponse response = getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork);
-
-                sfResponse.add(response);
-            }
-        }
-
-        return sfResponse;
+        return sfVirtualNetwork;
     }
 
     @Override
@@ -286,10 +266,12 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         cmdList.add(ListSolidFireClustersCmd.class);
         cmdList.add(CreateReferenceToSolidFireClusterCmd.class);
         cmdList.add(ModifyReferenceToSolidFireClusterCmd.class);
+        cmdList.add(DeleteReferenceToSolidFireClusterCmd.class);
         cmdList.add(ListSolidFireVirtualNetworkCmd.class);
         cmdList.add(ListSolidFireVirtualNetworksCmd.class);
         cmdList.add(CreateSolidFireVirtualNetworkCmd.class);
         cmdList.add(ModifySolidFireVirtualNetworkCmd.class);
+        cmdList.add(DeleteSolidFireVirtualNetworkCmd.class);
 
         return cmdList;
     }

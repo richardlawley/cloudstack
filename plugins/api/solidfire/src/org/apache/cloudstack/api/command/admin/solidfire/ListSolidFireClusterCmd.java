@@ -28,6 +28,7 @@ import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
+import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
 import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
@@ -71,7 +72,7 @@ public class ListSolidFireClusterCmd extends BaseCmd {
         try {
             SfCluster sfCluster = _apiSolidFireService2.listSolidFireCluster(name);
 
-            ApiSolidFireClusterResponse response = _apiSolidFireService2.getApiSolidFireClusterResponse(sfCluster);
+            ApiSolidFireClusterResponse response = ApiHelper.getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apilistsolidfirecluster");

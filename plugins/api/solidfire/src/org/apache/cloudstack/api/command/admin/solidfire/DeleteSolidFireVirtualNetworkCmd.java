@@ -34,11 +34,11 @@ import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 
-@APICommand(name = "listSolidFireVirtualNetwork", responseObject = ApiSolidFireVirtualNetworkResponse.class, description = "List SolidFire Virtual Network",
+@APICommand(name = "deleteSolidFireVirtualNetwork", responseObject = ApiSolidFireVirtualNetworkResponse.class, description = "Delete SolidFire Virtual Network",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class ListSolidFireVirtualNetworkCmd extends BaseCmd {
-    private static final Logger s_logger = Logger.getLogger(ListSolidFireVirtualNetworkCmd.class.getName());
-    private static final String s_name = "listsolidfirevirtualnetworkresponse";
+public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
+    private static final Logger s_logger = Logger.getLogger(DeleteSolidFireVirtualNetworkCmd.class.getName());
+    private static final String s_name = "deletesolidfirevirtualnetworkresponse";
 
     @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "SolidFire virtual network ID", required = true)
     private long id;
@@ -67,15 +67,15 @@ public class ListSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("ListSolidFireVirtualNetworkCmd.execute invoked");
+        s_logger.info("DeleteSolidFireVirtualNetworkCmd.execute invoked");
 
         try {
-            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.listSolidFireVirtualNetwork(id);
+            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.deleteSolidFireVirtualNetwork(id);
 
             ApiSolidFireVirtualNetworkResponse response = ApiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork);
 
             response.setResponseName(getCommandName());
-            response.setObjectName("apilistsolidfirevirtualnetwork");
+            response.setObjectName("apideletesolidfirevirtualnetwork");
 
             setResponseObject(response);
         }

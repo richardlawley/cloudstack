@@ -16,6 +16,7 @@
 // under the License.
 package org.apache.cloudstack.solidfire.dataaccess.vo;
 
+import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -24,8 +25,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
+
+import com.cloud.utils.db.GenericDao;
 
 @Entity
 @Table(name = "sf_volume")
@@ -63,6 +68,16 @@ public class SfVolumeVO implements SfVolume {
 
     @Column(name = "sf_cluster_id")
     private long sfClusterId;
+
+    @Column(name = GenericDao.CREATED_COLUMN)
+    private Date created;
+
+    @Column(name = "updated")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date updated;
+
+    @Column(name = GenericDao.REMOVED_COLUMN)
+    private Date removed;
 
     public SfVolumeVO() {
         uuid = UUID.randomUUID().toString();
