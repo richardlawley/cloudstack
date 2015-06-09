@@ -115,9 +115,17 @@ public class SfVolumeVO implements SfVolume {
         return name;
     }
 
+    public void setSize(long size) {
+        this.size = size;
+    }
+
     @Override
     public long getSize() {
         return size;
+    }
+
+    public void setMinIops(long minIops) {
+        this.minIops = minIops;
     }
 
     @Override
@@ -125,9 +133,17 @@ public class SfVolumeVO implements SfVolume {
         return minIops;
     }
 
+    public void setMaxIops(long maxIops) {
+        this.maxIops = maxIops;
+    }
+
     @Override
     public long getMaxIops() {
         return maxIops;
+    }
+
+    public void setBurstIops(long burstIops) {
+        this.burstIops = burstIops;
     }
 
     @Override

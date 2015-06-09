@@ -37,7 +37,7 @@ public class ListSolidFireVirtualNetworkCmd extends BaseListCmd {
     private static final Logger s_logger = Logger.getLogger(ListSolidFireVirtualNetworkCmd.class.getName());
     private static final String s_name = "listsolidfirevirtualnetworkresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "SolidFire virtual network ID", required = true)
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "Virtual network ID", required = true)
     private long id;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;

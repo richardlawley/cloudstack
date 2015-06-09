@@ -32,7 +32,7 @@ import com.cloud.utils.db.SearchCriteria.Op;
 @Local(value = SfVolumeVO.class)
 public class SfVolumeDaoImpl extends GenericDaoBase<SfVolumeVO, Long> implements SfVolumeDao {
     @Override
-    public List<SfVolumeVO> findByCluster(long clusterId) {
+    public List<SfVolumeVO> findByClusterId(long clusterId) {
         String columnName = "sf_cluster_id";
 
         SearchBuilder<SfVolumeVO> searchBuilder = createSearchBuilder();
@@ -44,6 +44,23 @@ public class SfVolumeDaoImpl extends GenericDaoBase<SfVolumeVO, Long> implements
         SearchCriteria<SfVolumeVO> sc = searchBuilder.create();
 
         sc.setParameters(columnName, clusterId);
+
+        return listBy(sc);
+    }
+
+    @Override
+    public List<SfVolumeVO> findByAccountId(long accountId) {
+        String columnName = "account_id";
+
+        SearchBuilder<SfVolumeVO> searchBuilder = createSearchBuilder();
+
+        searchBuilder.and(columnName, searchBuilder.entity().getAccountId(), Op.EQ);
+
+        searchBuilder.done();
+
+        SearchCriteria<SfVolumeVO> sc = searchBuilder.create();
+
+        sc.setParameters(columnName, accountId);
 
         return listBy(sc);
     }

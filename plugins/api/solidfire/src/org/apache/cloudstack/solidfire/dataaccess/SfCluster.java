@@ -36,5 +36,5 @@ public interface SfCluster extends Identity, InternalIdentity {
 
     long getTotalBurstIops();
 
-    long getDataCenterId();
+    long getZoneId();
 }

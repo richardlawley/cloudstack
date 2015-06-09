@@ -16,8 +16,6 @@
 // under the License.
 package org.apache.cloudstack.api.command.admin.solidfire;
 
-import com.cloud.user.Account;
-
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -29,18 +27,36 @@ import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
-import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
+import org.apache.cloudstack.api.response.ApiSolidFireVolumeResponse;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
-import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
+import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 
-@APICommand(name = "deleteSolidFireVirtualNetwork", responseObject = ApiSolidFireVirtualNetworkResponse.class, description = "Delete SolidFire Virtual Network",
+@APICommand(name = "createSolidFireVolume", responseObject = ApiSolidFireVolumeResponse.class, description = "Create SolidFire Volume",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
-    private static final Logger s_logger = Logger.getLogger(DeleteSolidFireVirtualNetworkCmd.class.getName());
-    private static final String s_name = "deletesolidfirevirtualnetworkresponse";
+public class CreateSolidFireVolumeCmd extends BaseCmd {
+    private static final Logger s_logger = Logger.getLogger(CreateSolidFireVolumeCmd.class.getName());
+    private static final String s_name = "createsolidfirevolumeresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "Virtual network ID", required = true)
-    private long id;
+    @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "Name", required = true)
+    private String name;
+
+    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size", required = true)
+    private long size;
+
+    @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = "Min IOPS", required = true)
+    private long minIops;
+
+    @Parameter(name = ApiConstants.MAX_IOPS, type = CommandType.LONG, description = "Max IOPS", required = true)
+    private long maxIops;
+
+    @Parameter(name = "burstiops", type = CommandType.LONG, description = "Burst IOPS", required = true)
+    private long burstIops;
+
+    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, description = "Zone ID", required = true)
+    private long zoneId;
+
+    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, description = "Account ID", required = true)
+    private long accountId;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -55,26 +71,20 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, id);
-
-        if (sfVirtualNetwork != null) {
-            sfVirtualNetwork.getAccountId();
-        }
-
-        return Account.ACCOUNT_ID_SYSTEM; // no account info given, parent this command to SYSTEM so ERROR events are tracked
+        return accountId;
     }
 
     @Override
     public void execute() {
-        s_logger.info("DeleteSolidFireVirtualNetworkCmd.execute invoked");
+        s_logger.info("CreateSolidFireVolumeCmd.execute invoked");
 
         try {
-            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.deleteSolidFireVirtualNetwork(id);
+            SfVolume sfVolume = _apiSolidFireService2.createSolidFireVolume(name, size, minIops, maxIops, burstIops, zoneId, accountId);
 
-            ApiSolidFireVirtualNetworkResponse response = ApiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork);
+            ApiSolidFireVolumeResponse response = ApiHelper.getApiSolidFireVolumeResponse(sfVolume);
 
             response.setResponseName(getCommandName());
-            response.setObjectName("apideletesolidfirevirtualnetwork");
+            response.setObjectName("apicreatesolidfirevolume");
 
             setResponseObject(response);
         }

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
+import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 
 import com.cloud.utils.component.PluggableService;
 
@@ -51,4 +52,16 @@ public interface ApiSolidFireService2 extends PluggableService {
             String netmask, String svip);
 
     SfVirtualNetwork deleteSolidFireVirtualNetwork(long id);
+
+ // ********** Volume-related commands **********
+
+    SfVolume listSolidFireVolume(long id);
+
+    List<SfVolume> listSolidFireVolumes();
+
+    SfVolume createSolidFireVolume(String name, long size, long minIops, long maxIops, long burstIops, long zoneId, long accountId);
+
+    SfVolume updateSolidFireVolume(long id, long size, long minIops, long maxIops, long burstIops);
+
+    SfVolume deleteSolidFireVolume(long id);
 }

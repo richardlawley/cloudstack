@@ -22,7 +22,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.cloudstack.api.BaseResponse;
 
-public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
+public class ApiSolidFireVolumeResponse extends BaseResponse {
     @SerializedName("id")
     @Param(description = "CloudStack ID")
     private long _id;
@@ -32,31 +32,27 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
     private String _uuid;
 
     @SerializedName("name")
-    @Param(description = "SolidFire VLAN name")
+    @Param(description = "Name of volume")
     private String _name;
 
-    @SerializedName("tag")
-    @Param(description = "SolidFire VLAN tag")
-    private String _tag;
-
-    @SerializedName("startip")
-    @Param(description = "Start of range of IP addresses")
-    private String _startIp;
-
     @SerializedName("size")
-    @Param(description = "Size of range of IP addresses")
-    private int _size;
+    @Param(description = "Size of volume")
+    private long _size;
 
-    @SerializedName("netmask")
-    @Param(description = "Netmask of VLAN")
-    private String _netmask;
+    @SerializedName("miniops")
+    @Param(description = "Min IOPS of volume")
+    private long _minIops;
 
-    @SerializedName("svip")
-    @Param(description = "SVIP of VLAN")
-    private String _svip;
+    @SerializedName("maxiops")
+    @Param(description = "Max IOPS of volume")
+    private long _maxIops;
+
+    @SerializedName("burstiops")
+    @Param(description = "Burst IOPS of volume")
+    private long _burstIops;
 
     @SerializedName("accountid")
-    @Param(description = "Account ID that the virtual network is associated with")
+    @Param(description = "Account ID that the volume is associated with")
     private long _accountId;
 
     public void setId(long id) {
@@ -83,44 +79,36 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
         return _name;
     }
 
-    public void setTag(String tag) {
-        _tag = tag;
-    }
-
-    public String getTag() {
-        return _tag;
-    }
-
-    public void setStartIp(String startIp) {
-        _startIp = startIp;
-    }
-
-    public String getStartIp() {
-        return _startIp;
-    }
-
-    public void setSize(int size) {
+    public void setSize(long size) {
         _size = size;
     }
 
-    public int getSize() {
+    public long getSize() {
         return _size;
     }
 
-    public void setNetmask(String netmask) {
-        _netmask = netmask;
+    public void setMinIops(long minIops) {
+        _minIops = minIops;
     }
 
-    public String getNetmask() {
-        return _netmask;
+    public long getMinIops() {
+        return _minIops;
     }
 
-    public void setSvip(String svip) {
-        _svip = svip;
+    public void setMaxIops(long maxIops) {
+        _maxIops = maxIops;
     }
 
-    public String getSvip() {
-        return _svip;
+    public long getMaxIops() {
+        return _maxIops;
+    }
+
+    public void setBurstIops(long burstIops) {
+        _burstIops = burstIops;
+    }
+
+    public long getBurstIops() {
+        return _burstIops;
     }
 
     public void setAccountId(long accountId) {

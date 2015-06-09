@@ -69,8 +69,8 @@ public class SfClusterVO implements SfCluster {
     @Column(name = "total_burst_iops")
     private long totalBurstIops;
 
-    @Column(name = "data_center_id")
-    private long dataCenterId;
+    @Column(name = "zone_id")
+    private long zoneId;
 
     @Column(name = GenericDao.CREATED_COLUMN)
     private Date created;
@@ -87,7 +87,7 @@ public class SfClusterVO implements SfCluster {
     }
 
     public SfClusterVO(String name, String mvip, String username, String password, long totalCapacity,
-            long totalMinIops, long totalMaxIops, long totalBurstIops,long dataCenterId) {
+            long totalMinIops, long totalMaxIops, long totalBurstIops,long zoneId) {
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
         this.mvip = mvip;
@@ -97,7 +97,7 @@ public class SfClusterVO implements SfCluster {
         this.totalMinIops = totalMinIops;
         this.totalMaxIops = totalMaxIops;
         this.totalBurstIops = totalBurstIops;
-        this.dataCenterId = dataCenterId;
+        this.zoneId = zoneId;
     }
 
     @Override
@@ -167,7 +167,7 @@ public class SfClusterVO implements SfCluster {
     }
 
     @Override
-    public long getDataCenterId() {
-        return dataCenterId;
+    public long getZoneId() {
+        return zoneId;
     }
 }

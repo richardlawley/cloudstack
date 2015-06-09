@@ -109,6 +109,61 @@ public class SolidFireConnection {
         verifyResult(virtualNetworkModifyResult.result, strVirtualNetworkToModifyResultJson, gson);
     }
 
+    public void deleteVirtualNetwork(long id) {
+        final Gson gson = new GsonBuilder().create();
+
+        VirtualNetworkToDelete virtualNetworkToDelete = new VirtualNetworkToDelete(id);
+
+        String strVolumeToDeleteJson = gson.toJson(virtualNetworkToDelete);
+
+        executeJsonRpc(strVolumeToDeleteJson);
+    }
+
+    public long createVolume(String name, long accountId, long totalSize, long minIops, long maxIops, long burstIops) {
+        final Gson gson = new GsonBuilder().create();
+
+        VolumeToCreate volumeToCreate = new VolumeToCreate(name, accountId, totalSize, true, minIops, maxIops, burstIops);
+
+        String strVolumeToCreateJson = gson.toJson(volumeToCreate);
+
+        String strVolumeCreateResultJson = executeJsonRpc(strVolumeToCreateJson);
+
+        VolumeCreateResult volumeCreateResult = gson.fromJson(strVolumeCreateResultJson, VolumeCreateResult.class);
+
+        verifyResult(volumeCreateResult.result, strVolumeCreateResultJson, gson);
+
+        return volumeCreateResult.result.volumeID;
+    }
+
+    public void modifyVolume(long volumeId, long size, long minIops, long maxIops, long burstIops)
+    {
+        final Gson gson = new GsonBuilder().create();
+
+        VolumeToModify volumeToModify = new VolumeToModify(volumeId, size, minIops, maxIops, burstIops);
+
+        String strVolumeToModifyJson = gson.toJson(volumeToModify);
+
+        String strVolumeModifyResultJson = executeJsonRpc(strVolumeToModifyJson);
+
+        JsonError jsonError = gson.fromJson(strVolumeModifyResultJson, JsonError.class);
+
+        /** @todo Mike T. should I be doing this elsewhere? */
+        if (jsonError.error != null) {
+            throw new IllegalStateException(jsonError.error.message);
+        }
+    }
+
+    public void deleteVolume(long id)
+    {
+        final Gson gson = new GsonBuilder().create();
+
+        VolumeToDelete volumeToDelete = new VolumeToDelete(id);
+
+        String strVolumeToDeleteJson = gson.toJson(volumeToDelete);
+
+        executeJsonRpc(strVolumeToDeleteJson);
+    }
+
     private String executeJsonRpc(String strJsonToExecute) {
         DefaultHttpClient httpClient = null;
         StringBuilder sb = new StringBuilder();
@@ -294,6 +349,124 @@ public class SolidFireConnection {
         }
     }
 
+    @SuppressWarnings("unused")
+    private static final class VirtualNetworkToDelete
+    {
+        private final String method = "RemoveVirtualNetwork";
+        private final VirtualNetworkToDeleteParams params;
+
+        private VirtualNetworkToDelete(long id) {
+            params = new VirtualNetworkToDeleteParams(id);
+        }
+
+        private static final class VirtualNetworkToDeleteParams {
+            private long virtualNetworkID;
+
+            private VirtualNetworkToDeleteParams(long id) {
+                virtualNetworkID = id;
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static final class VolumeToCreate {
+        private final String method = "CreateVolume";
+        private final VolumeToCreateParams params;
+
+        private VolumeToCreate(final String strVolumeName, final long lAccountId, final long lTotalSize, final boolean bEnable512e,
+                final long lMinIOPS, final long lMaxIOPS, final long lBurstIOPS) {
+            params = new VolumeToCreateParams(strVolumeName, lAccountId, lTotalSize, bEnable512e, lMinIOPS, lMaxIOPS, lBurstIOPS);
+        }
+
+        private static final class VolumeToCreateParams {
+            private final String name;
+            private final long accountID;
+            private final long totalSize;
+            private final boolean enable512e;
+            private final VolumeToCreateParamsQoS qos;
+
+            private VolumeToCreateParams(final String strVolumeName, final long lAccountId, final long lTotalSize, final boolean bEnable512e,
+                    final long lMinIOPS, final long lMaxIOPS, final long lBurstIOPS) {
+                name = strVolumeName;
+                accountID = lAccountId;
+                totalSize = lTotalSize;
+                enable512e = bEnable512e;
+
+                qos = new VolumeToCreateParamsQoS(lMinIOPS, lMaxIOPS, lBurstIOPS);
+            }
+
+            private static final class VolumeToCreateParamsQoS {
+                private final long minIOPS;
+                private final long maxIOPS;
+                private final long burstIOPS;
+
+                private VolumeToCreateParamsQoS(final long lMinIOPS, final long lMaxIOPS, final long lBurstIOPS) {
+                    minIOPS = lMinIOPS;
+                    maxIOPS = lMaxIOPS;
+                    burstIOPS = lBurstIOPS;
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static final class VolumeToModify
+    {
+        private final String method = "ModifyVolume";
+        private final VolumeToModifyParams params;
+
+        private VolumeToModify(long id, long totalSize, long minIOPS, long maxIOPS, long burstIOPS)
+        {
+            params = new VolumeToModifyParams(id, totalSize, minIOPS, maxIOPS, burstIOPS);
+        }
+
+        private static final class VolumeToModifyParams
+        {
+            private final long volumeID;
+            private final long totalSize;
+            private final VolumeToModifyParamsQoS qos;
+
+            private VolumeToModifyParams(long id, long totalSize, long minIOPS, long maxIOPS, long burstIOPS)
+            {
+                this.volumeID = id;
+                this.totalSize = totalSize;
+
+                this.qos = new VolumeToModifyParamsQoS(minIOPS, maxIOPS, burstIOPS);
+            }
+        }
+
+        private static final class VolumeToModifyParamsQoS {
+            private final long minIOPS;
+            private final long maxIOPS;
+            private final long burstIOPS;
+
+            private VolumeToModifyParamsQoS(long minIOPS, long maxIOPS, long burstIOPS) {
+                this.minIOPS = minIOPS;
+                this.maxIOPS = maxIOPS;
+                this.burstIOPS = burstIOPS;
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static final class VolumeToDelete
+    {
+        private final String method = "DeleteVolume";
+        private final VolumeToDeleteParams params;
+
+        private VolumeToDelete(final long lVolumeId) {
+            params = new VolumeToDeleteParams(lVolumeId);
+        }
+
+        private static final class VolumeToDeleteParams {
+            private long volumeID;
+
+            private VolumeToDeleteParams(final long lVolumeId) {
+                volumeID = lVolumeId;
+            }
+        }
+    }
+
     private static final class ClusterInfoGetResult
     {
         private Result result;
@@ -325,6 +498,14 @@ public class SolidFireConnection {
 
         private static final class Result
         {
+        }
+    }
+
+    private static final class VolumeCreateResult {
+        private Result result;
+
+        private static final class Result {
+            private long volumeID;
         }
     }
 

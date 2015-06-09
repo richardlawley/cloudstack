@@ -16,7 +16,6 @@
 // under the License.
 package org.apache.cloudstack.solidfire.dataaccess.dao;
 
-
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfClusterVO;
 
 import com.cloud.utils.db.GenericDao;

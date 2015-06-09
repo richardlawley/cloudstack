@@ -29,18 +29,30 @@ import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
-import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
+import org.apache.cloudstack.api.response.ApiSolidFireVolumeResponse;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
-import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
+import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 
-@APICommand(name = "deleteSolidFireVirtualNetwork", responseObject = ApiSolidFireVirtualNetworkResponse.class, description = "Delete SolidFire Virtual Network",
+@APICommand(name = "updateSolidFireVolume", responseObject = ApiSolidFireVolumeResponse.class, description = "Update SolidFire Volume",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
-    private static final Logger s_logger = Logger.getLogger(DeleteSolidFireVirtualNetworkCmd.class.getName());
-    private static final String s_name = "deletesolidfirevirtualnetworkresponse";
+public class UpdateSolidFireVolumeCmd extends BaseCmd {
+    private static final Logger s_logger = Logger.getLogger(UpdateSolidFireVolumeCmd.class.getName());
+    private static final String s_name = "updatesolidfirevolumeresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "Virtual network ID", required = true)
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "SolidFire volume ID", required = true)
     private long id;
+
+    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size", required = true)
+    private long size;
+
+    @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = "Min IOPS", required = true)
+    private long minIops;
+
+    @Parameter(name = ApiConstants.MAX_IOPS, type = CommandType.LONG, description = "Max IOPS", required = true)
+    private long maxIops;
+
+    @Parameter(name = "burstiops", type = CommandType.LONG, description = "Burst IOPS", required = true)
+    private long burstIops;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -55,10 +67,10 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, id);
+        SfVolume sfVolume = _entityMgr.findById(SfVolume.class, id);
 
-        if (sfVirtualNetwork != null) {
-            sfVirtualNetwork.getAccountId();
+        if (sfVolume != null) {
+            sfVolume.getAccountId();
         }
 
         return Account.ACCOUNT_ID_SYSTEM; // no account info given, parent this command to SYSTEM so ERROR events are tracked
@@ -66,15 +78,15 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("DeleteSolidFireVirtualNetworkCmd.execute invoked");
+        s_logger.info("UpdateSolidFireVolumeCmd.execute invoked");
 
         try {
-            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.deleteSolidFireVirtualNetwork(id);
+            SfVolume sfVolume = _apiSolidFireService2.updateSolidFireVolume(id, size, minIops, maxIops, burstIops);
 
-            ApiSolidFireVirtualNetworkResponse response = ApiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork);
+            ApiSolidFireVolumeResponse response = ApiHelper.getApiSolidFireVolumeResponse(sfVolume);
 
             response.setResponseName(getCommandName());
-            response.setObjectName("apideletesolidfirevirtualnetwork");
+            response.setObjectName("apiupdatesolidfirevolume");
 
             setResponseObject(response);
         }

@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
 import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
+import org.apache.cloudstack.api.response.ApiSolidFireVolumeResponse;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
+import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 
 public class ApiHelper {
     public static ApiSolidFireClusterResponse getApiSolidFireClusterResponse(SfCluster sfCluster) {
@@ -21,7 +23,7 @@ public class ApiHelper {
         sfResponse.setTotalMinIops(sfCluster.getTotalMinIops());
         sfResponse.setTotalMaxIops(sfCluster.getTotalMaxIops());
         sfResponse.setTotalBurstIops(sfCluster.getTotalBurstIops());
-        sfResponse.setZoneId(sfCluster.getDataCenterId());
+        sfResponse.setZoneId(sfCluster.getZoneId());
 
         return sfResponse;
     }
@@ -62,6 +64,35 @@ public class ApiHelper {
         if (sfVirtualNetworks != null) {
             for (SfVirtualNetwork sfVirtualNetwork : sfVirtualNetworks) {
                 ApiSolidFireVirtualNetworkResponse response = getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork);
+
+                sfResponse.add(response);
+            }
+        }
+
+        return sfResponse;
+    }
+
+    public static ApiSolidFireVolumeResponse getApiSolidFireVolumeResponse(SfVolume sfVolume) {
+        ApiSolidFireVolumeResponse sfResponse = new ApiSolidFireVolumeResponse();
+
+        sfResponse.setId(sfVolume.getId());
+        sfResponse.setUuid(sfVolume.getUuid());
+        sfResponse.setName(sfVolume.getName());
+        sfResponse.setSize(sfVolume.getSize());
+        sfResponse.setMinIops(sfVolume.getMinIops());
+        sfResponse.setMaxIops(sfVolume.getMaxIops());
+        sfResponse.setBurstIops(sfVolume.getBurstIops());
+        sfResponse.setAccountId(sfVolume.getAccountId());
+
+        return sfResponse;
+    }
+
+    public static List<ApiSolidFireVolumeResponse> getApiSolidFireVolumeResponse(List<SfVolume> sfVolumes) {
+        List<ApiSolidFireVolumeResponse> sfResponse = new ArrayList<>();
+
+        if (sfVolumes != null) {
+            for (SfVolume sfVolume : sfVolumes) {
+                ApiSolidFireVolumeResponse response = getApiSolidFireVolumeResponse(sfVolume);
 
                 sfResponse.add(response);
             }
