@@ -59,7 +59,7 @@ public interface ApiSolidFireService2 extends PluggableService {
 
     List<SfVolume> listSolidFireVolumes();
 
-    SfVolume createSolidFireVolume(String name, long size, long minIops, long maxIops, long burstIops, long zoneId, long accountId);
+    SfVolume createSolidFireVolume(String name, long size, long minIops, long maxIops, long burstIops, long accountId, long zoneId);
 
     SfVolume updateSolidFireVolume(long id, long size, long minIops, long maxIops, long burstIops);
 

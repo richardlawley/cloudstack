@@ -164,6 +164,73 @@ public class SolidFireConnection {
         executeJsonRpc(strVolumeToDeleteJson);
     }
 
+    public long createSolidFireAccount(String strAccountName)
+    {
+        final Gson gson = new GsonBuilder().create();
+
+        AccountToAdd accountToAdd = new AccountToAdd(strAccountName);
+
+        String strAccountAddJson = gson.toJson(accountToAdd);
+
+        String strAccountAddResultJson = executeJsonRpc(strAccountAddJson);
+
+        AccountAddResult accountAddResult = gson.fromJson(strAccountAddResultJson, AccountAddResult.class);
+
+        verifyResult(accountAddResult.result, strAccountAddResultJson, gson);
+
+        return accountAddResult.result.accountID;
+    }
+
+    public SolidFireAccount getSolidFireAccount(String sfAccountName) {
+        try {
+            return getSolidFireAccountByName(sfAccountName);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public SolidFireAccount getSolidFireAccountById(long lSfAccountId)
+    {
+        final Gson gson = new GsonBuilder().create();
+
+        AccountToGetById accountToGetById = new AccountToGetById(lSfAccountId);
+
+        String strAccountToGetByIdJson = gson.toJson(accountToGetById);
+
+        String strAccountGetByIdResultJson = executeJsonRpc(strAccountToGetByIdJson);
+
+        AccountGetResult accountGetByIdResult = gson.fromJson(strAccountGetByIdResultJson, AccountGetResult.class);
+
+        verifyResult(accountGetByIdResult.result, strAccountGetByIdResultJson, gson);
+
+        String strSfAccountName = accountGetByIdResult.result.account.username;
+        String strSfAccountInitiatorSecret = accountGetByIdResult.result.account.initiatorSecret;
+        String strSfAccountTargetSecret = accountGetByIdResult.result.account.targetSecret;
+
+        return new SolidFireAccount(lSfAccountId, strSfAccountName, strSfAccountInitiatorSecret, strSfAccountTargetSecret);
+    }
+
+    public SolidFireAccount getSolidFireAccountByName(String strSfAccountName)
+    {
+        final Gson gson = new GsonBuilder().create();
+
+        AccountToGetByName accountToGetByName = new AccountToGetByName(strSfAccountName);
+
+        String strAccountToGetByNameJson = gson.toJson(accountToGetByName);
+
+        String strAccountGetByNameResultJson = executeJsonRpc(strAccountToGetByNameJson);
+
+        AccountGetResult accountGetByNameResult = gson.fromJson(strAccountGetByNameResultJson, AccountGetResult.class);
+
+        verifyResult(accountGetByNameResult.result, strAccountGetByNameResultJson, gson);
+
+        long lSfAccountId = accountGetByNameResult.result.account.accountID;
+        String strSfAccountInitiatorSecret = accountGetByNameResult.result.account.initiatorSecret;
+        String strSfAccountTargetSecret = accountGetByNameResult.result.account.targetSecret;
+
+        return new SolidFireAccount(lSfAccountId, strSfAccountName, strSfAccountInitiatorSecret, strSfAccountTargetSecret);
+    }
+
     private String executeJsonRpc(String strJsonToExecute) {
         DefaultHttpClient httpClient = null;
         StringBuilder sb = new StringBuilder();
@@ -467,6 +534,72 @@ public class SolidFireConnection {
         }
     }
 
+    @SuppressWarnings("unused")
+    private static final class AccountToAdd
+    {
+        private final String method = "AddAccount";
+        private final AccountToAddParams params;
+
+        private AccountToAdd(final String strAccountName)
+        {
+            params = new AccountToAddParams(strAccountName);
+        }
+
+        private static final class AccountToAddParams
+        {
+            private final String username;
+
+            private AccountToAddParams(final String strAccountName)
+            {
+                username = strAccountName;
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static final class AccountToGetById
+    {
+        private final String method = "GetAccountByID";
+        private final AccountToGetByIdParams params;
+
+        private AccountToGetById(final long lAccountId)
+        {
+            params = new AccountToGetByIdParams(lAccountId);
+        }
+
+        private static final class AccountToGetByIdParams
+        {
+            private final long accountID;
+
+            private AccountToGetByIdParams(final long lAccountId)
+            {
+                accountID = lAccountId;
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static final class AccountToGetByName
+    {
+        private final String method = "GetAccountByName";
+        private final AccountToGetByNameParams params;
+
+        private AccountToGetByName(final String strUsername)
+        {
+            params = new AccountToGetByNameParams(strUsername);
+        }
+
+        private static final class AccountToGetByNameParams
+        {
+            private final String username;
+
+            private AccountToGetByNameParams(final String strUsername)
+            {
+                username = strUsername;
+            }
+        }
+    }
+
     private static final class ClusterInfoGetResult
     {
         private Result result;
@@ -509,6 +642,29 @@ public class SolidFireConnection {
         }
     }
 
+    private static final class AccountAddResult {
+        private Result result;
+
+        private static final class Result {
+            private long accountID;
+        }
+    }
+
+    private static final class AccountGetResult {
+        private Result result;
+
+        private static final class Result {
+            private Account account;
+
+            private static final class Account {
+                private long accountID;
+                private String username;
+                private String initiatorSecret;
+                private String targetSecret;
+            }
+        }
+    }
+
     private static final class JsonError
     {
         private Error error;
@@ -530,5 +686,67 @@ public class SolidFireConnection {
         }
 
         throw new IllegalStateException("Problem with the following JSON: " + strJson);
+    }
+
+    public static class SolidFireAccount
+    {
+        private final long _id;
+        private final String _name;
+        private final String _initiatorSecret;
+        private final String _targetSecret;
+
+        public SolidFireAccount(long id, String name, String initiatorSecret, String targetSecret) {
+            _id = id;
+            _name = name;
+            _initiatorSecret = initiatorSecret;
+            _targetSecret = targetSecret;
+        }
+
+        public long getId() {
+            return _id;
+        }
+
+        public String getName() {
+            return _name;
+        }
+
+        public String getInitiatorSecret() {
+            return _initiatorSecret;
+        }
+
+        public String getTargetSecret() {
+            return _targetSecret;
+        }
+
+        @Override
+        public int hashCode() {
+            return (_id + _name).hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return _name;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+
+            if (!obj.getClass().equals(SolidFireAccount.class)) {
+                return false;
+            }
+
+            SolidFireAccount sfa = (SolidFireAccount)obj;
+
+            if (_id == sfa._id && _name.equals(sfa._name) &&
+                _initiatorSecret.equals(sfa._initiatorSecret) &&
+                _targetSecret.equals(sfa._targetSecret)) {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

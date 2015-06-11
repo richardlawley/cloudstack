@@ -23,5 +23,5 @@ import org.apache.cloudstack.solidfire.dataaccess.vo.SfVirtualNetworkVO;
 import com.cloud.utils.db.GenericDao;
 
 public interface SfVirtualNetworkDao extends GenericDao<SfVirtualNetworkVO, Long> {
-    List<SfVirtualNetworkVO> findByCluster(long clusterId);
+    List<SfVirtualNetworkVO> findByClusterId(long clusterId);
 }

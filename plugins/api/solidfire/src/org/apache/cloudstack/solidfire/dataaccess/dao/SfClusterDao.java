@@ -16,10 +16,14 @@
 // under the License.
 package org.apache.cloudstack.solidfire.dataaccess.dao;
 
+import java.util.List;
+
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfClusterVO;
 
 import com.cloud.utils.db.GenericDao;
 
 public interface SfClusterDao extends GenericDao<SfClusterVO, Long> {
     SfClusterVO findByName(String name);
+
+    List<SfClusterVO> findByZoneId(long zoneId);
 }

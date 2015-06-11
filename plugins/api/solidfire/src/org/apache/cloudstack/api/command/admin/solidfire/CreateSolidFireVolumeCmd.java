@@ -79,7 +79,7 @@ public class CreateSolidFireVolumeCmd extends BaseCmd {
         s_logger.info("CreateSolidFireVolumeCmd.execute invoked");
 
         try {
-            SfVolume sfVolume = _apiSolidFireService2.createSolidFireVolume(name, size, minIops, maxIops, burstIops, zoneId, accountId);
+            SfVolume sfVolume = _apiSolidFireService2.createSolidFireVolume(name, size, minIops, maxIops, burstIops, accountId, zoneId);
 
             ApiSolidFireVolumeResponse response = ApiHelper.getApiSolidFireVolumeResponse(sfVolume);
 

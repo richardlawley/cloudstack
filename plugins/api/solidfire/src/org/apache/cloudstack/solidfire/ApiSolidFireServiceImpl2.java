@@ -49,24 +49,31 @@ import org.apache.cloudstack.solidfire.dataaccess.vo.SfClusterVO;
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfVirtualNetworkVO;
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfVolumeVO;
 import org.apache.cloudstack.solidfire.util.SolidFireConnection;
+import org.apache.cloudstack.storage.datastore.util.SolidFireUtil;
 import org.springframework.stereotype.Component;
 
 import com.cloud.dc.DataCenterVO;
 import com.cloud.dc.dao.DataCenterDao;
 import com.cloud.exception.PermissionDeniedException;
 import com.cloud.user.Account;
+import com.cloud.user.AccountDetailVO;
+import com.cloud.user.AccountDetailsDao;
 import com.cloud.user.AccountManager;
+import com.cloud.user.AccountVO;
 import com.cloud.user.User;
 import com.cloud.user.dao.AccountDao;
 import com.cloud.utils.component.AdapterBase;
+import com.cloud.utils.db.GlobalLock;
 import com.cloud.utils.exception.CloudRuntimeException;
 
 @Component
 @Local(value = APIChecker.class)
 public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker, ApiSolidFireService2 {
     private static final Logger s_logger = Logger.getLogger(ApiSolidFireServiceImpl2.class);
+    private static final int s_lockTimeInSeconds = 180;
 
     @Inject private AccountDao _accountDao;
+    @Inject private AccountDetailsDao _accountDetailsDao;
     @Inject private AccountManager _accountMgr;
     @Inject private DataCenterDao _zoneDao;
     @Inject private SfClusterDao _sfClusterDao;
@@ -126,6 +133,8 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         verifyRootAdmin();
 
+        verifyClusterQuotas(totalCapacity, totalMinIops, totalMaxIops, totalBurstIops);
+
         SfClusterVO sfClusterVO = getSfCluster(clusterName);
 
         sfClusterVO.setTotalCapacity(totalCapacity);
@@ -148,7 +157,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         SfCluster sfCluster = getSfCluster(clusterName);
 
-        List<SfVirtualNetworkVO> sfVirtualNetworks = _sfVirtualNetworkDao.findByCluster(sfCluster.getId());
+        List<SfVirtualNetworkVO> sfVirtualNetworks = _sfVirtualNetworkDao.findByClusterId(sfCluster.getId());
 
         if (sfVirtualNetworks == null || sfVirtualNetworks.size() <= 0) {
             throw new CloudRuntimeException("Unable to delete a cluster that has one or more virtual networks");
@@ -266,7 +275,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         SfVolume sfVolume = getSfVolume(id);
 
-        verifyPermissionsForVolume(sfVolume);
+        verifyPermissionsForAccount(sfVolume.getAccountId());
 
         return sfVolume;
     }
@@ -276,72 +285,41 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         List<SfVolume> sfVolumes = new ArrayList<>();
 
-        if (isRootAdmin()) {
-            List<SfVolumeVO> sfVolumeVOs = _sfVolumeDao.listAll();
+        final List<SfVolumeVO> sfVolumeVOs;
 
-            if (sfVolumeVOs != null) {
-                sfVolumes.addAll(sfVolumeVOs);
-            }
+        if (isRootAdmin()) {
+            sfVolumeVOs = _sfVolumeDao.listAll();
         }
         else {
-            List<SfVolumeVO> sfVolumeVOs = _sfVolumeDao.findByAccountId(getCallingAccount().getId());
+            sfVolumeVOs = _sfVolumeDao.findByAccountId(getCallingAccount().getId());
+        }
 
-            if (sfVolumeVOs != null) {
-                sfVolumes.addAll(sfVolumeVOs);
-            }
+        if (sfVolumeVOs != null) {
+            sfVolumes.addAll(sfVolumeVOs);
         }
 
         return sfVolumes;
     }
 
     /** @todo Mike T. make use of account-level limits, too **/
-    /** @todo Mike T. synchronization **/
     /** @todo Mike T. allow the user to specify the VLAN **/
     @Override
-    public SfVolume createSolidFireVolume(String name, long size, long minIops, long maxIops, long burstIops, long zoneId, long accountId) {
+    public SfVolume createSolidFireVolume(String name, long size, long minIops, long maxIops, long burstIops, long accountId, long zoneId) {
         s_logger.info("createSolidFireVolume invoked");
 
-        List<SfClusterVO> sfClusterVOs = _sfClusterDao.listAll();
+        verifyPermissionsForAccount(accountId);
+
+        List<SfClusterVO> sfClusterVOs = _sfClusterDao.findByZoneId(zoneId);
 
         if (sfClusterVOs == null || sfClusterVOs.size() <= 0) {
-            throw new CloudRuntimeException("Unable to find any storage clusters");
+            throw new CloudRuntimeException("Unable to find any storage clusters in the following zone: " + zoneId);
         }
 
+        SfVolume sfVolume = null;
+
         for (SfCluster sfCluster : sfClusterVOs) {
-            if (sfCluster.getZoneId() != zoneId) {
-                continue;
-            }
-
-            List<SfVolumeVO> sfVolumeVOs = _sfVolumeDao.findByClusterId(sfCluster.getId());
-
-            long totalRemainingCapacity = sfCluster.getTotalCapacity();
-            long totalRemainingMinIops = sfCluster.getTotalMinIops();
-            long totalRemainingMaxIops = sfCluster.getTotalMaxIops();
-            long totalRemainingBurstIops = sfCluster.getTotalBurstIops();
-
-            if (sfVolumeVOs != null) {
-                for (SfVolume sfVolume : sfVolumeVOs) {
-                    totalRemainingCapacity -= sfVolume.getSize();
-                    totalRemainingMinIops -= sfVolume.getMinIops();
-                    totalRemainingMaxIops -= sfVolume.getMaxIops();
-                    totalRemainingBurstIops -= sfVolume.getBurstIops();
-                }
-            }
-
-            totalRemainingCapacity -= size;
-            totalRemainingMinIops -= minIops;
-            totalRemainingMaxIops -= maxIops;
-            totalRemainingBurstIops -= burstIops;
-
-            if (totalRemainingCapacity >= 0 && totalRemainingMinIops >= 0 && totalRemainingMaxIops >= 0 && totalRemainingBurstIops >= 0) {
-                SolidFireConnection sfConnection = new SolidFireConnection(sfCluster.getMvip(), sfCluster.getUsername(), sfCluster.getPassword());
-
-                /** @todo Mike T. create an account, if necessary */
-                long sfVolumeId = sfConnection.createVolume(name, 0, size, minIops, maxIops, burstIops);
-
-                SfVolumeVO sfVolumeVO = new SfVolumeVO(sfVolumeId, name, size, minIops, maxIops, burstIops, accountId, sfCluster.getId());
-
-                return _sfVolumeDao.persist(sfVolumeVO);
+            if ((sfVolume = createVolume(sfCluster, name, size, minIops, maxIops, burstIops, accountId)) != null) {
+                return sfVolume;
             }
         }
 
@@ -350,29 +328,17 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
     @Override
     public SfVolume updateSolidFireVolume(long id, long size, long minIops, long maxIops, long burstIops) {
-        s_logger.info("modifySolidFireVolume invoked");
+        s_logger.info("updateSolidFireVolume invoked");
 
         SfVolumeVO sfVolumeVO = getSfVolume(id);
 
-        verifyPermissionsForVolume(sfVolumeVO);
+        verifyPermissionsForAccount(sfVolumeVO.getAccountId());
 
-        SfCluster sfCluster = getSfCluster(sfVolumeVO.getSfClusterId());
-
-        SolidFireConnection sfConnection = new SolidFireConnection(sfCluster.getMvip(), sfCluster.getUsername(), sfCluster.getPassword());
-
-        /** @todo Mike T. must figure out if this exceeds any quotas */
-        sfConnection.modifyVolume(sfVolumeVO.getSfId(), size, minIops, maxIops, burstIops);
-
-        sfVolumeVO.setSize(size);
-        sfVolumeVO.setMinIops(minIops);
-        sfVolumeVO.setMaxIops(maxIops);
-        sfVolumeVO.setBurstIops(burstIops);
-
-        if (!_sfVolumeDao.update(id, sfVolumeVO)) {
-            throw new CloudRuntimeException("Unable to update the following volume:" + id);
+        if ((sfVolumeVO = updateVolume(sfVolumeVO, size, minIops, maxIops, burstIops)) != null) {
+            return sfVolumeVO;
         }
 
-        return sfVolumeVO;
+        throw new CloudRuntimeException("Unable to update the volume with the following id: " + id);
     }
 
     @Override
@@ -381,7 +347,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         SfVolume sfVolume = getSfVolume(id);
 
-        verifyPermissionsForVolume(sfVolume);
+        verifyPermissionsForAccount(sfVolume.getAccountId());
 
         if (!_sfVolumeDao.remove(id)) {
             throw new CloudRuntimeException("Unable to remove the following volume:" + id);
@@ -501,14 +467,14 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         }
     }
 
-    private void verifyPermissionsForVolume(SfVolume sfVolume) {
+    private void verifyPermissionsForAccount(long accountId) {
         Account account = getCallingAccount();
 
         if (isRootAdmin(account.getId())) {
             return; // permissions OK
         }
 
-        if (sfVolume.getAccountId() == account.getId()) {
+        if (accountId == account.getId()) {
             return; // permissions OK
         }
 
@@ -555,5 +521,214 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
        if (dataCenterVO == null) {
            throw new CloudRuntimeException("Unable to locate the following zone: " + zoneId);
        }
+    }
+
+    private SfVolume createVolume(SfCluster sfCluster, String name, long size, long minIops, long maxIops, long burstIops, long accountId) {
+        GlobalLock lock = GlobalLock.getInternLock(sfCluster.getUuid());
+
+        if (!lock.lock(s_lockTimeInSeconds)) {
+            String errMsg = "Couldn't lock the DB on the following string: " + sfCluster.getUuid();
+
+            s_logger.debug(errMsg);
+
+            throw new CloudRuntimeException(errMsg);
+        }
+
+        try {
+            TotalRemaining totalRemaining = getTotalRemaining(sfCluster);
+
+            long totalRemainingCapacity = totalRemaining.getTotalRemainingCapacity() - size;
+            long totalRemainingMinIops = totalRemaining.getTotalRemainingMinIops() - minIops;
+            long totalRemainingMaxIops = totalRemaining.getTotalRemainingMaxIops() - maxIops;
+            long totalRemainingBurstIops = totalRemaining.getTotalRemainingBurstIops() - burstIops;
+
+            if (totalRemainingCapacity >= 0 && totalRemainingMinIops >= 0 && totalRemainingMaxIops >= 0 && totalRemainingBurstIops >= 0) {
+                SolidFireConnection sfConnection = new SolidFireConnection(sfCluster.getMvip(), sfCluster.getUsername(), sfCluster.getPassword());
+
+                long sfClusterId = sfCluster.getId();
+
+                AccountDetailVO accountDetail = getAccountDetail(accountId, sfClusterId);
+
+                if (accountDetail == null || accountDetail.getValue() == null) {
+                    AccountVO account = _accountDao.findById(accountId);
+                    String sfAccountName = getSolidFireAccountName(accountId, account.getUuid());
+                    SolidFireConnection.SolidFireAccount sfAccount = sfConnection.getSolidFireAccount(sfAccountName);
+
+                    if (sfAccount == null) {
+                        sfAccount = createSolidFireAccount(sfConnection, sfAccountName);
+                    }
+
+                    updateCsDbWithSolidFireAccountInfo(account.getId(), sfAccount, sfClusterId);
+
+                    accountDetail = getAccountDetail(accountId, sfClusterId);
+                }
+
+                long sfAccountId = Long.parseLong(accountDetail.getValue());
+
+                long sfVolumeId = sfConnection.createVolume(name, sfAccountId, size, minIops, maxIops, burstIops);
+
+                SfVolumeVO sfVolumeVO = new SfVolumeVO(sfVolumeId, name, size, minIops, maxIops, burstIops, accountId, sfClusterId);
+
+                return _sfVolumeDao.persist(sfVolumeVO);
+            }
+        }
+        finally {
+            lock.unlock();
+            lock.releaseRef();
+        }
+
+        return null;
+    }
+
+    private TotalRemaining getTotalRemaining(SfCluster sfCluster) {
+        return getTotalRemaining(sfCluster, null);
+    }
+
+    private TotalRemaining getTotalRemaining(SfCluster sfCluster, SfVolume volumeToExclude) {
+        long totalRemainingCapacity = sfCluster.getTotalCapacity();
+        long totalRemainingMinIops = sfCluster.getTotalMinIops();
+        long totalRemainingMaxIops = sfCluster.getTotalMaxIops();
+        long totalRemainingBurstIops = sfCluster.getTotalBurstIops();
+
+        List<SfVolumeVO> sfVolumeVOs = _sfVolumeDao.findByClusterId(sfCluster.getId());
+
+        if (sfVolumeVOs != null) {
+            for (SfVolume sfVolume : sfVolumeVOs) {
+                if (volumeToExclude == null || sfVolume.getId() != volumeToExclude.getId()) {
+                    totalRemainingCapacity -= sfVolume.getSize();
+                    totalRemainingMinIops -= sfVolume.getMinIops();
+                    totalRemainingMaxIops -= sfVolume.getMaxIops();
+                    totalRemainingBurstIops -= sfVolume.getBurstIops();
+                }
+            }
+        }
+
+        return new TotalRemaining(totalRemainingCapacity, totalRemainingMinIops, totalRemainingMaxIops, totalRemainingBurstIops);
+    }
+
+    private static class TotalRemaining {
+        private final long _totalRemainingCapacity;
+        private final long _totalRemainingMinIops;
+        private final long _totalRemainingMaxIops;
+        private final long _totalRemainingBurstIops;
+
+        public TotalRemaining(long totalRemainingCapacity, long totalRemainingMinIops, long totalRemainingMaxIops, long totalRemainingBurstIops) {
+            _totalRemainingCapacity = totalRemainingCapacity;
+            _totalRemainingMinIops = totalRemainingMinIops;
+            _totalRemainingMaxIops = totalRemainingMaxIops;
+            _totalRemainingBurstIops = totalRemainingBurstIops;
+        }
+
+        public long getTotalRemainingCapacity() {
+            return _totalRemainingCapacity;
+        }
+
+        public long getTotalRemainingMinIops() {
+            return _totalRemainingMinIops;
+        }
+
+        public long getTotalRemainingMaxIops() {
+            return _totalRemainingMaxIops;
+        }
+
+        public long getTotalRemainingBurstIops() {
+            return _totalRemainingBurstIops;
+        }
+    }
+
+    private SfVolumeVO updateVolume(SfVolumeVO sfVolumeVO, long size, long minIops, long maxIops, long burstIops) {
+        SfCluster sfCluster = getSfCluster(sfVolumeVO.getSfClusterId());
+
+        GlobalLock lock = GlobalLock.getInternLock(sfCluster.getUuid());
+
+        if (!lock.lock(s_lockTimeInSeconds)) {
+            String errMsg = "Couldn't lock the DB on the following string: " + sfCluster.getUuid();
+
+            s_logger.debug(errMsg);
+
+            throw new CloudRuntimeException(errMsg);
+        }
+
+        try {
+            TotalRemaining totalRemaining = getTotalRemaining(sfCluster, sfVolumeVO);
+
+            long totalRemainingCapacity = totalRemaining.getTotalRemainingCapacity() - size;
+            long totalRemainingMinIops = totalRemaining.getTotalRemainingMinIops() - minIops;
+            long totalRemainingMaxIops = totalRemaining.getTotalRemainingMaxIops() - maxIops;
+            long totalRemainingBurstIops = totalRemaining.getTotalRemainingBurstIops() - burstIops;
+
+            if (totalRemainingCapacity >= 0 && totalRemainingMinIops >= 0 && totalRemainingMaxIops >= 0 && totalRemainingBurstIops >= 0) {
+                SolidFireConnection sfConnection = new SolidFireConnection(sfCluster.getMvip(), sfCluster.getUsername(), sfCluster.getPassword());
+
+                sfConnection.modifyVolume(sfVolumeVO.getSfId(), size, minIops, maxIops, burstIops);
+
+                sfVolumeVO.setSize(size);
+                sfVolumeVO.setMinIops(minIops);
+                sfVolumeVO.setMaxIops(maxIops);
+                sfVolumeVO.setBurstIops(burstIops);
+
+                if (!_sfVolumeDao.update(sfVolumeVO.getId(), sfVolumeVO)) {
+                    throw new CloudRuntimeException("Unable to update the following volume:" + sfVolumeVO.getId());
+                }
+
+                return sfVolumeVO;
+            }
+        }
+        finally {
+            lock.unlock();
+            lock.releaseRef();
+        }
+
+        return null;
+    }
+
+    private static String getSolidFireAccountName(long accountId, String accountUuid) {
+        return "CloudStack_" + accountId + "_" + accountUuid;
+    }
+
+    private static String getAccountKey(long sfClusterId) {
+        return "sfAccountIdForClusterId_" + sfClusterId;
+    }
+
+    private AccountDetailVO getAccountDetail(long accountId, long sfClusterId) {
+        return _accountDetailsDao.findDetail(accountId, getAccountKey(sfClusterId));
+    }
+
+    private SolidFireConnection.SolidFireAccount createSolidFireAccount(SolidFireConnection sfConnection, String sfAccountName) {
+        long accountNumber = sfConnection.createSolidFireAccount(sfAccountName);
+
+        return sfConnection.getSolidFireAccountById(accountNumber);
+    }
+
+    private void updateCsDbWithSolidFireAccountInfo(long accountId, SolidFireConnection.SolidFireAccount sfAccount, long sfClusterId) {
+        AccountDetailVO accountDetail = new AccountDetailVO(accountId,
+                getAccountKey(sfClusterId),
+                String.valueOf(sfAccount.getId()));
+
+        _accountDetailsDao.persist(accountDetail);
+
+        accountDetail = new AccountDetailVO(accountId,
+                SolidFireUtil.CHAP_INITIATOR_USERNAME,
+                sfAccount.getName());
+
+        _accountDetailsDao.persist(accountDetail);
+
+        accountDetail = new AccountDetailVO(accountId,
+                SolidFireUtil.CHAP_INITIATOR_SECRET,
+                sfAccount.getInitiatorSecret());
+
+        _accountDetailsDao.persist(accountDetail);
+
+        accountDetail = new AccountDetailVO(accountId,
+                SolidFireUtil.CHAP_TARGET_USERNAME,
+                sfAccount.getName());
+
+        _accountDetailsDao.persist(accountDetail);
+
+        accountDetail = new AccountDetailVO(accountId,
+                SolidFireUtil.CHAP_TARGET_SECRET,
+                sfAccount.getTargetSecret());
+
+        _accountDetailsDao.persist(accountDetail);
     }
 }

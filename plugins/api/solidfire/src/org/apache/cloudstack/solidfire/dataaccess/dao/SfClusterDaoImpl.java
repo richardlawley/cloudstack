@@ -16,6 +16,8 @@
 // under the License.
 package org.apache.cloudstack.solidfire.dataaccess.dao;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import org.apache.cloudstack.solidfire.dataaccess.vo.SfClusterVO;
@@ -23,7 +25,9 @@ import org.springframework.stereotype.Component;
 
 import com.cloud.utils.db.DB;
 import com.cloud.utils.db.GenericDaoBase;
+import com.cloud.utils.db.SearchBuilder;
 import com.cloud.utils.db.SearchCriteria;
+import com.cloud.utils.db.SearchCriteria.Op;
 
 @Component
 @Local(value = SfClusterVO.class)
@@ -37,5 +41,22 @@ public class SfClusterDaoImpl extends GenericDaoBase<SfClusterVO, Long> implemen
         sc.addAnd("name", SearchCriteria.Op.EQ, name);
 
         return findOneBy(sc);
+    }
+
+    @Override
+    public List<SfClusterVO> findByZoneId(long zoneId) {
+        String columnName = "zoneId";
+
+        SearchBuilder<SfClusterVO> searchBuilder = createSearchBuilder();
+
+        searchBuilder.and(columnName, searchBuilder.entity().getZoneId(), Op.EQ);
+
+        searchBuilder.done();
+
+        SearchCriteria<SfClusterVO> sc = searchBuilder.create();
+
+        sc.setParameters(columnName, zoneId);
+
+        return listBy(sc);
     }
 }

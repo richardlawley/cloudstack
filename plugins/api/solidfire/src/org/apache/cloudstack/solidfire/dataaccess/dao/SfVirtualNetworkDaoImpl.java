@@ -32,7 +32,7 @@ import com.cloud.utils.db.SearchCriteria.Op;
 @Local(value = SfVirtualNetworkVO.class)
 public class SfVirtualNetworkDaoImpl extends GenericDaoBase<SfVirtualNetworkVO, Long> implements SfVirtualNetworkDao {
     @Override
-    public List<SfVirtualNetworkVO> findByCluster(long clusterId) {
+    public List<SfVirtualNetworkVO> findByClusterId(long clusterId) {
         String columnName = "sf_cluster_id";
 
         SearchBuilder<SfVirtualNetworkVO> searchBuilder = createSearchBuilder();
