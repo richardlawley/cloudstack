@@ -104,9 +104,11 @@ public class SolidFireConnection {
 
         String strVirtualNetworkToModifyResultJson = executeJsonRpc(strVirtualNetworkToModifyJson);
 
-        VirtualNetworkModifyResult virtualNetworkModifyResult = gson.fromJson(strVirtualNetworkToModifyResultJson, VirtualNetworkModifyResult.class);
+        JsonError jsonError = gson.fromJson(strVirtualNetworkToModifyResultJson, JsonError.class);
 
-        verifyResult(virtualNetworkModifyResult.result, strVirtualNetworkToModifyResultJson, gson);
+        if (jsonError.error != null) {
+            throw new IllegalStateException(jsonError.error.message);
+        }
     }
 
     public void deleteVirtualNetwork(long id) {
@@ -116,7 +118,13 @@ public class SolidFireConnection {
 
         String strVolumeToDeleteJson = gson.toJson(virtualNetworkToDelete);
 
-        executeJsonRpc(strVolumeToDeleteJson);
+        String strVirtualNetworkToDeleteResultJson = executeJsonRpc(strVolumeToDeleteJson);
+
+        JsonError jsonError = gson.fromJson(strVirtualNetworkToDeleteResultJson, JsonError.class);
+
+        if (jsonError.error != null) {
+            throw new IllegalStateException(jsonError.error.message);
+        }
     }
 
     public long createVolume(String name, long accountId, long totalSize, long minIops, long maxIops, long burstIops) {
@@ -147,7 +155,6 @@ public class SolidFireConnection {
 
         JsonError jsonError = gson.fromJson(strVolumeModifyResultJson, JsonError.class);
 
-        /** @todo Mike T. should I be doing this elsewhere? */
         if (jsonError.error != null) {
             throw new IllegalStateException(jsonError.error.message);
         }
@@ -161,7 +168,13 @@ public class SolidFireConnection {
 
         String strVolumeToDeleteJson = gson.toJson(volumeToDelete);
 
-        executeJsonRpc(strVolumeToDeleteJson);
+        String strVolumeToDeleteResultJson = executeJsonRpc(strVolumeToDeleteJson);
+
+        JsonError jsonError = gson.fromJson(strVolumeToDeleteResultJson, JsonError.class);
+
+        if (jsonError.error != null) {
+            throw new IllegalStateException(jsonError.error.message);
+        }
     }
 
     public long createSolidFireAccount(String strAccountName)
@@ -622,15 +635,6 @@ public class SolidFireConnection {
         private static final class Result
         {
             private long virtualNetworkID;
-        }
-    }
-
-    private static final class VirtualNetworkModifyResult
-    {
-        private Result result;
-
-        private static final class Result
-        {
         }
     }
 
