@@ -448,13 +448,15 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             return true;
         }
 
-        // substitute these commands with ones that a non-root admin can do and return true instead
-        if ("listSolidFireCluster".equals(apiCommandName) ||
-            "listSolidFireClusters".equals(apiCommandName)) {
-            return false;
+        if ("listSolidFireVolume".equals(apiCommandName) ||
+            "listSolidFireVolumes".equals(apiCommandName) ||
+            "createSolidFireVolume".equals(apiCommandName) ||
+            "updateSolidFireVolume".equals(apiCommandName) ||
+            "deleteSolidFireVolume".equals(apiCommandName)) {
+            return true;
         }
 
-        return false;
+        throw new PermissionDeniedException("Insufficient permissions to perform this action");
     }
 
     @Override
