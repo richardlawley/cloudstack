@@ -114,9 +114,17 @@ public class SfVirtualNetworkVO implements SfVirtualNetwork {
         return sfId;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String getName() {
         return name;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     @Override
@@ -124,9 +132,17 @@ public class SfVirtualNetworkVO implements SfVirtualNetwork {
         return tag;
     }
 
+    public void setStartIp(String startIp) {
+        this.startIp = startIp;
+    }
+
     @Override
     public String getStartIp() {
         return startIp;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
     @Override
@@ -134,9 +150,17 @@ public class SfVirtualNetworkVO implements SfVirtualNetwork {
         return size;
     }
 
+    public void setNetmask(String netmask) {
+        this.netmask = netmask;
+    }
+
     @Override
     public String getNetmask() {
         return netmask;
+    }
+
+    public void setSvip(String svip) {
+        this.svip = svip;
     }
 
     @Override

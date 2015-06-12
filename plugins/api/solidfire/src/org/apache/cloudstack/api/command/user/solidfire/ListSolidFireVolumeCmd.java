@@ -14,29 +14,31 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-package org.apache.cloudstack.api.command.admin.solidfire;
-
-import java.util.List;
+package org.apache.cloudstack.api.command.user.solidfire;
 
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
+import org.apache.cloudstack.api.ApiConstants;
 import org.apache.cloudstack.api.APICommand;
 import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseListCmd;
+import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireVolumeResponse;
-import org.apache.cloudstack.api.response.ListResponse;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 
-@APICommand(name = "listSolidFireVolumes", responseObject = ApiSolidFireVolumeResponse.class, description = "List SolidFire Volumes",
+@APICommand(name = "listSolidFireVolume", responseObject = ApiSolidFireVolumeResponse.class, description = "List SolidFire Volume",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class ListSolidFireVolumesCmd extends BaseListCmd {
-    private static final Logger s_logger = Logger.getLogger(ListSolidFireVolumesCmd.class.getName());
-    private static final String s_name = "listsolidfirevolumesresponse";
+public class ListSolidFireVolumeCmd extends BaseListCmd {
+    private static final Logger s_logger = Logger.getLogger(ListSolidFireVolumeCmd.class.getName());
+    private static final String s_name = "listsolidfirevolumeresponse";
+
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "Volume ID", required = true)
+    private long id;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -51,20 +53,17 @@ public class ListSolidFireVolumesCmd extends BaseListCmd {
 
     @Override
     public void execute() {
-        s_logger.info("ListSolidFireVolumesCmd.execute invoked");
+        s_logger.info("ListSolidFireVolumeCmd.execute invoked");
 
         try {
-            List<SfVolume> sfVolumes = _apiSolidFireService2.listSolidFireVolumes();
+            SfVolume sfVolume = _apiSolidFireService2.listSolidFireVolume(id);
 
-            List<ApiSolidFireVolumeResponse> responses = ApiHelper.getApiSolidFireVolumeResponse(sfVolumes);
+            ApiSolidFireVolumeResponse response = ApiHelper.getApiSolidFireVolumeResponse(sfVolume);
 
-            ListResponse<ApiSolidFireVolumeResponse> listReponse = new ListResponse<>();
+            response.setResponseName(getCommandName());
+            response.setObjectName("apilistsolidfirevolume");
 
-            listReponse.setResponses(responses);
-            listReponse.setResponseName(getCommandName());
-            listReponse.setObjectName("apilistsolidfirevolumes");
-
-            setResponseObject(listReponse);
+            setResponseObject(response);
         }
         catch (Exception ex) {
             throw new ServerApiException(ApiErrorCode.INTERNAL_ERROR, ex.getMessage());

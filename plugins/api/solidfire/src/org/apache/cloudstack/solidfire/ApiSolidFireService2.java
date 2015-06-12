@@ -18,13 +18,14 @@ package org.apache.cloudstack.solidfire;
 
 import java.util.List;
 
+import org.apache.cloudstack.framework.config.Configurable;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 
 import com.cloud.utils.component.PluggableService;
 
-public interface ApiSolidFireService2 extends PluggableService {
+public interface ApiSolidFireService2 extends PluggableService, Configurable {
     // ********** Cluster-related commands **********
 
     SfCluster listSolidFireCluster(String clusterName);
@@ -59,7 +60,7 @@ public interface ApiSolidFireService2 extends PluggableService {
 
     List<SfVolume> listSolidFireVolumes();
 
-    SfVolume createSolidFireVolume(String name, long size, long minIops, long maxIops, long burstIops, long accountId, long zoneId);
+    SfVolume createSolidFireVolume(String name, long size, long minIops, long maxIops, long burstIops, long accountId, long sfVirtualNetworkId);
 
     SfVolume updateSolidFireVolume(long id, long size, long minIops, long maxIops, long burstIops);
 

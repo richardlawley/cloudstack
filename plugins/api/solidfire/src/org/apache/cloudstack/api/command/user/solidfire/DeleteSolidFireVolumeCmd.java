@@ -14,7 +14,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-package org.apache.cloudstack.api.command.admin.solidfire;
+package org.apache.cloudstack.api.command.user.solidfire;
 
 import com.cloud.user.Account;
 
@@ -31,28 +31,17 @@ import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireVolumeResponse;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
+import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 
-@APICommand(name = "updateSolidFireVolume", responseObject = ApiSolidFireVolumeResponse.class, description = "Update SolidFire Volume",
+@APICommand(name = "deleteSolidFireVolume", responseObject = ApiSolidFireVolumeResponse.class, description = "Delete SolidFire Volume",
     requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
-public class UpdateSolidFireVolumeCmd extends BaseCmd {
-    private static final Logger s_logger = Logger.getLogger(UpdateSolidFireVolumeCmd.class.getName());
-    private static final String s_name = "updatesolidfirevolumeresponse";
+public class DeleteSolidFireVolumeCmd extends BaseCmd {
+    private static final Logger s_logger = Logger.getLogger(DeleteSolidFireVolumeCmd.class.getName());
+    private static final String s_name = "deletesolidfirevolumeresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "SolidFire volume ID", required = true)
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "Volume ID", required = true)
     private long id;
-
-    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size", required = true)
-    private long size;
-
-    @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = "Min IOPS", required = true)
-    private long minIops;
-
-    @Parameter(name = ApiConstants.MAX_IOPS, type = CommandType.LONG, description = "Max IOPS", required = true)
-    private long maxIops;
-
-    @Parameter(name = "burstiops", type = CommandType.LONG, description = "Burst IOPS", required = true)
-    private long burstIops;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -70,7 +59,11 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
         SfVolume sfVolume = _entityMgr.findById(SfVolume.class, id);
 
         if (sfVolume != null) {
-            sfVolume.getAccountId();
+            SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, sfVolume.getSfVirtualNetworkId());
+
+            if (sfVirtualNetwork != null) {
+                sfVirtualNetwork.getAccountId();
+            }
         }
 
         return Account.ACCOUNT_ID_SYSTEM; // no account info given, parent this command to SYSTEM so ERROR events are tracked
@@ -78,15 +71,15 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("UpdateSolidFireVolumeCmd.execute invoked");
+        s_logger.info("DeleteSolidFireVolumeCmd.execute invoked");
 
         try {
-            SfVolume sfVolume = _apiSolidFireService2.updateSolidFireVolume(id, size, minIops, maxIops, burstIops);
+            SfVolume sfVolume = _apiSolidFireService2.deleteSolidFireVolume(id);
 
             ApiSolidFireVolumeResponse response = ApiHelper.getApiSolidFireVolumeResponse(sfVolume);
 
             response.setResponseName(getCommandName());
-            response.setObjectName("apiupdatesolidfirevolume");
+            response.setObjectName("apideletesolidfirevolume");
 
             setResponseObject(response);
         }

@@ -47,4 +47,21 @@ public class SfVirtualNetworkDaoImpl extends GenericDaoBase<SfVirtualNetworkVO, 
 
         return listBy(sc);
     }
+
+    @Override
+    public List<SfVirtualNetworkVO> findByAccountId(long accountId) {
+        String columnName = "account_id";
+
+        SearchBuilder<SfVirtualNetworkVO> searchBuilder = createSearchBuilder();
+
+        searchBuilder.and(columnName, searchBuilder.entity().getAccountId(), Op.EQ);
+
+        searchBuilder.done();
+
+        SearchCriteria<SfVirtualNetworkVO> sc = searchBuilder.create();
+
+        sc.setParameters(columnName, accountId);
+
+        return listBy(sc);
+    }
 }

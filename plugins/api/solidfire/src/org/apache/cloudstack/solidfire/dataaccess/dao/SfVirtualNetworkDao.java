@@ -24,4 +24,6 @@ import com.cloud.utils.db.GenericDao;
 
 public interface SfVirtualNetworkDao extends GenericDao<SfVirtualNetworkVO, Long> {
     List<SfVirtualNetworkVO> findByClusterId(long clusterId);
+
+    List<SfVirtualNetworkVO> findByAccountId(long accountId);
 }

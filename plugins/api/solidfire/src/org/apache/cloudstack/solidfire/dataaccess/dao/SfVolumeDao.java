@@ -23,7 +23,5 @@ import org.apache.cloudstack.solidfire.dataaccess.vo.SfVolumeVO;
 import com.cloud.utils.db.GenericDao;
 
 public interface SfVolumeDao extends GenericDao<SfVolumeVO, Long> {
-    List<SfVolumeVO> findByClusterId(long clusterId);
-
-    List<SfVolumeVO> findByAccountId(long accountId);
+    List<SfVolumeVO> findBySfVirtualNetworkId(long sfVirtualNetworkId);
 }

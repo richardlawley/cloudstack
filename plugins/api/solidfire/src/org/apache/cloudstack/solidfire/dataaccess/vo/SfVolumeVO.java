@@ -63,11 +63,8 @@ public class SfVolumeVO implements SfVolume {
     @Column(name = "burst_iops")
     private long burstIops;
 
-    @Column(name = "account_id")
-    private long accountId;
-
-    @Column(name = "sf_cluster_id")
-    private long sfClusterId;
+    @Column(name = "sf_virtual_network_id")
+    private long sfVirtualNetworkId;
 
     @Column(name = GenericDao.CREATED_COLUMN)
     private Date created;
@@ -83,7 +80,7 @@ public class SfVolumeVO implements SfVolume {
         uuid = UUID.randomUUID().toString();
     }
 
-    public SfVolumeVO(long sfId, String name, long size, long minIops, long maxIops, long burstIops, long accountId, long sfClusterId) {
+    public SfVolumeVO(long sfId, String name, long size, long minIops, long maxIops, long burstIops, long sfVirtualNetworkId) {
         this.uuid = UUID.randomUUID().toString();
         this.sfId = sfId;
         this.name = name;
@@ -91,8 +88,7 @@ public class SfVolumeVO implements SfVolume {
         this.minIops = minIops;
         this.maxIops = maxIops;
         this.burstIops = burstIops;
-        this.accountId = accountId;
-        this.sfClusterId = sfClusterId;
+        this.sfVirtualNetworkId = sfVirtualNetworkId;
     }
 
     @Override
@@ -152,12 +148,7 @@ public class SfVolumeVO implements SfVolume {
     }
 
     @Override
-    public long getAccountId() {
-        return accountId;
-    }
-
-    @Override
-    public long getSfClusterId() {
-        return sfClusterId;
+    public long getSfVirtualNetworkId() {
+        return sfVirtualNetworkId;
     }
 }

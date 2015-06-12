@@ -32,7 +32,5 @@ public interface SfVolume extends Identity, InternalIdentity {
 
     long getBurstIops();
 
-    long getAccountId();
-
-    long getSfClusterId();
+    long getSfVirtualNetworkId();
 }

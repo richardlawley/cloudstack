@@ -32,35 +32,18 @@ import com.cloud.utils.db.SearchCriteria.Op;
 @Local(value = SfVolumeVO.class)
 public class SfVolumeDaoImpl extends GenericDaoBase<SfVolumeVO, Long> implements SfVolumeDao {
     @Override
-    public List<SfVolumeVO> findByClusterId(long clusterId) {
-        String columnName = "sf_cluster_id";
+    public List<SfVolumeVO> findBySfVirtualNetworkId(long sfVirtualNetworkId) {
+        String columnName = "sf_virtual_network_id";
 
         SearchBuilder<SfVolumeVO> searchBuilder = createSearchBuilder();
 
-        searchBuilder.and(columnName, searchBuilder.entity().getSfClusterId(), Op.EQ);
+        searchBuilder.and(columnName, searchBuilder.entity().getSfVirtualNetworkId(), Op.EQ);
 
         searchBuilder.done();
 
         SearchCriteria<SfVolumeVO> sc = searchBuilder.create();
 
-        sc.setParameters(columnName, clusterId);
-
-        return listBy(sc);
-    }
-
-    @Override
-    public List<SfVolumeVO> findByAccountId(long accountId) {
-        String columnName = "account_id";
-
-        SearchBuilder<SfVolumeVO> searchBuilder = createSearchBuilder();
-
-        searchBuilder.and(columnName, searchBuilder.entity().getAccountId(), Op.EQ);
-
-        searchBuilder.done();
-
-        SearchCriteria<SfVolumeVO> sc = searchBuilder.create();
-
-        sc.setParameters(columnName, accountId);
+        sc.setParameters(columnName, sfVirtualNetworkId);
 
         return listBy(sc);
     }

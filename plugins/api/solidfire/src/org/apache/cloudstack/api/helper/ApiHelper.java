@@ -82,7 +82,6 @@ public class ApiHelper {
         sfResponse.setMinIops(sfVolume.getMinIops());
         sfResponse.setMaxIops(sfVolume.getMaxIops());
         sfResponse.setBurstIops(sfVolume.getBurstIops());
-        sfResponse.setAccountId(sfVolume.getAccountId());
 
         return sfResponse;
     }
