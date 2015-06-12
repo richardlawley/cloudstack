@@ -163,26 +163,56 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     @Override
-    public SfCluster updateReferenceToSolidFireCluster(String clusterName, long totalCapacity,
-            long totalMinIops, long totalMaxIops, long totalBurstIops) {
+    public SfCluster updateReferenceToSolidFireCluster(String clusterName, long newTotalCapacity,
+            long newTotalMinIops, long newTotalMaxIops, long newTotalBurstIops) {
         s_logger.info("updateReferenceToSolidFireCluster invoked");
 
         verifyRootAdmin();
 
-        verifyClusterQuotas(totalCapacity, totalMinIops, totalMaxIops, totalBurstIops);
+        verifyClusterQuotas(newTotalCapacity, newTotalMinIops, newTotalMaxIops, newTotalBurstIops);
 
         SfClusterVO sfClusterVO = getSfCluster(clusterName);
 
-        sfClusterVO.setTotalCapacity(totalCapacity);
-        sfClusterVO.setTotalMinIops(totalMinIops);
-        sfClusterVO.setTotalMaxIops(totalMaxIops);
-        sfClusterVO.setTotalBurstIops(totalBurstIops);
+        GlobalLock sfClusterLock = GlobalLock.getInternLock(sfClusterVO.getUuid());
 
-        if (_sfClusterDao.update(sfClusterVO.getId(), sfClusterVO)) {
-            return sfClusterVO;
+        if (!sfClusterLock.lock(s_lockTimeInSeconds)) {
+            String errMsg = "Couldn't lock the DB on the following string (Storage cluster UUID): " + sfClusterVO.getUuid();
+
+            s_logger.debug(errMsg);
+
+            throw new CloudRuntimeException(errMsg);
         }
 
-        throw new CloudRuntimeException("Unable to update the cluster table");
+        try {
+            TotalRemaining totalRemainingInCluster = getTotalRemainingInCluster(sfClusterVO);
+
+            long totalUsedCapacityInCluster = sfClusterVO.getTotalCapacity() - totalRemainingInCluster.getTotalRemainingCapacity();
+            long totalUsedMinIopsInCluster = sfClusterVO.getTotalMinIops() - totalRemainingInCluster.getTotalRemainingMinIops();
+            long totalUsedMaxIopsInCluster = sfClusterVO.getTotalMaxIops() - totalRemainingInCluster.getTotalRemainingMaxIops();
+            long totalUsedBurstIopsInCluster = sfClusterVO.getTotalBurstIops() - totalRemainingInCluster.getTotalRemainingBurstIops();
+
+            if (totalUsedCapacityInCluster <= newTotalCapacity && totalUsedMinIopsInCluster <= newTotalMinIops &&
+                    totalUsedMaxIopsInCluster <= newTotalMaxIops && totalUsedBurstIopsInCluster <= newTotalBurstIops) {
+                sfClusterVO.setTotalCapacity(newTotalCapacity);
+                sfClusterVO.setTotalMinIops(newTotalMinIops);
+                sfClusterVO.setTotalMaxIops(newTotalMaxIops);
+                sfClusterVO.setTotalBurstIops(newTotalBurstIops);
+
+                if (_sfClusterDao.update(sfClusterVO.getId(), sfClusterVO)) {
+                    return sfClusterVO;
+                }
+
+                throw new CloudRuntimeException("Unable to update the cluster table");
+            }
+            else {
+                throw new CloudRuntimeException("Unable to update the cluster table as more capacity and/or performance is in use " +
+                        "in the storage cluster than one or more of the values passed in");
+            }
+        }
+        finally {
+            sfClusterLock.unlock();
+            sfClusterLock.releaseRef();
+        }
     }
 
     @Override
