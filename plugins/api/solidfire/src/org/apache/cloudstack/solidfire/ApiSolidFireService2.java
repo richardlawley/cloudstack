@@ -44,7 +44,8 @@ public interface ApiSolidFireService2 extends PluggableService, Configurable {
 
     SfVirtualNetwork listSolidFireVirtualNetwork(long id);
 
-    List<SfVirtualNetwork> listSolidFireVirtualNetworks();
+    // Long (instead of long) because it's optional and null is used to indicate that it's not present
+    List<SfVirtualNetwork> listSolidFireVirtualNetworks(Long zoneId);
 
     SfVirtualNetwork createSolidFireVirtualNetwork(String clusterName, String name, String tag, String startIp, int size,
             String netmask, String svip, long accountId);

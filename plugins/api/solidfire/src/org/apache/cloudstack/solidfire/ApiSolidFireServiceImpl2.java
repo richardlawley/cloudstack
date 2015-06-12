@@ -30,12 +30,12 @@ import org.apache.cloudstack.api.command.admin.solidfire.DeleteReferenceToSolidF
 import org.apache.cloudstack.api.command.admin.solidfire.DeleteSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireClusterCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireClustersCmd;
-import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireVirtualNetworkCmd;
-import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireVirtualNetworksCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.UpdateReferenceToSolidFireClusterCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.UpdateSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.api.command.user.solidfire.CreateSolidFireVolumeCmd;
 import org.apache.cloudstack.api.command.user.solidfire.DeleteSolidFireVolumeCmd;
+import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVirtualNetworkCmd;
+import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVirtualNetworksCmd;
 import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVolumeCmd;
 import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVolumesCmd;
 import org.apache.cloudstack.context.CallContext;
@@ -240,20 +240,37 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     public SfVirtualNetwork listSolidFireVirtualNetwork(long id) {
         s_logger.info("listSolidFireVirtualNetwork invoked");
 
-        verifyRootAdmin();
+        SfVirtualNetwork sfVirtualNetwork = getSfVirtualNetwork(id);
+
+        verifyPermissionsForAccount(sfVirtualNetwork.getAccountId());
 
         return getSfVirtualNetwork(id);
     }
 
     @Override
-    public List<SfVirtualNetwork> listSolidFireVirtualNetworks() {
+    public List<SfVirtualNetwork> listSolidFireVirtualNetworks(Long zoneId) {
         s_logger.info("listSolidFireVirtualNetworks invoked");
 
-        verifyRootAdmin();
+        final List<SfVirtualNetworkVO> sfVirtualNetworkVOs;
+
+        if (isRootAdmin()) {
+            if (zoneId != null) {
+                sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.listAll(), zoneId);
+            }
+            else {
+                sfVirtualNetworkVOs = _sfVirtualNetworkDao.listAll();
+            }
+        }
+        else {
+            if (zoneId != null) {
+                sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.findByAccountId(getCallingAccount().getId()), zoneId);
+            }
+            else {
+                sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(getCallingAccount().getId());
+            }
+        }
 
         List<SfVirtualNetwork> sfVirtualNetworks = new ArrayList<>();
-
-        List<SfVirtualNetworkVO> sfVirtualNetworkVOs = _sfVirtualNetworkDao.listAll();
 
         if (sfVirtualNetworkVOs != null) {
             sfVirtualNetworks.addAll(sfVirtualNetworkVOs);
@@ -448,11 +465,13 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             return true;
         }
 
-        if ("listSolidFireVolume".equals(apiCommandName) ||
-            "listSolidFireVolumes".equals(apiCommandName) ||
-            "createSolidFireVolume".equals(apiCommandName) ||
-            "updateSolidFireVolume".equals(apiCommandName) ||
-            "deleteSolidFireVolume".equals(apiCommandName)) {
+        if ("listSolidFireVirtualNetwork".equals(apiCommandName) ||
+                "listSolidFireVirtualNetworks".equals(apiCommandName) ||
+                "listSolidFireVolume".equals(apiCommandName) ||
+                "listSolidFireVolumes".equals(apiCommandName) ||
+                "createSolidFireVolume".equals(apiCommandName) ||
+                "updateSolidFireVolume".equals(apiCommandName) ||
+                "deleteSolidFireVolume".equals(apiCommandName)) {
             return true;
         }
 
@@ -566,7 +585,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             return; // permissions OK
         }
 
-        if (accountId == account.getId()) {
+        if (account.getId() == accountId) {
             return; // permissions OK
         }
 
@@ -955,5 +974,21 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
                 sfAccount.getTargetSecret());
 
         _accountDetailsDao.persist(accountDetail);
+    }
+
+    private List<SfVirtualNetworkVO> filterVirtualNetworksByZone(List<SfVirtualNetworkVO> sfVirtualNetworkVOs, long zoneId) {
+        List<SfVirtualNetworkVO> sfVirtualNetworkVOsToReturn = new ArrayList<>();
+
+        if (sfVirtualNetworkVOs != null) {
+            for (SfVirtualNetworkVO sfVirtualNetworkVO : sfVirtualNetworkVOs) {
+                SfCluster sfCluster = getSfCluster(sfVirtualNetworkVO.getSfClusterId());
+
+                if (sfCluster.getZoneId() == zoneId) {
+                    sfVirtualNetworkVOsToReturn.add(sfVirtualNetworkVO);
+                }
+            }
+        }
+
+        return sfVirtualNetworkVOsToReturn;
     }
 }
