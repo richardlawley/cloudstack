@@ -25,6 +25,8 @@ public class ApiHelper {
         sfResponse.setTotalBurstIops(sfCluster.getTotalBurstIops());
         sfResponse.setZoneId(sfCluster.getZoneId());
 
+        sfResponse.setObjectName("sfcluster");
+
         return sfResponse;
     }
 
@@ -55,6 +57,8 @@ public class ApiHelper {
         sfResponse.setSvip(sfVirtualNetwork.getSvip());
         sfResponse.setAccountId(sfVirtualNetwork.getAccountId());
 
+        sfResponse.setObjectName("sfvirtualnetwork");
+
         return sfResponse;
     }
 
@@ -82,6 +86,8 @@ public class ApiHelper {
         sfResponse.setMinIops(sfVolume.getMinIops());
         sfResponse.setMaxIops(sfVolume.getMaxIops());
         sfResponse.setBurstIops(sfVolume.getBurstIops());
+
+        sfResponse.setObjectName("sfvolume");
 
         return sfResponse;
     }
