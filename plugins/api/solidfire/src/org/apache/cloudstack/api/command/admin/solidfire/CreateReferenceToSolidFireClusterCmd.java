@@ -30,6 +30,7 @@ import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
+import org.apache.cloudstack.api.response.ZoneResponse;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 
@@ -60,7 +61,7 @@ public class CreateReferenceToSolidFireClusterCmd extends BaseCmd {
     @Parameter(name = "totalburstiops", type = CommandType.LONG, description = "Total burst IOPS", required = true)
     private long totalBurstIops;
 
-    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, description = "Zone ID", required = true)
+    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = "Zone ID", required = true)
     private long zoneId;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
