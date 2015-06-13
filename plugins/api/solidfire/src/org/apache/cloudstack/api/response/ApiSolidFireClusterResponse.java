@@ -21,7 +21,10 @@ import com.cloud.serializer.Param;
 import com.google.gson.annotations.SerializedName;
 
 import org.apache.cloudstack.api.BaseResponse;
+import org.apache.cloudstack.api.EntityReference;
+import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 
+@EntityReference(value = SfCluster.class)
 public class ApiSolidFireClusterResponse extends BaseResponse {
     @SerializedName("id")
     @Param(description = "CloudStack ID")
