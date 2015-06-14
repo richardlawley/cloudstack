@@ -155,6 +155,14 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         String clusterName = sfConnection.getClusterName();
 
+        List<SfClusterVO> sfClusterVOs = _sfClusterDao.listAll();
+
+        for (SfCluster sfCluster : sfClusterVOs) {
+            if (sfCluster.getName().equals(clusterName)) {
+                throw new CloudRuntimeException("Unable to add a reference to cluster '" + clusterName + "' as a reference to a cluster by this name already exists");
+            }
+        }
+
         SfClusterVO sfClusterVO = new SfClusterVO(clusterName, mvip, username, password, totalCapacity, totalMinIops, totalMaxIops, totalBurstIops, zoneId);
 
         return _sfClusterDao.persist(sfClusterVO);
