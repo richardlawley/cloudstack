@@ -39,7 +39,7 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(DeleteSolidFireVirtualNetworkCmd.class.getName());
     private static final String s_name = "deletesolidfirevirtualnetworkresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "Virtual network ID", required = true)
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = "Virtual network ID", required = true)
     private long id;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;

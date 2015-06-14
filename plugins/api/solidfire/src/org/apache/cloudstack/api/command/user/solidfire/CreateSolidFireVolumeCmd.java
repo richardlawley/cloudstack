@@ -27,6 +27,8 @@ import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
+import org.apache.cloudstack.api.response.AccountResponse;
+import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
 import org.apache.cloudstack.api.response.ApiSolidFireVolumeResponse;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
@@ -52,10 +54,10 @@ public class CreateSolidFireVolumeCmd extends BaseCmd {
     @Parameter(name = "burstiops", type = CommandType.LONG, description = "Burst IOPS", required = true)
     private long burstIops;
 
-    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, description = "Account ID", required = true)
+    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = "Account ID", required = true)
     private long accountId;
 
-    @Parameter(name = "sfvirtualnetworkid", type = CommandType.UUID, description = "Virtual Network ID", required = true)
+    @Parameter(name = "sfvirtualnetworkid", type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = "Virtual Network ID", required = true)
     private long sfVirtualNetworkId;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;

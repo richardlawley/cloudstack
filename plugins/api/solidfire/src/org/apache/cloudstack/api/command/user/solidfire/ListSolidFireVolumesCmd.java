@@ -16,6 +16,7 @@
 // under the License.
 package org.apache.cloudstack.api.command.user.solidfire;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,8 +24,10 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import org.apache.cloudstack.api.APICommand;
+import org.apache.cloudstack.api.ApiConstants;
 import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseListCmd;
+import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireVolumeResponse;
@@ -37,6 +40,9 @@ import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 public class ListSolidFireVolumesCmd extends BaseListCmd {
     private static final Logger s_logger = Logger.getLogger(ListSolidFireVolumesCmd.class.getName());
     private static final String s_name = "listsolidfirevolumesresponse";
+
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = "Volume ID")
+    private Long id;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -54,7 +60,20 @@ public class ListSolidFireVolumesCmd extends BaseListCmd {
         s_logger.info("ListSolidFireVolumesCmd.execute invoked");
 
         try {
-            List<SfVolume> sfVolumes = _apiSolidFireService2.listSolidFireVolumes();
+            List<SfVolume> sfVolumes = null;
+
+            if (id != null) {
+                sfVolumes = new ArrayList<>();
+
+                SfVolume sfVolume = _apiSolidFireService2.listSolidFireVolume(id);
+
+                if (sfVolume != null) {
+                    sfVolumes.add(sfVolume);
+                }
+            }
+            else {
+                sfVolumes = _apiSolidFireService2.listSolidFireVolumes();
+            }
 
             List<ApiSolidFireVolumeResponse> responses = ApiHelper.getApiSolidFireVolumeResponse(sfVolumes);
 

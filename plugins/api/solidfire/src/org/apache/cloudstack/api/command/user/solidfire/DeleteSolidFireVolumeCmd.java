@@ -40,7 +40,7 @@ public class DeleteSolidFireVolumeCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(DeleteSolidFireVolumeCmd.class.getName());
     private static final String s_name = "deletesolidfirevolumeresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "Volume ID", required = true)
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = "Volume ID", required = true)
     private long id;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;

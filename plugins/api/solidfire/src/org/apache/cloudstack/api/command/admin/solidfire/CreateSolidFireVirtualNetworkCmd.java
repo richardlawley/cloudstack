@@ -27,6 +27,7 @@ import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
+import org.apache.cloudstack.api.response.AccountResponse;
 import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
@@ -58,7 +59,7 @@ public class CreateSolidFireVirtualNetworkCmd extends BaseCmd {
     @Parameter(name = "svip", type = CommandType.STRING, description = "SolidFire SVIP", required = true)
     private String svip;
 
-    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, description = "Account ID", required = true)
+    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = "Account ID", required = true)
     private long accountId;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;

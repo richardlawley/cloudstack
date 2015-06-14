@@ -16,6 +16,7 @@
 // under the License.
 package org.apache.cloudstack.api.command.user.solidfire;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
 import org.apache.cloudstack.api.response.ListResponse;
+import org.apache.cloudstack.api.response.ZoneResponse;
 import org.apache.cloudstack.solidfire.ApiSolidFireService2;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 
@@ -42,7 +44,10 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
-    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, description = "Zone ID", required = false)
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = "Virtual network ID")
+    private Long id;
+
+    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = "Zone ID")
     private Long zoneId;
 
     /////////////////////////////////////////////////////
@@ -59,7 +64,20 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
         s_logger.info("ListSolidFireVirtualNetworksCmd.execute invoked");
 
         try {
-            List<SfVirtualNetwork> sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks(zoneId);
+            List<SfVirtualNetwork> sfVirtualNetworks = null;
+
+            if (id != null) {
+                sfVirtualNetworks = new ArrayList<>();
+
+                SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.listSolidFireVirtualNetwork(id);
+
+                if (sfVirtualNetwork != null) {
+                    sfVirtualNetworks.add(sfVirtualNetwork);
+                }
+            }
+            else {
+                sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks(zoneId);
+            }
 
             List<ApiSolidFireVirtualNetworkResponse> responses = ApiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetworks);
 

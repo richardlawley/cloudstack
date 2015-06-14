@@ -40,7 +40,7 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(UpdateSolidFireVolumeCmd.class.getName());
     private static final String s_name = "updatesolidfirevolumeresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "SolidFire volume ID", required = true)
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = "SolidFire volume ID", required = true)
     private long id;
 
     @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size", required = true)

@@ -39,7 +39,7 @@ public class UpdateSolidFireVirtualNetworkCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(UpdateSolidFireVirtualNetworkCmd.class.getName());
     private static final String s_name = "updatesolidfirevirtualnetworkresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, description = "SolidFire virtual network ID", required = true)
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = "SolidFire virtual network ID", required = true)
     private long id;
 
     @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "VLAN name", required = true)

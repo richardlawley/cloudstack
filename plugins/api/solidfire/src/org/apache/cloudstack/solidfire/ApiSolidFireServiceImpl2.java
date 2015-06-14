@@ -28,16 +28,14 @@ import org.apache.cloudstack.api.command.admin.solidfire.CreateReferenceToSolidF
 import org.apache.cloudstack.api.command.admin.solidfire.CreateSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.DeleteReferenceToSolidFireClusterCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.DeleteSolidFireVirtualNetworkCmd;
-import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireClusterCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.ListSolidFireClustersCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.UpdateReferenceToSolidFireClusterCmd;
 import org.apache.cloudstack.api.command.admin.solidfire.UpdateSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.api.command.user.solidfire.CreateSolidFireVolumeCmd;
 import org.apache.cloudstack.api.command.user.solidfire.DeleteSolidFireVolumeCmd;
-import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVirtualNetworkCmd;
 import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVirtualNetworksCmd;
-import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVolumeCmd;
 import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVolumesCmd;
+import org.apache.cloudstack.api.command.user.solidfire.UpdateSolidFireVolumeCmd;
 import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.framework.config.ConfigKey;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
@@ -465,9 +463,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             return true;
         }
 
-        if ("listSolidFireVirtualNetwork".equals(apiCommandName) ||
-                "listSolidFireVirtualNetworks".equals(apiCommandName) ||
-                "listSolidFireVolume".equals(apiCommandName) ||
+        if ("listSolidFireVirtualNetworks".equals(apiCommandName) ||
                 "listSolidFireVolumes".equals(apiCommandName) ||
                 "createSolidFireVolume".equals(apiCommandName) ||
                 "updateSolidFireVolume".equals(apiCommandName) ||
@@ -482,21 +478,19 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     public List<Class<?>> getCommands() {
         List<Class<?>> cmdList = new ArrayList<Class<?>>();
 
-        cmdList.add(ListSolidFireClusterCmd.class);
         cmdList.add(ListSolidFireClustersCmd.class);
         cmdList.add(CreateReferenceToSolidFireClusterCmd.class);
         cmdList.add(UpdateReferenceToSolidFireClusterCmd.class);
         cmdList.add(DeleteReferenceToSolidFireClusterCmd.class);
 
-        cmdList.add(ListSolidFireVirtualNetworkCmd.class);
         cmdList.add(ListSolidFireVirtualNetworksCmd.class);
         cmdList.add(CreateSolidFireVirtualNetworkCmd.class);
         cmdList.add(UpdateSolidFireVirtualNetworkCmd.class);
         cmdList.add(DeleteSolidFireVirtualNetworkCmd.class);
 
-        cmdList.add(ListSolidFireVolumeCmd.class);
         cmdList.add(ListSolidFireVolumesCmd.class);
         cmdList.add(CreateSolidFireVolumeCmd.class);
+        cmdList.add(UpdateSolidFireVolumeCmd.class);
         cmdList.add(DeleteSolidFireVolumeCmd.class);
 
         return cmdList;

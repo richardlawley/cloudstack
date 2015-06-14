@@ -16,6 +16,7 @@
 // under the License.
 package org.apache.cloudstack.api.command.admin.solidfire;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,8 +24,10 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import org.apache.cloudstack.api.APICommand;
+import org.apache.cloudstack.api.ApiConstants;
 import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseListCmd;
+import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireClusterResponse;
@@ -37,6 +40,9 @@ import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 public class ListSolidFireClustersCmd extends BaseListCmd {
     private static final Logger s_logger = Logger.getLogger(ListSolidFireClustersCmd.class.getName());
     private static final String s_name = "listsolidfireclustersresponse";
+
+    @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "SolidFire cluster name")
+    private String name;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -54,7 +60,20 @@ public class ListSolidFireClustersCmd extends BaseListCmd {
         s_logger.info("ListSolidFireClustersCmd.execute invoked");
 
         try {
-            List<SfCluster> sfClusters = _apiSolidFireService2.listSolidFireClusters();
+            final List<SfCluster> sfClusters;
+
+            if (name != null) {
+                sfClusters = new ArrayList<>();
+
+                SfCluster sfCluster = _apiSolidFireService2.listSolidFireCluster(name);
+
+                if (sfCluster != null) {
+                    sfClusters.add(sfCluster);
+                }
+            }
+            else {
+                sfClusters = _apiSolidFireService2.listSolidFireClusters();
+            }
 
             List<ApiSolidFireClusterResponse> responses = ApiHelper.getApiSolidFireClusterResponse(sfClusters);
 
