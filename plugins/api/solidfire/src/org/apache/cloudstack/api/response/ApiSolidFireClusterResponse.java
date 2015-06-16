@@ -47,7 +47,7 @@ public class ApiSolidFireClusterResponse extends BaseResponse {
     private String _username;
 
     @SerializedName("totalcapacity")
-    @Param(description = "SolidFire cluster total capacity for CloudStack")
+    @Param(description = "SolidFire cluster total capacity for CloudStack (in GBs)")
     private long _totalCapacity;
 
     @SerializedName("totalminiops")

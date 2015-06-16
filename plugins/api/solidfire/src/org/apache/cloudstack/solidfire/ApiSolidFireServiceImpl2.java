@@ -76,7 +76,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
                     Long.class,
                     "sf.total.capacity",
                     "0",
-                    "Total capacity the account can draw from any and all SolidFire clusters",
+                    "Total capacity the account can draw from any and all SolidFire clusters (in GBs)",
                     true, ConfigKey.Scope.Account);
 
     private static final ConfigKey<Long> s_sfTotalAccountMinIops =

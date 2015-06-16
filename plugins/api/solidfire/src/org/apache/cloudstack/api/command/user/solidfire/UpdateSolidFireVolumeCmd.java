@@ -43,7 +43,7 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
     @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = "SolidFire volume ID", required = true)
     private long id;
 
-    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size", required = true)
+    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size (in GBs)", required = true)
     private long size;
 
     @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = "Min IOPS", required = true)

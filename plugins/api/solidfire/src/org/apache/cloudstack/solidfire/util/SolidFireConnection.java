@@ -127,10 +127,12 @@ public class SolidFireConnection {
         }
     }
 
-    public long createVolume(String name, long accountId, long totalSize, long minIops, long maxIops, long burstIops) {
+    public long createVolume(String name, long accountId, long totalSizeInGBs, long minIops, long maxIops, long burstIops) {
         final Gson gson = new GsonBuilder().create();
 
-        VolumeToCreate volumeToCreate = new VolumeToCreate(name, accountId, totalSize, true, minIops, maxIops, burstIops);
+        long totalSizeInBytes = convertGBsToBytes(totalSizeInGBs);
+
+        VolumeToCreate volumeToCreate = new VolumeToCreate(name, accountId, totalSizeInBytes, true, minIops, maxIops, burstIops);
 
         String strVolumeToCreateJson = gson.toJson(volumeToCreate);
 
@@ -143,11 +145,13 @@ public class SolidFireConnection {
         return volumeCreateResult.result.volumeID;
     }
 
-    public void modifyVolume(long volumeId, long size, long minIops, long maxIops, long burstIops)
+    public void modifyVolume(long volumeId, long totalSizeInGBs, long minIops, long maxIops, long burstIops)
     {
         final Gson gson = new GsonBuilder().create();
 
-        VolumeToModify volumeToModify = new VolumeToModify(volumeId, size, minIops, maxIops, burstIops);
+        long totalSizeInBytes = convertGBsToBytes(totalSizeInGBs);
+
+        VolumeToModify volumeToModify = new VolumeToModify(volumeId, totalSizeInBytes, minIops, maxIops, burstIops);
 
         String strVolumeToModifyJson = gson.toJson(volumeToModify);
 
@@ -752,5 +756,9 @@ public class SolidFireConnection {
 
             return false;
         }
+    }
+
+    private static long convertGBsToBytes(long gbs) {
+        return gbs * 1024 * 1024 * 1024;
     }
 }

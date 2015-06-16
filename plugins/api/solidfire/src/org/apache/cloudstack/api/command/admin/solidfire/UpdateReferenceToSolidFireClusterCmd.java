@@ -42,7 +42,7 @@ public class UpdateReferenceToSolidFireClusterCmd extends BaseCmd {
     @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "SolidFire cluster name", required = true)
     private String name;
 
-    @Parameter(name = "totalcapacity", type = CommandType.LONG, description = "Total capacity", required = true)
+    @Parameter(name = "totalcapacity", type = CommandType.LONG, description = "Total capacity (in GBs)", required = true)
     private long totalCapacity;
 
     @Parameter(name = "totalminiops", type = CommandType.LONG, description = "Total minimum IOPS", required = true)

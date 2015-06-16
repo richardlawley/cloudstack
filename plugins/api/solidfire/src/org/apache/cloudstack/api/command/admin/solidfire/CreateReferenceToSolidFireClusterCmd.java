@@ -49,7 +49,7 @@ public class CreateReferenceToSolidFireClusterCmd extends BaseCmd {
     @Parameter(name = ApiConstants.PASSWORD, type = CommandType.STRING, description = "SolidFire cluster admin password", required = true)
     private String password;
 
-    @Parameter(name = "totalcapacity", type = CommandType.LONG, description = "Total capacity", required = true)
+    @Parameter(name = "totalcapacity", type = CommandType.LONG, description = "Total capacity (in GBs)", required = true)
     private long totalCapacity;
 
     @Parameter(name = "totalminiops", type = CommandType.LONG, description = "Total minimum IOPS", required = true)

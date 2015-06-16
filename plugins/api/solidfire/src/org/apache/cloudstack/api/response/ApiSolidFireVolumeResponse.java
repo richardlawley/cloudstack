@@ -39,7 +39,7 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     private String _name;
 
     @SerializedName("size")
-    @Param(description = "Size of volume")
+    @Param(description = "Size of volume (in GBs)")
     private long _size;
 
     @SerializedName("miniops")

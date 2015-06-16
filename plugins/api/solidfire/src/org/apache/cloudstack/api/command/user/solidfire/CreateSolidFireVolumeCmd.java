@@ -42,7 +42,7 @@ public class CreateSolidFireVolumeCmd extends BaseCmd {
     @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "Name", required = true)
     private String name;
 
-    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size", required = true)
+    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size (in GBs)", required = true)
     private long size;
 
     @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = "Min IOPS", required = true)
