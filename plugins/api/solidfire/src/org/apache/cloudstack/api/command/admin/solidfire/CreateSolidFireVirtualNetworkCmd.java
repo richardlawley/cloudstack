@@ -38,7 +38,7 @@ public class CreateSolidFireVirtualNetworkCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(CreateSolidFireVirtualNetworkCmd.class.getName());
     private static final String s_name = "createsolidfirevirtualnetworkresponse";
 
-    @Parameter(name = "clusterName", type = CommandType.STRING, description = "SolidFire cluster name", required = true)
+    @Parameter(name = "clustername", type = CommandType.STRING, description = "SolidFire cluster name", required = true)
     private String clusterName;
 
     @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "VLAN name", required = true)
