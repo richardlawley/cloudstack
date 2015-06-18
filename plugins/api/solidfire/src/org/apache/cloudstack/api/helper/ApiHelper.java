@@ -24,7 +24,7 @@ import com.cloud.user.dao.AccountDao;
 import com.cloud.utils.exception.CloudRuntimeException;
 
 public class ApiHelper {
-    private static ApiHelper _instance = new ApiHelper();
+    private static ApiHelper s_apiHelperInstance = new ApiHelper();
 
     @Inject private AccountDao _accountDao;
     @Inject private AccountManager _accountMgr;
@@ -36,7 +36,7 @@ public class ApiHelper {
     }
 
     public static ApiHelper instance() {
-        return _instance;
+        return s_apiHelperInstance;
     }
 
     public ApiSolidFireClusterResponse getApiSolidFireClusterResponse(SfCluster sfCluster) {
