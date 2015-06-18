@@ -75,7 +75,7 @@ public class ListSolidFireClustersCmd extends BaseListCmd {
                 sfClusters = _apiSolidFireService2.listSolidFireClusters();
             }
 
-            List<ApiSolidFireClusterResponse> responses = ApiHelper.getApiSolidFireClusterResponse(sfClusters);
+            List<ApiSolidFireClusterResponse> responses = ApiHelper.instance().getApiSolidFireClusterResponse(sfClusters);
 
             ListResponse<ApiSolidFireClusterResponse> listReponse = new ListResponse<>();
 

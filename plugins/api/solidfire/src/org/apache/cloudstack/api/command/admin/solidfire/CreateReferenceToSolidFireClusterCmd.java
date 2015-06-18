@@ -88,7 +88,7 @@ public class CreateReferenceToSolidFireClusterCmd extends BaseCmd {
             SfCluster sfCluster = _apiSolidFireService2.createReferenceToSolidFireCluster(mvip, username, password, totalCapacity,
                     totalMinIops, totalMaxIops, totalBurstIops, zoneId);
 
-            ApiSolidFireClusterResponse response = ApiHelper.getApiSolidFireClusterResponse(sfCluster);
+            ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apicreatereferencetosolidfirecluster");

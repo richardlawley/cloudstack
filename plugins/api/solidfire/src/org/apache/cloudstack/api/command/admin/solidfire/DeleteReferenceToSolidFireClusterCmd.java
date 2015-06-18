@@ -65,7 +65,7 @@ public class DeleteReferenceToSolidFireClusterCmd extends BaseCmd {
         try {
             SfCluster sfCluster = _apiSolidFireService2.deleteReferenceToSolidFireCluster(name);
 
-            ApiSolidFireClusterResponse response = ApiHelper.getApiSolidFireClusterResponse(sfCluster);
+            ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apideletereferencetosolidfirecluster");

@@ -29,6 +29,7 @@ import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseListCmd;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
+import org.apache.cloudstack.api.ResponseObject.ResponseView;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.ApiSolidFireVolumeResponse;
 import org.apache.cloudstack.api.response.ListResponse;
@@ -75,7 +76,9 @@ public class ListSolidFireVolumesCmd extends BaseListCmd {
                 sfVolumes = _apiSolidFireService2.listSolidFireVolumes();
             }
 
-            List<ApiSolidFireVolumeResponse> responses = ApiHelper.getApiSolidFireVolumeResponse(sfVolumes);
+            ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
+
+            List<ApiSolidFireVolumeResponse> responses = ApiHelper.instance().getApiSolidFireVolumeResponse(sfVolumes, responseView);
 
             ListResponse<ApiSolidFireVolumeResponse> listReponse = new ListResponse<>();
 

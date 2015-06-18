@@ -43,11 +43,11 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
     private String _tag;
 
     @SerializedName("startip")
-    @Param(description = "Start of range of IP addresses")
+    @Param(description = "Start of range of VLAN IP addresses")
     private String _startIp;
 
     @SerializedName("size")
-    @Param(description = "Size of range of IP addresses")
+    @Param(description = "Size of range of VLAN IP addresses")
     private int _size;
 
     @SerializedName("netmask")
@@ -59,8 +59,24 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
     private String _svip;
 
     @SerializedName("accountid")
-    @Param(description = "Account ID that the virtual network is associated with")
+    @Param(description = "ID of the account the VLAN is associated with")
     private long _accountId;
+
+    @SerializedName("accountuuid")
+    @Param(description = "UUID of the account the VLAN is associated with")
+    private String _accountUuid;
+
+    @SerializedName("zoneid")
+    @Param(description = "ID of the zone the VLAN is associated with")
+    private long _zoneId;
+
+    @SerializedName("zoneuuid")
+    @Param(description = "UUID of the zone the VLAN is associated with")
+    private String _zoneUuid;
+
+    @SerializedName("clustername")
+    @Param(description = "Name of cluster the VLAN belongs to")
+    private String _clusterName;
 
     public void setId(long id) {
         _id = id;
@@ -132,5 +148,37 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
 
     public long getAccountId() {
         return _accountId;
+    }
+
+    public void setAccountUuid(String accountUuid) {
+        _accountUuid = accountUuid;
+    }
+
+    public String getAccountUuid() {
+        return _accountUuid;
+    }
+
+    public void setZoneId(long zoneId) {
+        _zoneId = zoneId;
+    }
+
+    public long getZoneId() {
+        return _zoneId;
+    }
+
+    public void setZoneUuid(String zoneUuid) {
+        _zoneUuid = zoneUuid;
+    }
+
+    public String getZoneUuid() {
+        return _zoneUuid;
+    }
+
+    public void setClusterName(String clusterName) {
+        _clusterName = clusterName;
+    }
+
+    public String getClusterName() {
+        return _clusterName;
     }
 }

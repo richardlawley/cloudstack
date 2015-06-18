@@ -55,8 +55,24 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     private long _burstIops;
 
     @SerializedName("accountid")
-    @Param(description = "Account ID that the volume is associated with")
+    @Param(description = "ID of the account the volume is associated with")
     private long _accountId;
+
+    @SerializedName("accountuuid")
+    @Param(description = "UUID of the account the volume is associated with")
+    private String _accountUuid;
+
+    @SerializedName("zoneid")
+    @Param(description = "ID of the zone the volume is associated with")
+    private long _zoneId;
+
+    @SerializedName("zoneuuid")
+    @Param(description = "UUID of the zone the volume is associated with")
+    private String _zoneUuid;
+
+    @SerializedName("clustername")
+    @Param(description = "Name of cluster the volume belongs to")
+    private String _clusterName;
 
     public void setId(long id) {
         _id = id;
@@ -120,5 +136,37 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
 
     public long getAccountId() {
         return _accountId;
+    }
+
+    public void setAccountUuid(String accountUuid) {
+        _accountUuid = accountUuid;
+    }
+
+    public String getAccountUuid() {
+        return _accountUuid;
+    }
+
+    public void setZoneId(long zoneId) {
+        _zoneId = zoneId;
+    }
+
+    public long getZoneId() {
+        return _zoneId;
+    }
+
+    public void setZoneUuid(String zoneUuid) {
+        _zoneUuid = zoneUuid;
+    }
+
+    public String getZoneUuid() {
+        return _zoneUuid;
+    }
+
+    public void setClusterName(String clusterName) {
+        _clusterName = clusterName;
+    }
+
+    public String getClusterName() {
+        return _clusterName;
     }
 }

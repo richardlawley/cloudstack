@@ -25,6 +25,7 @@ import org.apache.cloudstack.api.APICommand;
 import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.Parameter;
+import org.apache.cloudstack.api.ResponseObject.ResponseView;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.api.response.AccountResponse;
@@ -85,7 +86,7 @@ public class CreateSolidFireVirtualNetworkCmd extends BaseCmd {
         try {
             SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.createSolidFireVirtualNetwork(clusterName, name, tag, startIp, size, netmask, svip, accountId);
 
-            ApiSolidFireVirtualNetworkResponse response = ApiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork);
+            ApiSolidFireVirtualNetworkResponse response = ApiHelper.instance().getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apicreatesolidfirevirtualnetwork");

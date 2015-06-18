@@ -78,7 +78,7 @@ public class UpdateReferenceToSolidFireClusterCmd extends BaseCmd {
             SfCluster sfCluster = _apiSolidFireService2.updateReferenceToSolidFireCluster(name, totalCapacity,
                     totalMinIops, totalMaxIops, totalBurstIops);
 
-            ApiSolidFireClusterResponse response = ApiHelper.getApiSolidFireClusterResponse(sfCluster);
+            ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apiupdatereferencetosolidfirecluster");

@@ -36,7 +36,7 @@ import org.apache.cloudstack.api.command.user.solidfire.DeleteSolidFireVolumeCmd
 import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVirtualNetworksCmd;
 import org.apache.cloudstack.api.command.user.solidfire.ListSolidFireVolumesCmd;
 import org.apache.cloudstack.api.command.user.solidfire.UpdateSolidFireVolumeCmd;
-import org.apache.cloudstack.context.CallContext;
+import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.framework.config.ConfigKey;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
@@ -259,7 +259,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         final List<SfVirtualNetworkVO> sfVirtualNetworkVOs;
 
-        if (isRootAdmin()) {
+        if (ApiHelper.instance().isRootAdmin()) {
             if (zoneId != null) {
                 sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.listAll(), zoneId);
             }
@@ -269,10 +269,10 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         }
         else {
             if (zoneId != null) {
-                sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.findByAccountId(getCallingAccount().getId()), zoneId);
+                sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.findByAccountId(ApiHelper.instance().getCallingAccount().getId()), zoneId);
             }
             else {
-                sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(getCallingAccount().getId());
+                sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(ApiHelper.instance().getCallingAccount().getId());
             }
         }
 
@@ -382,13 +382,13 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         final List<SfVolumeVO> sfVolumeVOs;
 
-        if (isRootAdmin()) {
+        if (ApiHelper.instance().isRootAdmin()) {
             sfVolumeVOs = _sfVolumeDao.listAll();
         }
         else {
             sfVolumeVOs = new ArrayList<>();
 
-            List<SfVirtualNetworkVO> sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(getCallingAccount().getId());
+            List<SfVirtualNetworkVO> sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(ApiHelper.instance().getCallingAccount().getId());
 
             if (sfVirtualNetworkVOs != null) {
                 for (SfVirtualNetwork sfVirtualNetwork : sfVirtualNetworkVOs) {
@@ -554,36 +554,16 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         return sfVolumeVO;
     }
 
-    private Account getCallingAccount() {
-        Account account = CallContext.current().getCallingAccount();
-
-        if (account == null) {
-            throw new CloudRuntimeException("The user's account cannot be determined.");
-        }
-
-        return account;
-    }
-
-    private boolean isRootAdmin() {
-        Account account = getCallingAccount();
-
-        return isRootAdmin(account.getId());
-    }
-
-    private boolean isRootAdmin(long accountId) {
-        return _accountMgr.isRootAdmin(accountId);
-    }
-
     private void verifyRootAdmin() {
-        if (!isRootAdmin()) {
+        if (!ApiHelper.instance().isRootAdmin()) {
             throw new PermissionDeniedException("Only a root admin can perform this operation.");
         }
     }
 
     private void verifyPermissionsForAccount(long accountId) {
-        Account account = getCallingAccount();
+        Account account = ApiHelper.instance().getCallingAccount();
 
-        if (isRootAdmin(account.getId())) {
+        if (ApiHelper.instance().isRootAdmin(account.getId())) {
             return; // permissions OK
         }
 
