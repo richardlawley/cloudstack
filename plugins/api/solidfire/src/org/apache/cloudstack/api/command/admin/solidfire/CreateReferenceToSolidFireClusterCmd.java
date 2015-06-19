@@ -40,29 +40,29 @@ public class CreateReferenceToSolidFireClusterCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(CreateReferenceToSolidFireClusterCmd.class.getName());
     private static final String s_name = "createreferencetosolidfireclusterresponse";
 
-    @Parameter(name = "mvip", type = CommandType.STRING, description = "SolidFire MVIP", required = true)
-    private String mvip;
+    @Parameter(name = ApiHelper.MVIP, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_MVIP_DESC, required = true)
+    private String _mvip;
 
-    @Parameter(name = ApiConstants.USERNAME, type = CommandType.STRING, description = "SolidFire cluster admin username", required = true)
-    private String username;
+    @Parameter(name = ApiConstants.USERNAME, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_USERNAME_DESC, required = true)
+    private String _username;
 
-    @Parameter(name = ApiConstants.PASSWORD, type = CommandType.STRING, description = "SolidFire cluster admin password", required = true)
-    private String password;
+    @Parameter(name = ApiConstants.PASSWORD, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_PASSWORD_DESC, required = true)
+    private String _password;
 
-    @Parameter(name = "totalcapacity", type = CommandType.LONG, description = "Total capacity (in GBs)", required = true)
-    private long totalCapacity;
+    @Parameter(name = ApiHelper.TOTAL_CAPACITY, type = CommandType.LONG, description = ApiHelper.TOTAL_CAPACITY_DESC, required = true)
+    private long _totalCapacity;
 
-    @Parameter(name = "totalminiops", type = CommandType.LONG, description = "Total minimum IOPS", required = true)
-    private long totalMinIops;
+    @Parameter(name = ApiHelper.TOTAL_MIN_IOPS, type = CommandType.LONG, description = ApiHelper.TOTAL_MIN_IOPS_DESC, required = true)
+    private long _totalMinIops;
 
-    @Parameter(name = "totalmaxiops", type = CommandType.LONG, description = "Total maximum IOPS", required = true)
-    private long totalMaxIops;
+    @Parameter(name = ApiHelper.TOTAL_MAX_IOPS, type = CommandType.LONG, description = ApiHelper.TOTAL_MAX_IOPS_DESC, required = true)
+    private long _totalMaxIops;
 
-    @Parameter(name = "totalburstiops", type = CommandType.LONG, description = "Total burst IOPS", required = true)
-    private long totalBurstIops;
+    @Parameter(name = ApiHelper.TOTAL_BURST_IOPS, type = CommandType.LONG, description = ApiHelper.TOTAL_BURST_IOPS_DESC, required = true)
+    private long _totalBurstIops;
 
-    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = "Zone ID", required = true)
-    private long zoneId;
+    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = ApiHelper.ZONE_ID_DESC, required = true)
+    private long _zoneId;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -82,11 +82,11 @@ public class CreateReferenceToSolidFireClusterCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("CreateReferenceToSolidFireClusterCmd.execute invoked");
-
         try {
-            SfCluster sfCluster = _apiSolidFireService2.createReferenceToSolidFireCluster(mvip, username, password, totalCapacity,
-                    totalMinIops, totalMaxIops, totalBurstIops, zoneId);
+            s_logger.info(CreateReferenceToSolidFireClusterCmd.class.getName() + ".execute invoked");
+
+            SfCluster sfCluster = _apiSolidFireService2.createReferenceToSolidFireCluster(_mvip, _username, _password, _totalCapacity,
+                    _totalMinIops, _totalMaxIops, _totalBurstIops, _zoneId);
 
             ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
 

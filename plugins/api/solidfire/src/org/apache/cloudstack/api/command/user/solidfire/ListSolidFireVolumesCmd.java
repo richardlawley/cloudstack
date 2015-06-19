@@ -42,8 +42,8 @@ public class ListSolidFireVolumesCmd extends BaseListCmd {
     private static final Logger s_logger = Logger.getLogger(ListSolidFireVolumesCmd.class.getName());
     private static final String s_name = "listsolidfirevolumesresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = "Volume ID")
-    private Long id;
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = ApiHelper.VOLUME_ID_DESC)
+    private Long _id;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -58,15 +58,15 @@ public class ListSolidFireVolumesCmd extends BaseListCmd {
 
     @Override
     public void execute() {
-        s_logger.info("ListSolidFireVolumesCmd.execute invoked");
-
         try {
-            List<SfVolume> sfVolumes = null;
+            s_logger.info(ListSolidFireVolumesCmd.class.getName() + ".execute invoked");
 
-            if (id != null) {
+            final List<SfVolume> sfVolumes;
+
+            if (_id != null) {
                 sfVolumes = new ArrayList<>();
 
-                SfVolume sfVolume = _apiSolidFireService2.listSolidFireVolume(id);
+                SfVolume sfVolume = _apiSolidFireService2.listSolidFireVolume(_id);
 
                 if (sfVolume != null) {
                     sfVolumes.add(sfVolume);

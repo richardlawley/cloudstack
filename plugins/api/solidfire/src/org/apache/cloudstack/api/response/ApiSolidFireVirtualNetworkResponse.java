@@ -22,6 +22,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.cloudstack.api.BaseResponse;
 import org.apache.cloudstack.api.EntityReference;
+import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 
 @EntityReference(value = SfVirtualNetwork.class)
@@ -35,27 +36,27 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
     private String _uuid;
 
     @SerializedName("name")
-    @Param(description = "SolidFire VLAN name")
+    @Param(description = ApiHelper.VIRTUAL_NETWORK_NAME_DESC)
     private String _name;
 
     @SerializedName("tag")
-    @Param(description = "SolidFire VLAN tag")
+    @Param(description = ApiHelper.VIRTUAL_NETWORK_TAG_DESC)
     private String _tag;
 
     @SerializedName("startip")
-    @Param(description = "Start of range of VLAN IP addresses")
+    @Param(description = ApiHelper.START_IP_ADDRESS_DESC)
     private String _startIp;
 
     @SerializedName("size")
-    @Param(description = "Size of range of VLAN IP addresses")
+    @Param(description = ApiHelper.SIZE_DESC)
     private int _size;
 
     @SerializedName("netmask")
-    @Param(description = "Netmask of VLAN")
+    @Param(description = ApiHelper.NETMASK_DESC)
     private String _netmask;
 
     @SerializedName("svip")
-    @Param(description = "SVIP of VLAN")
+    @Param(description = ApiHelper.SOLIDFIRE_SVIP_DESC)
     private String _svip;
 
     @SerializedName("accountid")

@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
-import org.apache.cloudstack.api.ApiConstants;
 import org.apache.cloudstack.api.APICommand;
 import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseCmd;
@@ -39,8 +38,8 @@ public class DeleteReferenceToSolidFireClusterCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(DeleteReferenceToSolidFireClusterCmd.class.getName());
     private static final String s_name = "deletereferencetosolidfireclusterresponse";
 
-    @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "SolidFire cluster name", required = true)
-    private String name;
+    @Parameter(name = ApiHelper.NAME, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_CLUSTER_NAME_DESC, required = true)
+    private String _name;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -60,10 +59,10 @@ public class DeleteReferenceToSolidFireClusterCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("DeleteReferenceToSolidFireClusterCmd.execute invoked");
-
         try {
-            SfCluster sfCluster = _apiSolidFireService2.deleteReferenceToSolidFireCluster(name);
+            s_logger.info(DeleteReferenceToSolidFireClusterCmd.class.getName() + ".execute invoked");
+
+            SfCluster sfCluster = _apiSolidFireService2.deleteReferenceToSolidFireCluster(_name);
 
             ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
 

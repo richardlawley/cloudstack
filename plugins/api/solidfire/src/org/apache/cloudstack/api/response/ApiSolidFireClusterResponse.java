@@ -22,6 +22,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.cloudstack.api.BaseResponse;
 import org.apache.cloudstack.api.EntityReference;
+import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.solidfire.dataaccess.SfCluster;
 
 @EntityReference(value = SfCluster.class)
@@ -35,15 +36,15 @@ public class ApiSolidFireClusterResponse extends BaseResponse {
     private String _uuid;
 
     @SerializedName("name")
-    @Param(description = "SolidFire cluster name")
+    @Param(description = ApiHelper.SOLIDFIRE_CLUSTER_NAME_DESC)
     private String _name;
 
     @SerializedName("mvip")
-    @Param(description = "SolidFire cluster MVIP")
+    @Param(description = ApiHelper.SOLIDFIRE_MVIP_DESC)
     private String _mvip;
 
     @SerializedName("username")
-    @Param(description = "SolidFire cluster admin username")
+    @Param(description = ApiHelper.SOLIDFIRE_USERNAME_DESC)
     private String _username;
 
     @SerializedName("totalcapacity")
@@ -51,15 +52,15 @@ public class ApiSolidFireClusterResponse extends BaseResponse {
     private long _totalCapacity;
 
     @SerializedName("totalminiops")
-    @Param(description = "SolidFire cluster total IOPS for CloudStack")
+    @Param(description = "SolidFire cluster total minimum IOPS for CloudStack")
     private long _totalMinIops;
 
     @SerializedName("totalmaxiops")
-    @Param(description = "SolidFire cluster total IOPS for CloudStack")
+    @Param(description = "SolidFire cluster total maximum IOPS for CloudStack")
     private long _totalMaxIops;
 
     @SerializedName("totalburstiops")
-    @Param(description = "SolidFire cluster total IOPS for CloudStack")
+    @Param(description = "SolidFire cluster total burst IOPS for CloudStack")
     private long _totalBurstIops;
 
     @SerializedName("zoneid")

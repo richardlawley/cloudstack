@@ -45,11 +45,11 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = "Virtual network ID")
-    private Long id;
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = ApiHelper.VIRTUAL_NETWORK_ID_DESC)
+    private Long _id;
 
-    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = "Zone ID")
-    private Long zoneId;
+    @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = ApiHelper.ZONE_ID_DESC)
+    private Long _zoneId;
 
     /////////////////////////////////////////////////////
     /////////////// API Implementation///////////////////
@@ -62,22 +62,22 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
 
     @Override
     public void execute() {
-        s_logger.info("ListSolidFireVirtualNetworksCmd.execute invoked");
-
         try {
-            List<SfVirtualNetwork> sfVirtualNetworks = null;
+            s_logger.info(ListSolidFireVirtualNetworksCmd.class.getName() + ".execute invoked");
 
-            if (id != null) {
+            final List<SfVirtualNetwork> sfVirtualNetworks;
+
+            if (_id != null) {
                 sfVirtualNetworks = new ArrayList<>();
 
-                SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.listSolidFireVirtualNetwork(id);
+                SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.listSolidFireVirtualNetwork(_id);
 
                 if (sfVirtualNetwork != null) {
                     sfVirtualNetworks.add(sfVirtualNetwork);
                 }
             }
             else {
-                sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks(zoneId);
+                sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks(_zoneId);
             }
 
             ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;

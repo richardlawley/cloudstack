@@ -40,8 +40,8 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(DeleteSolidFireVirtualNetworkCmd.class.getName());
     private static final String s_name = "deletesolidfirevirtualnetworkresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = "Virtual network ID", required = true)
-    private long id;
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = ApiHelper.VIRTUAL_NETWORK_ID_DESC, required = true)
+    private long _id;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -56,7 +56,7 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, id);
+        SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, _id);
 
         if (sfVirtualNetwork != null) {
             sfVirtualNetwork.getAccountId();
@@ -67,10 +67,10 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("DeleteSolidFireVirtualNetworkCmd.execute invoked");
-
         try {
-            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.deleteSolidFireVirtualNetwork(id);
+            s_logger.info(DeleteSolidFireVirtualNetworkCmd.class.getName() + ".execute invoked");
+
+            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.deleteSolidFireVirtualNetwork(_id);
 
             ApiSolidFireVirtualNetworkResponse response = ApiHelper.instance().getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
 

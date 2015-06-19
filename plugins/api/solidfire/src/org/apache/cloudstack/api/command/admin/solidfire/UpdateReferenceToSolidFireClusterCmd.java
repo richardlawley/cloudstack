@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
-import org.apache.cloudstack.api.ApiConstants;
 import org.apache.cloudstack.api.APICommand;
 import org.apache.cloudstack.api.ApiErrorCode;
 import org.apache.cloudstack.api.BaseCmd;
@@ -39,20 +38,20 @@ public class UpdateReferenceToSolidFireClusterCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(UpdateReferenceToSolidFireClusterCmd.class.getName());
     private static final String s_name = "updatereferencetosolidfireclusterresponse";
 
-    @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "SolidFire cluster name", required = true)
-    private String name;
+    @Parameter(name = ApiHelper.NAME, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_CLUSTER_NAME_DESC, required = true)
+    private String _name;
 
-    @Parameter(name = "totalcapacity", type = CommandType.LONG, description = "Total capacity (in GBs)", required = true)
-    private long totalCapacity;
+    @Parameter(name = ApiHelper.TOTAL_CAPACITY, type = CommandType.LONG, description = ApiHelper.TOTAL_CAPACITY_DESC, required = true)
+    private long _totalCapacity;
 
-    @Parameter(name = "totalminiops", type = CommandType.LONG, description = "Total minimum IOPS", required = true)
-    private long totalMinIops;
+    @Parameter(name = ApiHelper.TOTAL_MIN_IOPS, type = CommandType.LONG, description = ApiHelper.TOTAL_MIN_IOPS_DESC, required = true)
+    private long _totalMinIops;
 
-    @Parameter(name = "totalmaxiops", type = CommandType.LONG, description = "Total maximum IOPS", required = true)
-    private long totalMaxIops;
+    @Parameter(name = ApiHelper.TOTAL_MAX_IOPS, type = CommandType.LONG, description = ApiHelper.TOTAL_MAX_IOPS_DESC, required = true)
+    private long _totalMaxIops;
 
-    @Parameter(name = "totalburstiops", type = CommandType.LONG, description = "Total burst IOPS", required = true)
-    private long totalBurstIops;
+    @Parameter(name = ApiHelper.TOTAL_BURST_IOPS, type = CommandType.LONG, description = ApiHelper.TOTAL_BURST_IOPS_DESC, required = true)
+    private long _totalBurstIops;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -72,11 +71,11 @@ public class UpdateReferenceToSolidFireClusterCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("UpdateReferenceToSolidFireClusterCmd.execute invoked");
-
         try {
-            SfCluster sfCluster = _apiSolidFireService2.updateReferenceToSolidFireCluster(name, totalCapacity,
-                    totalMinIops, totalMaxIops, totalBurstIops);
+            s_logger.info(UpdateReferenceToSolidFireClusterCmd.class.getName() + ".execute invoked");
+
+            SfCluster sfCluster = _apiSolidFireService2.updateReferenceToSolidFireCluster(_name, _totalCapacity,
+                    _totalMinIops, _totalMaxIops, _totalBurstIops);
 
             ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
 

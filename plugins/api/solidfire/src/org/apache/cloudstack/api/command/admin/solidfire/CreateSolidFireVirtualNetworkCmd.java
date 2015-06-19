@@ -39,29 +39,29 @@ public class CreateSolidFireVirtualNetworkCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(CreateSolidFireVirtualNetworkCmd.class.getName());
     private static final String s_name = "createsolidfirevirtualnetworkresponse";
 
-    @Parameter(name = "clustername", type = CommandType.STRING, description = "SolidFire cluster name", required = true)
-    private String clusterName;
+    @Parameter(name = ApiHelper.CLUSTER_NAME, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_CLUSTER_NAME_DESC, required = true)
+    private String _clusterName;
 
-    @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "VLAN name", required = true)
-    private String name;
+    @Parameter(name = ApiHelper.NAME, type = CommandType.STRING, description = ApiHelper.VIRTUAL_NETWORK_NAME_DESC, required = true)
+    private String _name;
 
-    @Parameter(name = "tag", type = CommandType.STRING, description = "VLAN tag", required = true)
-    private String tag;
+    @Parameter(name = ApiHelper.TAG, type = CommandType.STRING, description = ApiHelper.VIRTUAL_NETWORK_TAG_DESC, required = true)
+    private String _tag;
 
-    @Parameter(name = "startip", type = CommandType.STRING, description = "Start IP address", required = true)
-    private String startIp;
+    @Parameter(name = ApiHelper.START_IP, type = CommandType.STRING, description = ApiHelper.START_IP_ADDRESS_DESC, required = true)
+    private String _startIp;
 
-    @Parameter(name = "size", type = CommandType.INTEGER, description = "Number of contiguous IP addresses starting at 'startip'", required = true)
-    private int size;
+    @Parameter(name = ApiHelper.SIZE, type = CommandType.INTEGER, description = ApiHelper.NUMBER_OF_IP_ADDRESSES_DESC, required = true)
+    private int _size;
 
-    @Parameter(name = "netmask", type = CommandType.STRING, description = "Netmask", required = true)
-    private String netmask;
+    @Parameter(name = ApiHelper.NETMASK, type = CommandType.STRING, description = ApiHelper.NETMASK_DESC, required = true)
+    private String _netmask;
 
-    @Parameter(name = "svip", type = CommandType.STRING, description = "SolidFire SVIP", required = true)
-    private String svip;
+    @Parameter(name = ApiHelper.SVIP, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_SVIP_DESC, required = true)
+    private String _svip;
 
-    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = "Account ID", required = true)
-    private long accountId;
+    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = ApiHelper.ACCOUNT_ID_DESC, required = true)
+    private long _accountId;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -76,15 +76,15 @@ public class CreateSolidFireVirtualNetworkCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        return accountId;
+        return _accountId;
     }
 
     @Override
     public void execute() {
-        s_logger.info("CreateSolidFireVirtualNetworkCmd.execute invoked");
-
         try {
-            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.createSolidFireVirtualNetwork(clusterName, name, tag, startIp, size, netmask, svip, accountId);
+            s_logger.info(CreateSolidFireVirtualNetworkCmd.class.getName() + ".execute invoked");
+
+            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.createSolidFireVirtualNetwork(_clusterName, _name, _tag, _startIp, _size, _netmask, _svip, _accountId);
 
             ApiSolidFireVirtualNetworkResponse response = ApiHelper.instance().getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
 

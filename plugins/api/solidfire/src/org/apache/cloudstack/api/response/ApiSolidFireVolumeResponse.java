@@ -22,6 +22,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.cloudstack.api.BaseResponse;
 import org.apache.cloudstack.api.EntityReference;
+import org.apache.cloudstack.api.helper.ApiHelper;
 import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 
 @EntityReference(value = SfVolume.class)
@@ -35,23 +36,23 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     private String _uuid;
 
     @SerializedName("name")
-    @Param(description = "Name of volume")
+    @Param(description = ApiHelper.VOLUME_NAME_DESC)
     private String _name;
 
     @SerializedName("size")
-    @Param(description = "Size of volume (in GBs)")
+    @Param(description = ApiHelper.SIZE_DESC)
     private long _size;
 
     @SerializedName("miniops")
-    @Param(description = "Min IOPS of volume")
+    @Param(description = ApiHelper.MIN_IOPS_DESC)
     private long _minIops;
 
     @SerializedName("maxiops")
-    @Param(description = "Max IOPS of volume")
+    @Param(description = ApiHelper.MAX_IOPS_DESC)
     private long _maxIops;
 
     @SerializedName("burstiops")
-    @Param(description = "Burst IOPS of volume")
+    @Param(description = ApiHelper.BURST_IOPS_DESC)
     private long _burstIops;
 
     @SerializedName("accountid")

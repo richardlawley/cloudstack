@@ -41,20 +41,20 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(UpdateSolidFireVolumeCmd.class.getName());
     private static final String s_name = "updatesolidfirevolumeresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = "SolidFire volume ID", required = true)
-    private long id;
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = ApiHelper.VOLUME_ID_DESC, required = true)
+    private long _id;
 
-    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size (in GBs)", required = true)
-    private long size;
+    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = ApiHelper.SIZE_DESC, required = true)
+    private long _size;
 
-    @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = "Min IOPS", required = true)
-    private long minIops;
+    @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = ApiHelper.MIN_IOPS_DESC, required = true)
+    private long _minIops;
 
-    @Parameter(name = ApiConstants.MAX_IOPS, type = CommandType.LONG, description = "Max IOPS", required = true)
-    private long maxIops;
+    @Parameter(name = ApiConstants.MAX_IOPS, type = CommandType.LONG, description = ApiHelper.MAX_IOPS_DESC, required = true)
+    private long _maxIops;
 
-    @Parameter(name = "burstiops", type = CommandType.LONG, description = "Burst IOPS", required = true)
-    private long burstIops;
+    @Parameter(name = ApiHelper.BURST_IOPS, type = CommandType.LONG, description = ApiHelper.BURST_IOPS_DESC, required = true)
+    private long _burstIops;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -69,7 +69,7 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        SfVolume sfVolume = _entityMgr.findById(SfVolume.class, id);
+        SfVolume sfVolume = _entityMgr.findById(SfVolume.class, _id);
 
         if (sfVolume != null) {
             SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, sfVolume.getSfVirtualNetworkId());
@@ -83,10 +83,10 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("UpdateSolidFireVolumeCmd.execute invoked");
-
         try {
-            SfVolume sfVolume = _apiSolidFireService2.updateSolidFireVolume(id, size, minIops, maxIops, burstIops);
+            s_logger.info(UpdateSolidFireVolumeCmd.class.getName() + ".execute invoked");
+
+            SfVolume sfVolume = _apiSolidFireService2.updateSolidFireVolume(_id, _size, _minIops, _maxIops, _burstIops);
 
             ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
 

@@ -41,8 +41,8 @@ public class DeleteSolidFireVolumeCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(DeleteSolidFireVolumeCmd.class.getName());
     private static final String s_name = "deletesolidfirevolumeresponse";
 
-    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = "Volume ID", required = true)
-    private long id;
+    @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = ApiHelper.VOLUME_ID_DESC, required = true)
+    private long _id;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -57,7 +57,7 @@ public class DeleteSolidFireVolumeCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        SfVolume sfVolume = _entityMgr.findById(SfVolume.class, id);
+        SfVolume sfVolume = _entityMgr.findById(SfVolume.class, _id);
 
         if (sfVolume != null) {
             SfVirtualNetwork sfVirtualNetwork = _entityMgr.findById(SfVirtualNetwork.class, sfVolume.getSfVirtualNetworkId());
@@ -72,10 +72,10 @@ public class DeleteSolidFireVolumeCmd extends BaseCmd {
 
     @Override
     public void execute() {
-        s_logger.info("DeleteSolidFireVolumeCmd.execute invoked");
-
         try {
-            SfVolume sfVolume = _apiSolidFireService2.deleteSolidFireVolume(id);
+            s_logger.info(DeleteSolidFireVolumeCmd.class.getName() + ".execute invoked");
+
+            SfVolume sfVolume = _apiSolidFireService2.deleteSolidFireVolume(_id);
 
             ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
 

@@ -40,26 +40,27 @@ public class CreateSolidFireVolumeCmd extends BaseCmd {
     private static final Logger s_logger = Logger.getLogger(CreateSolidFireVolumeCmd.class.getName());
     private static final String s_name = "createsolidfirevolumeresponse";
 
-    @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "Name", required = true)
-    private String name;
+    @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = ApiHelper.VOLUME_NAME_DESC, required = true)
+    private String _name;
 
-    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = "Size (in GBs)", required = true)
-    private long size;
+    @Parameter(name = ApiConstants.SIZE, type = CommandType.LONG, description = ApiHelper.SIZE_DESC, required = true)
+    private long _size;
 
-    @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = "Min IOPS", required = true)
-    private long minIops;
+    @Parameter(name = ApiConstants.MIN_IOPS, type = CommandType.LONG, description = ApiHelper.MIN_IOPS_DESC, required = true)
+    private long _minIops;
 
-    @Parameter(name = ApiConstants.MAX_IOPS, type = CommandType.LONG, description = "Max IOPS", required = true)
-    private long maxIops;
+    @Parameter(name = ApiConstants.MAX_IOPS, type = CommandType.LONG, description = ApiHelper.MAX_IOPS_DESC, required = true)
+    private long _maxIops;
 
-    @Parameter(name = "burstiops", type = CommandType.LONG, description = "Burst IOPS", required = true)
-    private long burstIops;
+    @Parameter(name = ApiHelper.BURST_IOPS, type = CommandType.LONG, description = ApiHelper.BURST_IOPS_DESC, required = true)
+    private long _burstIops;
 
-    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = "Account ID", required = true)
-    private long accountId;
+    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = ApiHelper.ACCOUNT_ID_DESC, required = true)
+    private long _accountId;
 
-    @Parameter(name = "sfvirtualnetworkid", type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = "Virtual Network ID", required = true)
-    private long sfVirtualNetworkId;
+    @Parameter(name = ApiHelper.SF_VIRTUAL_NETWORK_ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class,
+            description = ApiHelper.VIRTUAL_NETWORK_ID_DESC, required = true)
+    private long _sfVirtualNetworkId;
 
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -74,15 +75,15 @@ public class CreateSolidFireVolumeCmd extends BaseCmd {
 
     @Override
     public long getEntityOwnerId() {
-        return accountId;
+        return _accountId;
     }
 
     @Override
     public void execute() {
-        s_logger.info("CreateSolidFireVolumeCmd.execute invoked");
-
         try {
-            SfVolume sfVolume = _apiSolidFireService2.createSolidFireVolume(name, size, minIops, maxIops, burstIops, accountId, sfVirtualNetworkId);
+            s_logger.info(CreateSolidFireVolumeCmd.class.getName() + ".execute invoked");
+
+            SfVolume sfVolume = _apiSolidFireService2.createSolidFireVolume(_name, _size, _minIops, _maxIops, _burstIops, _accountId, _sfVirtualNetworkId);
 
             ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
 
