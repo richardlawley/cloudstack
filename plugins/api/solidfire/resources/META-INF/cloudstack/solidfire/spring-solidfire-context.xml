@@ -28,8 +28,8 @@
                       >
 
       <bean id="apiSolidFireServiceImpl2" class="org.apache.cloudstack.solidfire.ApiSolidFireServiceImpl2"/>
-      <bean id="sfClusterDao" class="org.apache.cloudstack.solidfire.dataaccess.dao.SfClusterDao" />
-      <bean id="sfVolumeDao" class="org.apache.cloudstack.solidfire.dataaccess.dao.SfVolumeDao" />
-      <bean id="sfVirtualNetworkDao" class="org.apache.cloudstack.solidfire.dataaccess.dao.SfVirtualNetworkDao" />
+      <bean id="sfClusterDao" class="org.apache.cloudstack.solidfire.dataaccess.dao.SfClusterDaoImpl" />
+      <bean id="sfVolumeDao" class="org.apache.cloudstack.solidfire.dataaccess.dao.SfVolumeDaoImpl" />
+      <bean id="sfVirtualNetworkDao" class="org.apache.cloudstack.solidfire.dataaccess.dao.SfVirtualNetworkDaoImpl" />
 
 </beans>
