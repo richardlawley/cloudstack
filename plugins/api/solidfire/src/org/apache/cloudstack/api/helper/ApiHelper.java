@@ -15,10 +15,13 @@ import org.apache.cloudstack.solidfire.dataaccess.SfVirtualNetwork;
 import org.apache.cloudstack.solidfire.dataaccess.SfVolume;
 import org.apache.cloudstack.solidfire.dataaccess.dao.SfClusterDao;
 import org.apache.cloudstack.solidfire.dataaccess.dao.SfVirtualNetworkDao;
+import org.apache.cloudstack.storage.datastore.util.SolidFireUtil;
 
 import com.cloud.dc.DataCenterVO;
 import com.cloud.dc.dao.DataCenterDao;
 import com.cloud.user.Account;
+import com.cloud.user.AccountDetailVO;
+import com.cloud.user.AccountDetailsDao;
 import com.cloud.user.AccountManager;
 import com.cloud.user.dao.AccountDao;
 import com.cloud.utils.exception.CloudRuntimeException;
@@ -67,6 +70,7 @@ public class ApiHelper {
     public static final String ZONE_ID_DESC = "Zone ID";
 
     @Inject private AccountDao _accountDao;
+    @Inject private AccountDetailsDao _accountDetailsDao;
     @Inject private AccountManager _accountMgr;
     @Inject private SfClusterDao _sfClusterDao;
     @Inject private DataCenterDao _zoneDao;
@@ -190,6 +194,22 @@ public class ApiHelper {
         if (ResponseView.Full.equals(responseView)) {
             sfResponse.setClusterName(sfCluster.getName());
         }
+
+        AccountDetailVO accountDetail = _accountDetailsDao.findDetail(sfVirtualNetwork.getAccountId(), SolidFireUtil.CHAP_INITIATOR_USERNAME);
+
+        sfResponse.setChapInitiatorUsername(accountDetail.getValue());
+
+        accountDetail = _accountDetailsDao.findDetail(sfVirtualNetwork.getAccountId(), SolidFireUtil.CHAP_INITIATOR_SECRET);
+
+        sfResponse.setChapInitiatorSecret(accountDetail.getValue());
+
+        accountDetail = _accountDetailsDao.findDetail(sfVirtualNetwork.getAccountId(), SolidFireUtil.CHAP_TARGET_USERNAME);
+
+        sfResponse.setChapTargetUsername(accountDetail.getValue());
+
+        accountDetail = _accountDetailsDao.findDetail(sfVirtualNetwork.getAccountId(), SolidFireUtil.CHAP_TARGET_SECRET);
+
+        sfResponse.setChapTargetSecret(accountDetail.getValue());
 
         sfResponse.setObjectName("sfvolume");
 

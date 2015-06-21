@@ -75,6 +75,22 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     @Param(description = "Name of cluster the volume belongs to")
     private String _clusterName;
 
+    @SerializedName("chapinitiatorusername")
+    @Param(description = "CHAP initiator username")
+    private String _chapInitiatorUsername;
+
+    @SerializedName("chapinitiatorsecret")
+    @Param(description = "CHAP initiator secret")
+    private String _chapInitiatorSecret;
+
+    @SerializedName("chaptargetusername")
+    @Param(description = "CHAP target username")
+    private String _chapTargetUsername;
+
+    @SerializedName("chaptargetsecret")
+    @Param(description = "CHAP target secret")
+    private String _chapTargetSecret;
+
     public void setId(long id) {
         _id = id;
     }
@@ -169,5 +185,37 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
 
     public String getClusterName() {
         return _clusterName;
+    }
+
+    public void setChapInitiatorUsername(String chapInitiatorUsername) {
+        _chapInitiatorUsername = chapInitiatorUsername;
+    }
+
+    public String getChapInitiatorUsername() {
+        return _chapInitiatorUsername;
+    }
+
+    public void setChapInitiatorSecret(String chapInitiatorSecret) {
+        _chapInitiatorSecret = chapInitiatorSecret;
+    }
+
+    public String getChapInitiatorSecret() {
+        return _chapInitiatorSecret;
+    }
+
+    public void setChapTargetUsername(String chapTargetUsername) {
+        _chapTargetUsername = chapTargetUsername;
+    }
+
+    public String getTargetInitiatorUsername() {
+        return _chapTargetUsername;
+    }
+
+    public void setChapTargetSecret(String chapTargetSecret) {
+        _chapTargetSecret = chapTargetSecret;
+    }
+
+    public String getTargetInitiatorSecret() {
+        return _chapTargetSecret;
     }
 }
