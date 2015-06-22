@@ -122,10 +122,6 @@ public class ApiHelper {
         sfResponse.setId(sfVirtualNetwork.getId());
         sfResponse.setUuid(sfVirtualNetwork.getUuid());
         sfResponse.setName(sfVirtualNetwork.getName());
-        sfResponse.setTag(sfVirtualNetwork.getTag());
-        sfResponse.setStartIp(sfVirtualNetwork.getStartIp());
-        sfResponse.setSize(sfVirtualNetwork.getSize());
-        sfResponse.setNetmask(sfVirtualNetwork.getNetmask());
         sfResponse.setSvip(sfVirtualNetwork.getSvip());
         sfResponse.setAccountId(sfVirtualNetwork.getAccountId());
 
@@ -142,6 +138,10 @@ public class ApiHelper {
         sfResponse.setZoneUuid(dataCenterVO.getUuid());
 
         if (ResponseView.Full.equals(responseView)) {
+            sfResponse.setTag(sfVirtualNetwork.getTag());
+            sfResponse.setStartIp(sfVirtualNetwork.getStartIp());
+            sfResponse.setSize(sfVirtualNetwork.getSize());
+            sfResponse.setNetmask(sfVirtualNetwork.getNetmask());
             sfResponse.setClusterName(sfCluster.getName());
         }
 
@@ -196,6 +196,8 @@ public class ApiHelper {
         }
 
         sfResponse.setTargetPortal(sfVirtualNetwork.getSvip());
+        sfResponse.setVlanId(sfVirtualNetwork.getId());
+        sfResponse.setVlanUuid(sfVirtualNetwork.getUuid());
 
         AccountDetailVO accountDetail = _accountDetailsDao.findDetail(sfVirtualNetwork.getAccountId(), SolidFireUtil.CHAP_INITIATOR_USERNAME);
 

@@ -63,6 +63,14 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     @Param(description = "UUID of the account the volume is associated with")
     private String _accountUuid;
 
+    @SerializedName("vlanid")
+    @Param(description = "ID of the VLAN the volume is associated with")
+    private long _vlanId;
+
+    @SerializedName("vlanuuid")
+    @Param(description = "UUID of the VLAN the volume is associated with")
+    private String _vlanUuid;
+
     @SerializedName("zoneid")
     @Param(description = "ID of the zone the volume is associated with")
     private long _zoneId;
@@ -165,6 +173,22 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
 
     public String getAccountUuid() {
         return _accountUuid;
+    }
+
+    public void setVlanId(long vlanId) {
+        _vlanId = vlanId;
+    }
+
+    public long getVlanId() {
+        return _vlanId;
+    }
+
+    public void setVlanUuid(String vlanUuid) {
+        _vlanUuid = vlanUuid;
+    }
+
+    public String getVlanUuid() {
+        return _vlanUuid;
     }
 
     public void setZoneId(long zoneId) {
