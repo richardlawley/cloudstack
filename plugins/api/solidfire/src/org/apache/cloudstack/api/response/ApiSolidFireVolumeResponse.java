@@ -75,6 +75,10 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     @Param(description = "Name of cluster the volume belongs to")
     private String _clusterName;
 
+    @SerializedName("targetportal")
+    @Param(description = "Target portal")
+    private String _targetPortal;
+
     @SerializedName("chapinitiatorusername")
     @Param(description = "CHAP initiator username")
     private String _chapInitiatorUsername;
@@ -185,6 +189,14 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
 
     public String getClusterName() {
         return _clusterName;
+    }
+
+    public void setTargetPortal(String targetPortal) {
+        _targetPortal = targetPortal;
+    }
+
+    public String getTargetPortal() {
+        return _targetPortal;
     }
 
     public void setChapInitiatorUsername(String chapInitiatorUsername) {

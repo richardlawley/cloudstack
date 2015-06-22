@@ -195,6 +195,8 @@ public class ApiHelper {
             sfResponse.setClusterName(sfCluster.getName());
         }
 
+        sfResponse.setTargetPortal(sfVirtualNetwork.getSvip());
+
         AccountDetailVO accountDetail = _accountDetailsDao.findDetail(sfVirtualNetwork.getAccountId(), SolidFireUtil.CHAP_INITIATOR_USERNAME);
 
         sfResponse.setChapInitiatorUsername(accountDetail.getValue());
