@@ -94,8 +94,10 @@ public class CreateSolidFireVolumeCmd extends BaseCmd {
 
             setResponseObject(response);
         }
-        catch (Exception ex) {
-            throw new ServerApiException(ApiErrorCode.INTERNAL_ERROR, ex.getMessage());
+        catch (Throwable t) {
+            s_logger.error(t.getMessage());
+
+            throw new ServerApiException(ApiErrorCode.INTERNAL_ERROR, t.getMessage());
         }
     }
 }
