@@ -7,19 +7,19 @@
         return true;
       },
       listView: {
-        id: 'testPluginInstances',
+        id: 'sfClusters',
         fields: {
           name: { label: 'label.name' },
-          instancename: { label: 'label.internal.name' },
-          displayname: { label: 'label.display.name' },
+          mvip: { label: 'MVIP' },
+          username: { label: 'Username' },
           zonename: { label: 'label.zone.name' }
         },
         dataProvider: function(args) {
-          plugin.ui.apiCall('listVirtualMachines', {
+          plugin.ui.apiCall('listSolidFireClusters', {
             success: function(json) {
-              var vms = json.listvirtualmachinesresponse.virtualmachine;
+              var sfclusters = json.listsolidfireclustersresponse.sfcluster;
 
-              args.response.success({ data: vms });
+              args.response.success({ data: sfclusters });
             },
             error: function(errorMessage) {
               args.response.error(errorMessage)
