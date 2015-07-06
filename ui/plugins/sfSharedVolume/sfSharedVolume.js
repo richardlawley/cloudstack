@@ -4,10 +4,28 @@
       id: 'sfSharedVolume',
       title: 'Shared Volume',
       preFilter: function(args) {
-        return isAdmin();
+        return true;
       },
-      show: function() {
-        return $('<div>').html('Content will go here');
+      listView: {
+        id: 'testPluginInstances',
+        fields: {
+          name: { label: 'label.name' },
+          instancename: { label: 'label.internal.name' },
+          displayname: { label: 'label.display.name' },
+          zonename: { label: 'label.zone.name' }
+        },
+        dataProvider: function(args) {
+          plugin.ui.apiCall('listVirtualMachines', {
+            success: function(json) {
+              var vms = json.listvirtualmachinesresponse.virtualmachine;
+
+              args.response.success({ data: vms });
+            },
+            error: function(errorMessage) {
+              args.response.error(errorMessage)
+            }
+          });
+        }
       }
     });
   };
