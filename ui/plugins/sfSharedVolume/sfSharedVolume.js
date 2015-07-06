@@ -11,7 +11,7 @@
         fields: {
           name: { label: 'label.name' },
           mvip: { label: 'MVIP' },
-          username: { label: 'Username' },
+          username: { label: 'label.username' },
           zonename: { label: 'label.zone.name' }
         },
         dataProvider: function(args) {
@@ -25,6 +25,19 @@
               args.response.error(errorMessage)
             }
           });
+        }
+      },
+      actions: {
+        add: {
+          label: 'Add Shared Volume',
+          preFilter: function(args) {
+            return true;
+          },
+          messages: {
+            notification: function(args) {
+              return 'Add Shared Volume';
+            }
+          }
         }
       }
     });
