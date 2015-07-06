@@ -97,6 +97,10 @@ public class ApiHelper {
         sfResponse.setTotalBurstIops(sfCluster.getTotalBurstIops());
         sfResponse.setZoneId(sfCluster.getZoneId());
 
+        DataCenterVO dataCenterVO = _zoneDao.findById(sfCluster.getZoneId());
+
+        sfResponse.setZoneName(dataCenterVO.getName());
+
         sfResponse.setObjectName("sfcluster");
 
         return sfResponse;

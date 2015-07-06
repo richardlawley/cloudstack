@@ -67,6 +67,10 @@ public class ApiSolidFireClusterResponse extends BaseResponse {
     @Param(description = "Zone ID that the SolidFire cluster is associated with")
     private long _zoneId;
 
+    @SerializedName("zonename")
+    @Param(description = "Zone name that the SolidFire cluster is associated with")
+    private String _zoneName;
+
     public void setId(long id) {
         _id = id;
     }
@@ -145,5 +149,13 @@ public class ApiSolidFireClusterResponse extends BaseResponse {
 
     public long getZoneId() {
         return _zoneId;
+    }
+
+    public void setZoneName(String zoneName) {
+        _zoneName = zoneName;
+    }
+
+    public String getZoneName() {
+        return _zoneName;
     }
 }
