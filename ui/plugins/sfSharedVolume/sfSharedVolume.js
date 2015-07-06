@@ -7,24 +7,38 @@
         return true;
       },
       listView: {
-        id: 'sfClusters',
+        id: 'sfSharedVolumes',
         fields: {
           name: { label: 'label.name' },
-          mvip: { label: 'MVIP' },
-          username: { label: 'label.username' },
-          zonename: { label: 'label.zone.name' }
+          iqn: { label: 'IQN' },
+          size: { label: 'Size' },
+          miniops: { label: 'Min IOPS' },
+          maxiops: { label: 'Max IOPS' },
+          burstiops: { label: 'Burst IOPS' }
         },
         dataProvider: function(args) {
-          plugin.ui.apiCall('listSolidFireClusters', {
+          plugin.ui.apiCall('listSolidFireVolumes', {
             success: function(json) {
-              var sfclusters = json.listsolidfireclustersresponse.sfcluster;
+              var sfvolumes = json.listsolidfirevolumesresponse.sfvolume;
 
-              args.response.success({ data: sfclusters });
+              args.response.success({ data: sfvolumes });
             },
             error: function(errorMessage) {
-              args.response.error(errorMessage)
+              args.response.error(errorMessage);
             }
           });
+        },
+        actions: {
+          delete: {
+            label: "Delete Shared Volume",
+            messages: {
+              confirm: function() { return 'Are you sure you want to delete this shared volume?' },
+              notification: function() { return 'Deleted shared volume' }
+            },
+            action: function(args) {
+              var instance = args.context.sfSharedVolumes[0];
+            }
+          }
         }
       },
       actions: {
