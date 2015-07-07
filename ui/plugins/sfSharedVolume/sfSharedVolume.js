@@ -69,14 +69,14 @@
                   }
                 },
                 name: {
-				  label: 'label.name',
+                  label: 'label.name',
                   docID: 'helpVolumeName',
                   validation: {
                     required: true
                   }
                 },
                 diskSize: {
-				  label: 'label.disk.size.gb',
+                  label: 'label.disk.size.gb',
                   validation: {
                     required: true,
                     number: true
@@ -103,6 +103,27 @@
                     number: true
                   }
                 },
+                account: {
+                  label: 'Account',
+                  validation: {
+                    required: true
+                  },
+                  select: function(args) {
+                    $.ajax({
+                      url: createURL("listAccounts"),
+                      dataType: "json",
+                      async: true,
+                      success: function(json) {
+                        var accountObjs = json.listaccountsresponse.account;
+
+                        args.response.success({
+                          descriptionField: 'name',
+                          data: accountObjs
+                        });
+                      }
+                    });
+                  }
+                },
                 vlan: {
                   label: 'VLAN',
                   validation: {
@@ -126,22 +147,22 @@
                 }
               }
             },
-			action: function(args) {
+            action: function(args) {
               var data = {
                 name: args.data.name,
-				size: args.data.diskSize,
+                size: args.data.diskSize,
                 miniops: args.data.minIops,
                 maxiops: args.data.maxIops,
-				burstiops: args.data.burstIops,
-				sfvirtualnetworkid: args.data.vlan,
-				accountid: 2
+                burstiops: args.data.burstIops,
+                accountid: args.data.account,
+                sfvirtualnetworkid: args.data.vlan
               };
 
               $.ajax({
                 url: createURL('createSolidFireVolume'),
                 data: data,
                 success: function(json) {
-			      var sfvolumeObj = json.createsolidfirevolumeresponse.apicreatesolidfirevolume;
+                  var sfvolumeObj = json.createsolidfirevolumeresponse.apicreatesolidfirevolume;
 
                   args.response.success({
                     data: sfvolumeObj
@@ -151,7 +172,7 @@
                   args.response.error(parseXMLHttpResponse(json));
                 }
               });
-			}
+            }
           }
         },
         detailView: {
