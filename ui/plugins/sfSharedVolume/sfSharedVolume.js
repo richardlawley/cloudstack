@@ -28,6 +28,28 @@
             }
           });
         },
+        actions: {
+          add: {
+            label: 'Add Shared Volume',
+            preFilter: function(args) {
+              return true;
+            },
+            messages: {
+              confirm: function(args) {
+                return 'Please fill in the following data to add a new shared volume.';
+              },
+              notification: function(args) {
+                return 'Add Shared Volume';
+              }
+            },
+            createForm: {
+              title: 'Add Shared Volume',
+              desc: 'Please fill in the following data to add a new shared volume.',
+              fields: {
+              }
+            }
+          }
+        },
         detailView: {
           name: 'Shared volume details',
           isMaximized: true,
@@ -38,19 +60,6 @@
               action: function(args) {
                 var sharedVolumeObj = args.context;
               }
-            }
-          }
-        }
-      },
-      actions: {
-        add: {
-          label: 'Add Shared Volume',
-          preFilter: function(args) {
-            return true;
-          },
-          messages: {
-            notification: function(args) {
-              return 'Add Shared Volume';
             }
           }
         }
