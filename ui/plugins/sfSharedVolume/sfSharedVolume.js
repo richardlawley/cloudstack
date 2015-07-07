@@ -114,7 +114,7 @@
                       dataType: "json",
                       async: true,
                       success: function(json) {
-                        var virtualNetworkObjs = json.listvirtualnetworksresponse.virtualnetwork;
+                        var virtualNetworkObjs = json.listsolidfirevirtualnetworksresponse.sfvirtualnetwork;
 
                         args.response.success({
                           descriptionField: 'name',
@@ -127,21 +127,24 @@
               }
             },
 			action: function(args) {
+              var data = {
+                name: args.data.name,
+				size: args.data.diskSize,
+                miniops: args.data.minIops,
+                maxiops: args.data.maxIops,
+				burstiops: args.data.burstIops,
+				sfvirtualnetworkid: args.data.vlan,
+				accountid: 2
+              };
+
               $.ajax({
-                url: createURL('createVolume'),
+                url: createURL('createSolidFireVolume'),
                 data: data,
                 success: function(json) {
-                  var jid = json.createvolumeresponse.jobid;
+			      var sfvolumeObj = json.createsolidfirevolumeresponse.apicreatesolidfirevolume;
+
                   args.response.success({
-                    _custom: {
-                      jobId: jid,
-                      getUpdatedItem: function(json) {
-                        return json.queryasyncjobresultresponse.jobresult.volume;
-                      },
-                      getActionFilter: function() {
-                        return volumeActionfilter;
-                      }
-                    }
+                    data: sfvolumeObj
                   });
                 },
                 error: function(json) {
