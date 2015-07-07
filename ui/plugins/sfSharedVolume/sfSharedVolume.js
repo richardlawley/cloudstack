@@ -46,15 +46,38 @@
               title: 'Add Shared Volume',
               desc: 'Please fill in the following data to add a new shared volume.',
               fields: {
+                availabilityZone: {
+                  label: 'label.availability.zone',
+                  docID: 'helpVolumeAvailabilityZone',
+                  validation: {
+                    required: true
+                  },
+                  select: function(args) {
+                    $.ajax({
+                      url: createURL("listZones&available=true"),
+                      dataType: "json",
+                      async: true,
+                      success: function(json) {
+                        var zoneObjs = json.listzonesresponse.zone;
+
+                        args.response.success({
+                          descriptionField: 'name',
+                          data: zoneObjs
+                        });
+                      }
+                    });
+                  }
+                },
                 name: {
+				  label: 'label.name',
                   docID: 'helpVolumeName',
-                  label: 'label.name',
                   validation: {
                     required: true
                   }
                 },
                 diskSize: {
-                  label: 'label.disk.size.gb',
+				  label: 'label.disk.size.gb',
+			      docID: 'Size of the volume in GB',
                   validation: {
                     required: true,
                     number: true
@@ -63,21 +86,21 @@
                 minIops: {
                   label: 'label.disk.iops.min',
                   validation: {
-                    required: false,
+                    required: true,
                     number: true
                   }
                 },
                 maxIops: {
                   label: 'label.disk.iops.max',
                   validation: {
-                    required: false,
+                    required: true,
                     number: true
                   }
                 },
                 burstIops: {
                   label: 'Burst IOPS',
                   validation: {
-                    required: false,
+                    required: true,
                     number: true
                   }
                 }
