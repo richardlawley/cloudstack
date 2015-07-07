@@ -82,7 +82,30 @@
                   }
                 }
               }
-            }
+            },
+			action: function(args) {
+              $.ajax({
+                url: createURL('createVolume'),
+                data: data,
+                success: function(json) {
+                  var jid = json.createvolumeresponse.jobid;
+                  args.response.success({
+                    _custom: {
+                      jobId: jid,
+                      getUpdatedItem: function(json) {
+                        return json.queryasyncjobresultresponse.jobresult.volume;
+                      },
+                      getActionFilter: function() {
+                        return volumeActionfilter;
+                      }
+                    }
+                  });
+                },
+                error: function(json) {
+                  args.response.error(parseXMLHttpResponse(json));
+                }
+              });
+			}
           }
         },
         detailView: {
