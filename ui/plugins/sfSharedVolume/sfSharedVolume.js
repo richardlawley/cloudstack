@@ -46,6 +46,41 @@
               title: 'Add Shared Volume',
               desc: 'Please fill in the following data to add a new shared volume.',
               fields: {
+                name: {
+                  docID: 'helpVolumeName',
+                  label: 'label.name',
+                  validation: {
+                    required: true
+                  }
+                },
+                diskSize: {
+                  label: 'label.disk.size.gb',
+                  validation: {
+                    required: true,
+                    number: true
+                  }
+                },
+                minIops: {
+                  label: 'label.disk.iops.min',
+                  validation: {
+                    required: false,
+                    number: true
+                  }
+                },
+                maxIops: {
+                  label: 'label.disk.iops.max',
+                  validation: {
+                    required: false,
+                    number: true
+                  }
+                },
+                burstIops: {
+                  label: 'Burst IOPS',
+                  validation: {
+                    required: false,
+                    number: true
+                  }
+                }
               }
             }
           }
