@@ -22,9 +22,7 @@ import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -39,7 +37,6 @@ import org.apache.cloudstack.utils.security.SSLUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -47,11 +44,14 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
+import org.apache.log4j.Logger;
 
 import com.cloud.utils.exception.CloudRuntimeException;
 
 @SuppressWarnings("deprecation")
 public class SolidFireConnection {
+    private static final Logger s_logger = Logger.getLogger(SolidFireConnection.class.getName());
+
     private final String _managementVip;
     private final int _managementPort = 443;
     private final String _clusterAdminUsername;
@@ -125,6 +125,28 @@ public class SolidFireConnection {
         if (jsonError.error != null) {
             throw new IllegalStateException(jsonError.error.message);
         }
+    }
+
+    public SolidFireVolume getVolume(long lVolumeId) {
+        final Gson gson = new GsonBuilder().create();
+
+        VolumeToGet volumeToGet = new VolumeToGet(lVolumeId);
+
+        String strVolumeToGetJson = gson.toJson(volumeToGet);
+
+        String strVolumeGetResultJson = executeJsonRpc(strVolumeToGetJson);
+
+        VolumeGetResult volumeGetResult = gson.fromJson(strVolumeGetResultJson, VolumeGetResult.class);
+
+        verifyResult(volumeGetResult.result, strVolumeGetResultJson, gson);
+
+        String strVolumeName = getVolumeName(volumeGetResult, lVolumeId);
+        String strVolumeIqn = getVolumeIqn(volumeGetResult, lVolumeId);
+        long lAccountId = getVolumeAccountId(volumeGetResult, lVolumeId);
+        String strVolumeStatus = getVolumeStatus(volumeGetResult, lVolumeId);
+        long lTotalSize = getVolumeTotalSize(volumeGetResult, lVolumeId);
+
+        return new SolidFireVolume(lVolumeId, strVolumeName, strVolumeIqn, lAccountId, strVolumeStatus, lTotalSize);
     }
 
     public long createVolume(String name, long accountId, long totalSizeInGBs, long minIops, long maxIops, long burstIops) {
@@ -283,14 +305,10 @@ public class SolidFireConnection {
             }catch (IOException ex) {
                 throw new CloudRuntimeException(ex.getMessage());
             }
-        } catch (UnsupportedEncodingException ex) {
-            throw new CloudRuntimeException(ex.getMessage());
-        } catch (ClientProtocolException ex) {
-            throw new CloudRuntimeException(ex.getMessage());
-        } catch (IOException ex) {
-            throw new CloudRuntimeException(ex.getMessage());
-        } catch (URISyntaxException ex) {
-            throw new CloudRuntimeException(ex.getMessage());
+        } catch (Throwable t) {
+            s_logger.error(t.getMessage());
+
+            throw new CloudRuntimeException(t.getMessage());
         } finally {
             if (httpClient != null) {
                 try {
@@ -308,6 +326,7 @@ public class SolidFireConnection {
 
         try {
             SSLContext sslContext = SSLUtils.getSSLContext();
+
             X509TrustManager tm = new X509TrustManager() {
                 @Override
                 public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
@@ -323,7 +342,7 @@ public class SolidFireConnection {
                 }
             };
 
-            sslContext.init(null, new TrustManager[] {tm}, new SecureRandom());
+            sslContext.init(null, new TrustManager[] { tm }, new SecureRandom());
 
             SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
             SchemeRegistry registry = new SchemeRegistry();
@@ -335,13 +354,24 @@ public class SolidFireConnection {
 
             return new DefaultHttpClient(mgr, client.getParams());
         } catch (NoSuchAlgorithmException ex) {
+            s_logger.error(ex.getMessage());
+
             throw new CloudRuntimeException(ex.getMessage());
         } catch (KeyManagementException ex) {
+            s_logger.error(ex.getMessage());
+
             throw new CloudRuntimeException(ex.getMessage());
         }
         finally {
             if (client != null) {
-                client.close();
+                try {
+                    client.close();
+                }
+                catch (Throwable t) {
+                    s_logger.error(t.getMessage());
+
+                    throw t;
+                }
             }
         }
     }
@@ -448,6 +478,29 @@ public class SolidFireConnection {
 
             private VirtualNetworkToDeleteParams(long id) {
                 virtualNetworkID = id;
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static final class VolumeToGet
+    {
+        private final String method = "ListActiveVolumes";
+        private final VolumeToGetParams params;
+
+        private VolumeToGet(final long lVolumeId)
+        {
+            params = new VolumeToGetParams(lVolumeId);
+        }
+
+        private static final class VolumeToGetParams
+        {
+            private final long startVolumeID;
+            private final long limit = 1;
+
+            private VolumeToGetParams(final long lVolumeId)
+            {
+                startVolumeID = lVolumeId;
             }
         }
     }
@@ -642,6 +695,23 @@ public class SolidFireConnection {
         }
     }
 
+    private static final class VolumeGetResult {
+        private Result result;
+
+        private static final class Result {
+            private Volume[] volumes;
+
+            private static final class Volume {
+                private long volumeID;
+                private String name;
+                private String iqn;
+                private long accountID;
+                private String status;
+                private long totalSize;
+            }
+        }
+    }
+
     private static final class VolumeCreateResult {
         private Result result;
 
@@ -694,6 +764,83 @@ public class SolidFireConnection {
         }
 
         throw new IllegalStateException("Problem with the following JSON: " + strJson);
+    }
+
+    private static final String ACTIVE = "active";
+
+    public static class SolidFireVolume {
+        private final long _id;
+        private final String _name;
+        private final String _iqn;
+        private final long _accountId;
+        private final String _status;
+        private final long _totalSize;
+
+        public SolidFireVolume(long id, String name, String iqn,
+                long accountId, String status, long totalSize)
+        {
+            _id = id;
+            _name = name;
+            _iqn = iqn;
+            _accountId = accountId;
+            _status = status;
+            _totalSize = totalSize;
+        }
+
+        public long getId() {
+            return _id;
+        }
+
+        public String getName() {
+            return _name;
+        }
+
+        public String getIqn() {
+            return _iqn;
+        }
+
+        public long getAccountId() {
+            return _accountId;
+        }
+
+        public boolean isActive() {
+            return ACTIVE.equalsIgnoreCase(_status);
+        }
+
+        public long getTotalSize() {
+            return _totalSize;
+        }
+
+        @Override
+        public int hashCode() {
+            return _iqn.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return _name;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+
+            if (!obj.getClass().equals(SolidFireVolume.class)) {
+                return false;
+            }
+
+            SolidFireVolume sfv = (SolidFireVolume)obj;
+
+            if (_id == sfv._id && _name.equals(sfv._name) &&
+                _iqn.equals(sfv._iqn) && _accountId == sfv._accountId &&
+                isActive() == sfv.isActive() && getTotalSize() == sfv.getTotalSize()) {
+                return true;
+            }
+
+            return false;
+        }
     }
 
     public static class SolidFireAccount
@@ -760,5 +907,48 @@ public class SolidFireConnection {
 
     private static long convertGBsToBytes(long gbs) {
         return gbs * 1024 * 1024 * 1024;
+    }
+
+    private static String getVolumeName(VolumeGetResult volumeGetResult, long lVolumeId) {
+        if (volumeGetResult.result.volumes != null && volumeGetResult.result.volumes.length == 1 && volumeGetResult.result.volumes[0].volumeID == lVolumeId) {
+            return volumeGetResult.result.volumes[0].name;
+        }
+
+        throw new CloudRuntimeException("Could not determine the name of the volume for volume ID of " + lVolumeId + ".");
+    }
+
+    private static String getVolumeIqn(VolumeGetResult volumeGetResult, long lVolumeId) {
+        if (volumeGetResult.result.volumes != null && volumeGetResult.result.volumes.length == 1 && volumeGetResult.result.volumes[0].volumeID == lVolumeId) {
+            return volumeGetResult.result.volumes[0].iqn;
+        }
+
+        throw new CloudRuntimeException("Could not determine the IQN of the volume for volume ID of " + lVolumeId + ".");
+    }
+
+    private static long getVolumeAccountId(VolumeGetResult volumeGetResult, long lVolumeId) {
+        if (volumeGetResult.result.volumes != null && volumeGetResult.result.volumes.length == 1 && volumeGetResult.result.volumes[0].volumeID == lVolumeId) {
+            return volumeGetResult.result.volumes[0].accountID;
+        }
+
+        throw new CloudRuntimeException("Could not determine the account ID of the volume for volume ID of " + lVolumeId + ".");
+    }
+
+    private static String getVolumeStatus(VolumeGetResult volumeGetResult, long lVolumeId) {
+        if (volumeGetResult.result.volumes != null && volumeGetResult.result.volumes.length == 1 && volumeGetResult.result.volumes[0].volumeID == lVolumeId) {
+            return volumeGetResult.result.volumes[0].status;
+        }
+
+        throw new CloudRuntimeException("Could not determine the status of the volume for volume ID of " + lVolumeId + ".");
+    }
+
+    private static long getVolumeTotalSize(VolumeGetResult volumeGetResult, long lVolumeId)
+    {
+        if (volumeGetResult.result.volumes != null && volumeGetResult.result.volumes.length == 1 &&
+            volumeGetResult.result.volumes[0].volumeID == lVolumeId)
+        {
+            return volumeGetResult.result.volumes[0].totalSize;
+        }
+
+        throw new CloudRuntimeException("Could not determine the total size of the volume for volume ID of " + lVolumeId + ".");
     }
 }

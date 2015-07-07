@@ -51,6 +51,9 @@ public class SfVolumeVO implements SfVolume {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "iqn")
+    private String iqn;
+
     @Column(name = "size")
     private long size;
 
@@ -80,10 +83,11 @@ public class SfVolumeVO implements SfVolume {
         uuid = UUID.randomUUID().toString();
     }
 
-    public SfVolumeVO(long sfId, String name, long size, long minIops, long maxIops, long burstIops, long sfVirtualNetworkId) {
+    public SfVolumeVO(long sfId, String name, String iqn, long size, long minIops, long maxIops, long burstIops, long sfVirtualNetworkId) {
         this.uuid = UUID.randomUUID().toString();
         this.sfId = sfId;
         this.name = name;
+        this.iqn = iqn;
         this.size = size;
         this.minIops = minIops;
         this.maxIops = maxIops;
@@ -109,6 +113,11 @@ public class SfVolumeVO implements SfVolume {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getIqn() {
+        return iqn;
     }
 
     public void setSize(long size) {

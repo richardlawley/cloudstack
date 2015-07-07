@@ -54,6 +54,7 @@ public class ApiHelper {
     public static final String TOTAL_MIN_IOPS_DESC = "Total minimum IOPS";
     public static final String TOTAL_MAX_IOPS_DESC = "Total maximum IOPS";
     public static final String TOTAL_BURST_IOPS_DESC = "Total burst IOPS";
+    public static final String IQN_DESC = "Volume IQN";
     public static final String SIZE_DESC = "Size (in GBs)";
     public static final String MIN_IOPS_DESC = "Min IOPS";
     public static final String MAX_IOPS_DESC = "Max IOPS";
@@ -66,7 +67,7 @@ public class ApiHelper {
     public static final String ACCOUNT_ID_DESC = "Account ID";
     public static final String VIRTUAL_NETWORK_ID_DESC = "Virtual network ID";
     public static final String VOLUME_ID_DESC = "Volume ID";
-    public static final String VOLUME_NAME_DESC = "Name for volume";
+    public static final String VOLUME_NAME_DESC = "Volume name";
     public static final String ZONE_ID_DESC = "Zone ID";
 
     @Inject private AccountDao _accountDao;
@@ -174,6 +175,7 @@ public class ApiHelper {
         sfResponse.setId(sfVolume.getId());
         sfResponse.setUuid(sfVolume.getUuid());
         sfResponse.setName(sfVolume.getName());
+        sfResponse.setIqn(sfVolume.getIqn());
         sfResponse.setSize(sfVolume.getSize());
         sfResponse.setMinIops(sfVolume.getMinIops());
         sfResponse.setMaxIops(sfVolume.getMaxIops());

@@ -24,6 +24,8 @@ public interface SfVolume extends Identity, InternalIdentity {
 
     String getName();
 
+    String getIqn();
+
     long getSize();
 
     long getMinIops();

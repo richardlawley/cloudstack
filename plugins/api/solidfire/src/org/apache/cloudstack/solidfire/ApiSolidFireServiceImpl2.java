@@ -702,7 +702,9 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
                     long sfVolumeId = sfConnection.createVolume(name, sfAccountId, size, minIops, maxIops, burstIops);
 
-                    SfVolumeVO sfVolumeVO = new SfVolumeVO(sfVolumeId, name, size, minIops, maxIops, burstIops, sfVirtualNetworkId);
+                    SolidFireConnection.SolidFireVolume sfVolume = sfConnection.getVolume(sfVolumeId);
+
+                    SfVolumeVO sfVolumeVO = new SfVolumeVO(sfVolumeId, name, sfVolume.getIqn(), size, minIops, maxIops, burstIops, sfVirtualNetworkId);
 
                     return _sfVolumeDao.persist(sfVolumeVO);
                 }

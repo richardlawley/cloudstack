@@ -39,6 +39,10 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     @Param(description = ApiHelper.VOLUME_NAME_DESC)
     private String _name;
 
+    @SerializedName("iqn")
+    @Param(description = ApiHelper.IQN_DESC)
+    private String _iqn;
+
     @SerializedName("size")
     @Param(description = ApiHelper.SIZE_DESC)
     private long _size;
@@ -125,6 +129,14 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
 
     public String getName() {
         return _name;
+    }
+
+    public void setIqn(String iqn) {
+        _iqn = iqn;
+    }
+
+    public String getIqn() {
+        return _iqn;
     }
 
     public void setSize(long size) {
