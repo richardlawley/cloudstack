@@ -11,7 +11,7 @@
         fields: {
           name: { label: 'label.name' },
           iqn: { label: 'IQN' },
-          size: { label: 'Size' },
+          size: { label: 'Size (GB)' },
           miniops: { label: 'Min IOPS' },
           maxiops: { label: 'Max IOPS' },
           burstiops: { label: 'Burst IOPS' }
@@ -28,15 +28,16 @@
             }
           });
         },
-        actions: {
-          delete: {
-            label: "Delete Shared Volume",
-            messages: {
-              confirm: function() { return 'Are you sure you want to delete this shared volume?' },
-              notification: function() { return 'Deleted shared volume' }
-            },
-            action: function(args) {
-              var instance = args.context.sfSharedVolumes[0];
+        detailView: {
+          name: 'Shared volume details',
+          isMaximized: true,
+          actions: {
+            edit: {
+              label: 'Edit shared volume',
+              compactLabel: 'label.edit',
+              action: function(args) {
+                var sharedVolumeObj = args.context;
+              }
             }
           }
         }
