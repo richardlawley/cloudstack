@@ -77,7 +77,6 @@
                 },
                 diskSize: {
 				  label: 'label.disk.size.gb',
-			      docID: 'Size of the volume in GB',
                   validation: {
                     required: true,
                     number: true
@@ -102,6 +101,27 @@
                   validation: {
                     required: true,
                     number: true
+                  }
+                },
+                vlan: {
+                  label: 'VLAN',
+                  validation: {
+                    required: true
+                  },
+                  select: function(args) {
+                    $.ajax({
+                      url: createURL("listSolidFireVirtualNetworks"),
+                      dataType: "json",
+                      async: true,
+                      success: function(json) {
+                        var virtualNetworkObjs = json.listvirtualnetworksresponse.virtualnetwork;
+
+                        args.response.success({
+                          descriptionField: 'name',
+                          data: virtualNetworkObjs
+                        });
+                      }
+                    });
                   }
                 }
               }
