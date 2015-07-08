@@ -110,20 +110,41 @@
                   },
                   isHidden: true,
                   select: function(args) {
+                    var accountNameParam = "";
+
                     if (isAdmin()) {
                       args.$form.find('.form-item[rel=account]').show();
                     }
+                    else {
+                      accountNameParam = "&name=" + g_account;
+                    }
 
                     $.ajax({
-                      url: createURL("listAccounts"),
+                      url: createURL("listAccounts&listAll=true" + accountNameParam),
                       dataType: "json",
                       async: true,
                       success: function(json) {
                         var accountObjs = json.listaccountsresponse.account;
+                        var filteredAccountObjs = [];
+
+                        if (isAdmin()) {
+                          filteredAccountObjs = accountObjs;
+                        }
+                        else {
+                          for (int i = 0; i < accountObjs.length; i++) {
+                            var accountObj = accountObjs[i];
+
+                            if (accountObj.domainid == g_domainid) {
+                              filteredAccountObjs.push(accountObj);
+
+                              break; // there should only be one account with a particular name in a domain
+                            }
+                          }
+                        }
 
                         args.response.success({
                           descriptionField: 'name',
-                          data: accountObjs
+                          data: filteredAccountObjs
                         });
                       }
                     });
