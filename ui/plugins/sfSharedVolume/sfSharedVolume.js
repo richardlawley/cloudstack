@@ -110,17 +110,15 @@
                   },
                   isHidden: true,
                   select: function(args) {
+                    if (isAdmin()) {
+                      args.$form.find('.form-item[rel=account]').show();
+                    }
+
                     $.ajax({
                       url: createURL("listAccounts"),
                       dataType: "json",
                       async: true,
                       success: function(json) {
-                        if (isAdmin()) {
-                          var $form = $(this).closest('form');
-
-                          $form.find('.form-item[rel=account]').show();
-                        }
-
                         var accountObjs = json.listaccountsresponse.account;
 
                         args.response.success({
