@@ -157,8 +157,8 @@
                   },
                   dependsOn: ['availabilityZone', 'account'],
                   select: function(args) {
-                    if (args.data.availabilityZone == null || args.data.availabilityZone == "" ||
-                        args.data.account == null || args.data.account == "") {
+                    if (args.data.availabilityZone === null || args.data.availabilityZone === "" ||
+                        args.data.account === null || args.data.account === "") {
                       return;
                     }
 
@@ -213,14 +213,23 @@
           }
         },
         detailView: {
-          name: 'Shared volume details',
-          isMaximized: true,
+          name: 'label.volume.details',
+          viewAll: {
+            path: 'storage.snapshots',
+            label: 'label.snapshots'
+          },
           actions: {
-            edit: {
-              label: 'Edit shared volume',
-              compactLabel: 'label.edit',
+            deleteVolume: {
+              label: 'Delete Shared Volume',
+              messages: {
+                confirm: function(args) {
+                  return 'Are you sure you would like to delete this shared volume?';
+                },
+                notification: function(args) {
+                  return 'Shared volume deleted';
+                }
+              },
               action: function(args) {
-                var sharedVolumeObj = args.context;
               }
             }
           }
