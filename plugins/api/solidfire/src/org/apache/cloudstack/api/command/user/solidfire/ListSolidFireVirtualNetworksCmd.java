@@ -31,6 +31,7 @@ import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.ServerApiException;
 import org.apache.cloudstack.api.ResponseObject.ResponseView;
 import org.apache.cloudstack.api.helper.ApiHelper;
+import org.apache.cloudstack.api.response.AccountResponse;
 import org.apache.cloudstack.api.response.ApiSolidFireVirtualNetworkResponse;
 import org.apache.cloudstack.api.response.ListResponse;
 import org.apache.cloudstack.api.response.ZoneResponse;
@@ -50,6 +51,11 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
 
     @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = ApiHelper.ZONE_ID_DESC)
     private Long _zoneId;
+
+    @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = ApiHelper.ACCOUNT_ID_DESC)
+    private long _accountId;
+
+    @Inject private ApiHelper _apiHelper;
 
     /////////////////////////////////////////////////////
     /////////////// API Implementation///////////////////
@@ -77,7 +83,7 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
                 }
             }
             else {
-                sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks(_zoneId);
+                sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks(_zoneId, _accountId);
             }
 
             ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;

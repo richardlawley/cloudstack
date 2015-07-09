@@ -131,7 +131,7 @@
                           filteredAccountObjs = accountObjs;
                         }
                         else {
-                          for (int i = 0; i < accountObjs.length; i++) {
+                          for (i = 0; i < accountObjs.length; i++) {
                             var accountObj = accountObjs[i];
 
                             if (accountObj.domainid == g_domainid) {
@@ -155,9 +155,15 @@
                   validation: {
                     required: true
                   },
+                  dependsOn: ['availabilityZone', 'account'],
                   select: function(args) {
+                    var params = [];
+
+                    params.push("&zoneid=" + args.data.availabilityZone);
+                    params.push("&accountid=" + args.data.account);
+
                     $.ajax({
-                      url: createURL("listSolidFireVirtualNetworks"),
+                      url: createURL("listSolidFireVirtualNetworks" + params.join("")),
                       dataType: "json",
                       async: true,
                       success: function(json) {

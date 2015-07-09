@@ -254,20 +254,34 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     @Override
-    public List<SfVirtualNetwork> listSolidFireVirtualNetworks(Long zoneId) {
+    public List<SfVirtualNetwork> listSolidFireVirtualNetworks(Long zoneId, Long accountId) {
         s_logger.info("listSolidFireVirtualNetworks invoked");
 
         final List<SfVirtualNetworkVO> sfVirtualNetworkVOs;
 
         if (ApiHelper.instance().isRootAdmin()) {
             if (zoneId != null) {
-                sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.listAll(), zoneId);
+                if (accountId != null) {
+                    sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.findByAccountId(accountId), zoneId);
+                }
+                else {
+                    sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.listAll(), zoneId);
+                }
             }
             else {
-                sfVirtualNetworkVOs = _sfVirtualNetworkDao.listAll();
+                if (accountId != null) {
+                    sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(accountId);
+                }
+                else {
+                    sfVirtualNetworkVOs = _sfVirtualNetworkDao.listAll();
+                }
             }
         }
         else {
+            if (accountId != null && accountId != _apiHelper.getCallingAccount().getId()) {
+                throw new CloudRuntimeException("Only a root admin can specify an account other than his own.");
+            }
+
             if (zoneId != null) {
                 sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.findByAccountId(ApiHelper.instance().getCallingAccount().getId()), zoneId);
             }
