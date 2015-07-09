@@ -157,6 +157,10 @@
                   },
                   dependsOn: ['availabilityZone', 'account'],
                   select: function(args) {
+                    if (args.data.availabilityZone == null || args.data.account == null) {
+                      return;
+                    }
+
                     var params = [];
 
                     params.push("&zoneid=" + args.data.availabilityZone);
