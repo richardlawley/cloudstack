@@ -157,7 +157,8 @@
                   },
                   dependsOn: ['availabilityZone', 'account'],
                   select: function(args) {
-                    if (args.data.availabilityZone == null || args.data.account == null) {
+                    if (args.data.availabilityZone == null || args.data.availabilityZone == "" ||
+                        args.data.account == null || args.data.account == "") {
                       return;
                     }
 
