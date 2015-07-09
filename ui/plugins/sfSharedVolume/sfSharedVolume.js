@@ -313,20 +313,15 @@
                   }
                 }
               ],
-              tags: cloudStack.api.tags({
-                resourceType: 'Volume',
-                contextId: 'volumes'
-              }),
               dataProvider: function(args) {
                 $.ajax({
-                  url: createURL("listSolidFireVolumes&id=" + args.context.volumes[0].id),
+                  url: createURL("listSolidFireVolumes&id=" + args.context.sfSharedVolumes[0].id),
                   dataType: "json",
                   async: true,
                   success: function(json) {
                     var jsonObj = json.listsolidfirevolumesresponse.sfvolume[0];
 
                     args.response.success({
-                      actionFilter: volumeActionfilter,
                       data: jsonObj
                     });
                   }
