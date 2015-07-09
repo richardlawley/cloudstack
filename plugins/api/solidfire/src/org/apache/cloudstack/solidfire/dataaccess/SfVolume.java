@@ -16,6 +16,8 @@
 // under the License.
 package org.apache.cloudstack.solidfire.dataaccess;
 
+import java.util.Date;
+
 import org.apache.cloudstack.api.Identity;
 import org.apache.cloudstack.api.InternalIdentity;
 
@@ -35,4 +37,6 @@ public interface SfVolume extends Identity, InternalIdentity {
     long getBurstIops();
 
     long getSfVirtualNetworkId();
+
+    Date getCreated();
 }

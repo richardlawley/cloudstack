@@ -160,4 +160,9 @@ public class SfVolumeVO implements SfVolume {
     public long getSfVirtualNetworkId() {
         return sfVirtualNetworkId;
     }
+
+    @Override
+    public Date getCreated() {
+        return created;
+    }
 }

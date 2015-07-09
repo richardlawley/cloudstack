@@ -230,6 +230,107 @@
                 }
               },
               action: function(args) {
+                $.ajax({
+                  url: createURL('deleteSolidFireVolume'),
+                  data: data,
+                  success: function(json) {
+                    var sfvolumeObj = json.deletesolidfirevolumeresponse.apideletesolidfirevolume;
+
+                    args.response.success({
+                      data: sfvolumeObj
+                    });
+                  },
+                  error: function(json) {
+                    args.response.error(parseXMLHttpResponse(json));
+                  }
+                });
+              }
+            }
+          },
+          tabs: {
+            details: {
+              title: 'label.details',
+              preFilter: function(args) {
+                var hiddenFields;
+
+                if (isAdmin()) {
+                  hiddenFields = [];
+                } else {
+                  hiddenFields = ['clustername', 'accountname'];
+                }
+
+                return hiddenFields;
+              },
+              fields: [
+                {
+                  name: {
+                    label: 'label.name'
+                  }
+                },
+                {
+                  uuid: {
+                    label: 'label.id'
+                  },
+                  clustername: {
+                    label: 'Cluster'
+                  },
+                  zonename: {
+                    label: 'label.zone'
+                  },
+                  accountname: {
+                    label: 'label.account'
+                  },
+                  vlanname: {
+                    label: 'VLAN'
+                  },
+                  size: {
+                    label: 'label.disk.size.gb'
+                  },
+                  miniops: {
+                    label: 'label.disk.iops.min'
+                  },
+                  maxiops: {
+                    label: 'label.disk.iops.max'
+                  },
+                  burstiops: {
+                    label: 'Burst IOPS'
+                  },
+                  targetportal: {
+                    label: 'Target Portal'
+                  },
+                  iqn: {
+                    label: 'IQN'
+                  },
+                  chapinitiatorusername: {
+                    label: 'Initiator Username'
+                  },
+                  chapinitiatorsecret: {
+                    label: 'Initiator Secret'
+                  },
+                  created: {
+                    label: 'label.created',
+                    converter: cloudStack.converters.toLocalDate
+                  }
+                }
+              ],
+              tags: cloudStack.api.tags({
+                resourceType: 'Volume',
+                contextId: 'volumes'
+              }),
+              dataProvider: function(args) {
+                $.ajax({
+                  url: createURL("listSolidFireVolumes&id=" + args.context.volumes[0].id),
+                  dataType: "json",
+                  async: true,
+                  success: function(json) {
+                    var jsonObj = json.listsolidfirevolumesresponse.sfvolume[0];
+
+                    args.response.success({
+                      actionFilter: volumeActionfilter,
+                      data: jsonObj
+                    });
+                  }
+                });
               }
             }
           }

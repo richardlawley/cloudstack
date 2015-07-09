@@ -180,6 +180,7 @@ public class ApiHelper {
         sfResponse.setMinIops(sfVolume.getMinIops());
         sfResponse.setMaxIops(sfVolume.getMaxIops());
         sfResponse.setBurstIops(sfVolume.getBurstIops());
+        sfResponse.setCreated(sfVolume.getCreated());
 
         SfVirtualNetwork sfVirtualNetwork = _sfVirtualNetworkDao.findById(sfVolume.getSfVirtualNetworkId());
 
@@ -188,6 +189,7 @@ public class ApiHelper {
         Account account = _accountDao.findById(sfVirtualNetwork.getAccountId());
 
         sfResponse.setAccountUuid(account.getUuid());
+        sfResponse.setAccountName(account.getAccountName());
 
         SfCluster sfCluster = _sfClusterDao.findById(sfVirtualNetwork.getSfClusterId());
 
@@ -196,6 +198,7 @@ public class ApiHelper {
         DataCenterVO dataCenterVO = _zoneDao.findById(sfCluster.getZoneId());
 
         sfResponse.setZoneUuid(dataCenterVO.getUuid());
+        sfResponse.setZoneName(dataCenterVO.getName());
 
         if (ResponseView.Full.equals(responseView)) {
             sfResponse.setClusterName(sfCluster.getName());
@@ -204,6 +207,7 @@ public class ApiHelper {
         sfResponse.setTargetPortal(sfVirtualNetwork.getSvip());
         sfResponse.setVlanId(sfVirtualNetwork.getId());
         sfResponse.setVlanUuid(sfVirtualNetwork.getUuid());
+        sfResponse.setVlanName(sfVirtualNetwork.getName());
 
         AccountDetailVO accountDetail = _accountDetailsDao.findDetail(sfVirtualNetwork.getAccountId(), SolidFireUtil.CHAP_INITIATOR_USERNAME);
 

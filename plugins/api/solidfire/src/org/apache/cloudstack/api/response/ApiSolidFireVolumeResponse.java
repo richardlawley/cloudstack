@@ -16,10 +16,13 @@
 // under the License.
 package org.apache.cloudstack.api.response;
 
+import java.util.Date;
+
 import com.cloud.serializer.Param;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.apache.cloudstack.api.ApiConstants;
 import org.apache.cloudstack.api.BaseResponse;
 import org.apache.cloudstack.api.EntityReference;
 import org.apache.cloudstack.api.helper.ApiHelper;
@@ -67,6 +70,10 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     @Param(description = "UUID of the account the volume is associated with")
     private String _accountUuid;
 
+    @SerializedName("accountname")
+    @Param(description = "Name of the account the volume is associated with")
+    private String _accountName;
+
     @SerializedName("vlanid")
     @Param(description = "ID of the VLAN the volume is associated with")
     private long _vlanId;
@@ -75,6 +82,10 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     @Param(description = "UUID of the VLAN the volume is associated with")
     private String _vlanUuid;
 
+    @SerializedName("vlanname")
+    @Param(description = "Name of the VLAN the volume is associated with")
+    private String _vlanName;
+
     @SerializedName("zoneid")
     @Param(description = "ID of the zone the volume is associated with")
     private long _zoneId;
@@ -82,6 +93,10 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     @SerializedName("zoneuuid")
     @Param(description = "UUID of the zone the volume is associated with")
     private String _zoneUuid;
+
+    @SerializedName("zonename")
+    @Param(description = "Name of the zone the volume is associated with")
+    private String _zoneName;
 
     @SerializedName("clustername")
     @Param(description = "Name of cluster the volume belongs to")
@@ -106,6 +121,10 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
     @SerializedName("chaptargetsecret")
     @Param(description = "CHAP target secret")
     private String _chapTargetSecret;
+
+    @SerializedName(ApiConstants.CREATED)
+    @Param(description = "Date volume was created")
+    private Date _created;
 
     public void setId(long id) {
         _id = id;
@@ -187,6 +206,14 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
         return _accountUuid;
     }
 
+    public void setAccountName(String accountName) {
+        _accountName = accountName;
+    }
+
+    public String getAccountName() {
+        return _accountName;
+    }
+
     public void setVlanId(long vlanId) {
         _vlanId = vlanId;
     }
@@ -203,6 +230,14 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
         return _vlanUuid;
     }
 
+    public void setVlanName(String vlanName) {
+        _vlanName = vlanName;
+    }
+
+    public String getVlanName() {
+        return _vlanName;
+    }
+
     public void setZoneId(long zoneId) {
         _zoneId = zoneId;
     }
@@ -217,6 +252,14 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
 
     public String getZoneUuid() {
         return _zoneUuid;
+    }
+
+    public void setZoneName(String zoneName) {
+        _zoneName = zoneName;
+    }
+
+    public String getZoneName() {
+        return _zoneName;
     }
 
     public void setClusterName(String clusterName) {
@@ -265,5 +308,13 @@ public class ApiSolidFireVolumeResponse extends BaseResponse {
 
     public String getTargetInitiatorSecret() {
         return _chapTargetSecret;
+    }
+
+    public void setCreated(Date created) {
+        _created = created;
+    }
+
+    public Date getCreated() {
+        return _created;
     }
 }
