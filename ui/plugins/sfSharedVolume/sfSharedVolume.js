@@ -157,8 +157,8 @@
                   },
                   dependsOn: ['availabilityZone', 'account'],
                   select: function(args) {
-                    if (args.data.availabilityZone === null || args.data.availabilityZone === "" ||
-                        args.data.account === null || args.data.account === "") {
+                    if (args.data.availabilityZone == null || args.data.availabilityZone == "" ||
+                        args.data.account == null || args.data.account == "") {
                       return;
                     }
 
@@ -214,31 +214,22 @@
         },
         detailView: {
           name: 'label.volume.details',
-          viewAll: {
-            path: 'storage.snapshots',
-            label: 'label.snapshots'
-          },
           actions: {
-            deleteVolume: {
+            remove: {
               label: 'Delete Shared Volume',
               messages: {
                 confirm: function(args) {
                   return 'Are you sure you would like to delete this shared volume?';
                 },
                 notification: function(args) {
-                  return 'Shared volume deleted';
+                  return 'Delete Shared Volume';
                 }
               },
               action: function(args) {
                 $.ajax({
-                  url: createURL('deleteSolidFireVolume'),
-                  data: data,
+                  url: createURL('deleteSolidFireVolume&id=' + args.context.sfSharedVolumes[0].id),
                   success: function(json) {
-                    var sfvolumeObj = json.deletesolidfirevolumeresponse.apideletesolidfirevolume;
-
-                    args.response.success({
-                      data: sfvolumeObj
-                    });
+                    args.response.success();
                   },
                   error: function(json) {
                     args.response.error(parseXMLHttpResponse(json));
