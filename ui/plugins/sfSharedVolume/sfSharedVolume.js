@@ -215,8 +215,39 @@
         detailView: {
           name: 'label.volume.details',
           actions: {
+            edit: {
+              label: 'label.edit',
+              messages: {
+                notification: function(args) {
+                  return 'Edit Shared Volume';
+                }
+              },
+              action: function (args) {
+                var params = [];
+
+                params.push("&id=" + args.context.sfSharedVolumes[0].id);
+                params.push("&size=" + args.data.size);
+                params.push("&miniops=" + args.data.miniops);
+                params.push("&maxiops=" + args.data.maxiops);
+                params.push("&burstiops=" + args.data.burstiops);
+
+                $.ajax({
+                  url: createURL('updateSolidFireVolume' + params.join("")),
+                  success: function(json) {
+                    var sfvolumeObj = json.updatesolidfirevolumeresponse.apiupdatesolidfirevolume;
+
+                    args.response.success({
+                      data: sfvolumeObj
+                    });
+                  },
+                  error: function(json) {
+                    args.response.error(parseXMLHttpResponse(json));
+                  }
+                });
+              }
+            },
             remove: {
-              label: 'Delete Shared Volume',
+              label: 'label.delete',
               messages: {
                 confirm: function(args) {
                   return 'Are you sure you would like to delete this shared volume?';
@@ -275,16 +306,20 @@
                     label: 'VLAN'
                   },
                   size: {
-                    label: 'label.disk.size.gb'
+                    label: 'label.disk.size.gb',
+                    isEditable: true
                   },
                   miniops: {
-                    label: 'label.disk.iops.min'
+                    label: 'label.disk.iops.min',
+                    isEditable: true
                   },
                   maxiops: {
-                    label: 'label.disk.iops.max'
+                    label: 'label.disk.iops.max',
+                    isEditable: true
                   },
                   burstiops: {
-                    label: 'Burst IOPS'
+                    label: 'Burst IOPS',
+                    isEditable: true
                   },
                   targetportal: {
                     label: 'Target Portal'
