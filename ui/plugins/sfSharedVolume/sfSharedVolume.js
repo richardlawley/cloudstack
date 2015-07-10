@@ -19,9 +19,24 @@
         dataProvider: function(args) {
           plugin.ui.apiCall('listSolidFireVolumes', {
             success: function(json) {
+              var sfvolumesfiltered = [];
               var sfvolumes = json.listsolidfirevolumesresponse.sfvolume;
+              var search = args.filterBy.search.value == null ? "" : args.filterBy.search.value.toLowerCase();
 
-              args.response.success({ data: sfvolumes });
+              if (search == "") {
+                sfvolumesfiltered = sfvolumes;
+              }
+              else {
+                for (i = 0; i < sfvolumes.length; i++) {
+                  sfvolume = sfvolumes[i];
+
+                  if (sfvolume.name.toLowerCase().indexOf(search) > -1 ) {
+                    sfvolumesfiltered.push(sfvolume);
+                  }
+                }
+              }
+
+              args.response.success({ data: sfvolumesfiltered });
             },
             error: function(errorMessage) {
               args.response.error(errorMessage);
