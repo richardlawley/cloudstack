@@ -53,7 +53,7 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
     private Long _zoneId;
 
     @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = ApiHelper.ACCOUNT_ID_DESC)
-    private long _accountId;
+    private Long _accountId;
 
     @Inject private ApiHelper _apiHelper;
 
