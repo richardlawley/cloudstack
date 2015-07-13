@@ -639,6 +639,8 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     private SfVolume createVolume(String name, long size, long minIops, long maxIops, long burstIops, long accountId, long sfVirtualNetworkId) {
+        verifyIops(minIops, maxIops, burstIops);
+
         Account account = _accountDao.findById(accountId);
 
         SfVirtualNetwork sfVirtualNetwork = getSfVirtualNetwork(sfVirtualNetworkId);
@@ -740,6 +742,8 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     private SfVolumeVO updateVolume(SfVolumeVO sfVolumeVO, long size, long minIops, long maxIops, long burstIops) {
+        verifyIops(minIops, maxIops, burstIops);
+
         SfVirtualNetwork sfVirtualNetwork = getSfVirtualNetwork(sfVolumeVO.getSfVirtualNetworkId());
 
         Account account = _accountDao.findById(sfVirtualNetwork.getAccountId());
@@ -988,5 +992,19 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         }
 
         return sfVirtualNetworkVOsToReturn;
+    }
+
+    private static void verifyIops(long minIops, long maxIops, long burstIops) {
+        if (minIops <= 0 || maxIops <= 0 || burstIops <= 0) {
+            throw new IllegalArgumentException("The 'Min IOPS', 'Max IOPS', and 'Burst IOPS' values must be greater than 0.");
+        }
+
+        if (minIops > maxIops) {
+            throw new IllegalArgumentException("The 'Min IOPS' value cannot exceed the 'Max IOPS' value.");
+        }
+
+        if (maxIops > burstIops) {
+            throw new IllegalArgumentException("The 'Max IOPS' value cannot exceed the 'Burst IOPS' value.");
+        }
     }
 }
