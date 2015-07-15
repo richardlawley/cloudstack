@@ -494,7 +494,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             return true;
         }
 
-        throw new PermissionDeniedException("Insufficient permissions to perform this action");
+        return false;
     }
 
     @Override
