@@ -44,6 +44,7 @@ public class DeleteSolidFireVolumeCmd extends BaseCmd {
     @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = ApiHelper.VOLUME_ID_DESC, required = true)
     private long _id;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -77,9 +78,9 @@ public class DeleteSolidFireVolumeCmd extends BaseCmd {
 
             SfVolume sfVolume = _apiSolidFireService2.deleteSolidFireVolume(_id);
 
-            ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
+            ResponseView responseView = _apiHelper.isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
 
-            ApiSolidFireVolumeResponse response = ApiHelper.instance().getApiSolidFireVolumeResponse(sfVolume, responseView);
+            ApiSolidFireVolumeResponse response = _apiHelper.getApiSolidFireVolumeResponse(sfVolume, responseView);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apideletesolidfirevolume");

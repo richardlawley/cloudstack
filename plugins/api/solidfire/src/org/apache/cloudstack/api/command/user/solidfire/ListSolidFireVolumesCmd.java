@@ -45,6 +45,7 @@ public class ListSolidFireVolumesCmd extends BaseListCmd {
     @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVolumeResponse.class, description = ApiHelper.VOLUME_ID_DESC)
     private Long _id;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -76,9 +77,9 @@ public class ListSolidFireVolumesCmd extends BaseListCmd {
                 sfVolumes = _apiSolidFireService2.listSolidFireVolumes();
             }
 
-            ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
+            ResponseView responseView = _apiHelper.isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
 
-            List<ApiSolidFireVolumeResponse> responses = ApiHelper.instance().getApiSolidFireVolumeResponse(sfVolumes, responseView);
+            List<ApiSolidFireVolumeResponse> responses = _apiHelper.getApiSolidFireVolumeResponse(sfVolumes, responseView);
 
             ListResponse<ApiSolidFireVolumeResponse> listReponse = new ListResponse<>();
 

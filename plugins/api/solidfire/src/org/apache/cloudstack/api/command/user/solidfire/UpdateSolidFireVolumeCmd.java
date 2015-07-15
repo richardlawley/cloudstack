@@ -56,6 +56,7 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
     @Parameter(name = ApiHelper.BURST_IOPS, type = CommandType.LONG, description = ApiHelper.BURST_IOPS_DESC, required = true)
     private long _burstIops;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -88,9 +89,9 @@ public class UpdateSolidFireVolumeCmd extends BaseCmd {
 
             SfVolume sfVolume = _apiSolidFireService2.updateSolidFireVolume(_id, _size, _minIops, _maxIops, _burstIops);
 
-            ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
+            ResponseView responseView = _apiHelper.isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
 
-            ApiSolidFireVolumeResponse response = ApiHelper.instance().getApiSolidFireVolumeResponse(sfVolume, responseView);
+            ApiSolidFireVolumeResponse response = _apiHelper.getApiSolidFireVolumeResponse(sfVolume, responseView);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apiupdatesolidfirevolume");

@@ -53,6 +53,7 @@ public class UpdateReferenceToSolidFireClusterCmd extends BaseCmd {
     @Parameter(name = ApiHelper.TOTAL_BURST_IOPS, type = CommandType.LONG, description = ApiHelper.TOTAL_BURST_IOPS_DESC, required = true)
     private long _totalBurstIops;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -77,7 +78,7 @@ public class UpdateReferenceToSolidFireClusterCmd extends BaseCmd {
             SfCluster sfCluster = _apiSolidFireService2.updateReferenceToSolidFireCluster(_name, _totalCapacity,
                     _totalMinIops, _totalMaxIops, _totalBurstIops);
 
-            ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
+            ApiSolidFireClusterResponse response = _apiHelper.getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apiupdatereferencetosolidfirecluster");

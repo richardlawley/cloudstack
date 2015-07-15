@@ -63,6 +63,7 @@ public class CreateSolidFireVirtualNetworkCmd extends BaseCmd {
     @Parameter(name = ApiConstants.ACCOUNT_ID, type = CommandType.UUID, entityType = AccountResponse.class, description = ApiHelper.ACCOUNT_ID_DESC, required = true)
     private long _accountId;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -86,7 +87,7 @@ public class CreateSolidFireVirtualNetworkCmd extends BaseCmd {
 
             SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.createSolidFireVirtualNetwork(_clusterName, _name, _tag, _startIp, _size, _netmask, _svip, _accountId);
 
-            ApiSolidFireVirtualNetworkResponse response = ApiHelper.instance().getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
+            ApiSolidFireVirtualNetworkResponse response = _apiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apicreatesolidfirevirtualnetwork");

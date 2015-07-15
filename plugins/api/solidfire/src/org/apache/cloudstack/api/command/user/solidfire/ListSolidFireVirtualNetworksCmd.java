@@ -86,9 +86,9 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
                 sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks(_zoneId, _accountId);
             }
 
-            ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
+            ResponseView responseView = _apiHelper.isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
 
-            List<ApiSolidFireVirtualNetworkResponse> responses = ApiHelper.instance().getApiSolidFireVirtualNetworkResponse(sfVirtualNetworks, responseView);
+            List<ApiSolidFireVirtualNetworkResponse> responses = _apiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetworks, responseView);
 
             ListResponse<ApiSolidFireVirtualNetworkResponse> listReponse = new ListResponse<>();
 

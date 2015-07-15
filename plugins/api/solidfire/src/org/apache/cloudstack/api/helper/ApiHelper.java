@@ -27,8 +27,6 @@ import com.cloud.user.dao.AccountDao;
 import com.cloud.utils.exception.CloudRuntimeException;
 
 public class ApiHelper {
-    private static ApiHelper s_apiHelperInstance = new ApiHelper();
-
     public static final String MVIP = "mvip";
     public static final String SVIP = "svip";
     public static final String CLUSTER_NAME = "clustername";
@@ -78,10 +76,6 @@ public class ApiHelper {
     @Inject private SfVirtualNetworkDao _sfVirtualNetworkDao;
 
     private ApiHelper() {
-    }
-
-    public static ApiHelper instance() {
-        return s_apiHelperInstance;
     }
 
     public ApiSolidFireClusterResponse getApiSolidFireClusterResponse(SfCluster sfCluster) {

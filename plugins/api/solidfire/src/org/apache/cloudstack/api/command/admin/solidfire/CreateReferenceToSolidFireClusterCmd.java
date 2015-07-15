@@ -64,6 +64,7 @@ public class CreateReferenceToSolidFireClusterCmd extends BaseCmd {
     @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = ApiHelper.ZONE_ID_DESC, required = true)
     private long _zoneId;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -88,7 +89,7 @@ public class CreateReferenceToSolidFireClusterCmd extends BaseCmd {
             SfCluster sfCluster = _apiSolidFireService2.createReferenceToSolidFireCluster(_mvip, _username, _password, _totalCapacity,
                     _totalMinIops, _totalMaxIops, _totalBurstIops, _zoneId);
 
-            ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
+            ApiSolidFireClusterResponse response = _apiHelper.getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apicreatereferencetosolidfirecluster");

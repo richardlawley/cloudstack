@@ -62,6 +62,7 @@ public class UpdateSolidFireVirtualNetworkCmd extends BaseCmd {
     @Parameter(name = ApiHelper.SVIP, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_SVIP_DESC, required = true)
     private String _svip;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -91,7 +92,7 @@ public class UpdateSolidFireVirtualNetworkCmd extends BaseCmd {
 
             SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.updateSolidFireVirtualNetwork(_id, _name, _tag, _startIp, _size, _netmask, _svip);
 
-            ApiSolidFireVirtualNetworkResponse response = ApiHelper.instance().getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
+            ApiSolidFireVirtualNetworkResponse response = _apiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apiupdatesolidfirevirtualnetwork");

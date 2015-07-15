@@ -41,6 +41,7 @@ public class DeleteReferenceToSolidFireClusterCmd extends BaseCmd {
     @Parameter(name = ApiHelper.NAME, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_CLUSTER_NAME_DESC, required = true)
     private String _name;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -64,7 +65,7 @@ public class DeleteReferenceToSolidFireClusterCmd extends BaseCmd {
 
             SfCluster sfCluster = _apiSolidFireService2.deleteReferenceToSolidFireCluster(_name);
 
-            ApiSolidFireClusterResponse response = ApiHelper.instance().getApiSolidFireClusterResponse(sfCluster);
+            ApiSolidFireClusterResponse response = _apiHelper.getApiSolidFireClusterResponse(sfCluster);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apideletereferencetosolidfirecluster");

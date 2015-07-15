@@ -62,6 +62,7 @@ public class CreateSolidFireVolumeCmd extends BaseCmd {
             description = ApiHelper.VIRTUAL_NETWORK_ID_DESC, required = true)
     private long _sfVirtualNetworkId;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -85,9 +86,9 @@ public class CreateSolidFireVolumeCmd extends BaseCmd {
 
             SfVolume sfVolume = _apiSolidFireService2.createSolidFireVolume(_name, _size, _minIops, _maxIops, _burstIops, _accountId, _sfVirtualNetworkId);
 
-            ResponseView responseView = ApiHelper.instance().isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
+            ResponseView responseView = _apiHelper.isRootAdmin() ? ResponseView.Full : ResponseView.Restricted;
 
-            ApiSolidFireVolumeResponse response = ApiHelper.instance().getApiSolidFireVolumeResponse(sfVolume, responseView);
+            ApiSolidFireVolumeResponse response = _apiHelper.getApiSolidFireVolumeResponse(sfVolume, responseView);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apicreatesolidfirevolume");

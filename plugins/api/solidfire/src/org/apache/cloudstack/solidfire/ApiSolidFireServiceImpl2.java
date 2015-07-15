@@ -109,6 +109,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     @Inject private AccountDao _accountDao;
     @Inject private AccountDetailsDao _accountDetailsDao;
     @Inject private AccountManager _accountMgr;
+    @Inject private ApiHelper _apiHelper;
     @Inject private DataCenterDao _zoneDao;
     @Inject private SfClusterDao _sfClusterDao;
     @Inject private SfVirtualNetworkDao _sfVirtualNetworkDao;
@@ -259,7 +260,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         final List<SfVirtualNetworkVO> sfVirtualNetworkVOs;
 
-        if (ApiHelper.instance().isRootAdmin()) {
+        if (_apiHelper.isRootAdmin()) {
             if (zoneId != null) {
                 if (accountId != null) {
                     sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.findByAccountId(accountId), zoneId);
@@ -283,10 +284,10 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             }
 
             if (zoneId != null) {
-                sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.findByAccountId(ApiHelper.instance().getCallingAccount().getId()), zoneId);
+                sfVirtualNetworkVOs = filterVirtualNetworksByZone(_sfVirtualNetworkDao.findByAccountId(_apiHelper.getCallingAccount().getId()), zoneId);
             }
             else {
-                sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(ApiHelper.instance().getCallingAccount().getId());
+                sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(_apiHelper.getCallingAccount().getId());
             }
         }
 
@@ -396,13 +397,13 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         final List<SfVolumeVO> sfVolumeVOs;
 
-        if (ApiHelper.instance().isRootAdmin()) {
+        if (_apiHelper.isRootAdmin()) {
             sfVolumeVOs = _sfVolumeDao.listAll();
         }
         else {
             sfVolumeVOs = new ArrayList<>();
 
-            List<SfVirtualNetworkVO> sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(ApiHelper.instance().getCallingAccount().getId());
+            List<SfVirtualNetworkVO> sfVirtualNetworkVOs = _sfVirtualNetworkDao.findByAccountId(_apiHelper.getCallingAccount().getId());
 
             if (sfVirtualNetworkVOs != null) {
                 for (SfVirtualNetwork sfVirtualNetwork : sfVirtualNetworkVOs) {
@@ -569,15 +570,15 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     private void verifyRootAdmin() {
-        if (!ApiHelper.instance().isRootAdmin()) {
+        if (!_apiHelper.isRootAdmin()) {
             throw new PermissionDeniedException("Only a root admin can perform this operation.");
         }
     }
 
     private void verifyPermissionsForAccount(long accountId) {
-        Account account = ApiHelper.instance().getCallingAccount();
+        Account account = _apiHelper.getCallingAccount();
 
-        if (ApiHelper.instance().isRootAdmin(account.getId())) {
+        if (_apiHelper.isRootAdmin(account.getId())) {
             return; // permissions OK
         }
 

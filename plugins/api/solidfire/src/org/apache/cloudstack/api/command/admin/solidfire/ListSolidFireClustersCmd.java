@@ -43,6 +43,7 @@ public class ListSolidFireClustersCmd extends BaseListCmd {
     @Parameter(name = ApiHelper.NAME, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_CLUSTER_NAME_DESC)
     private String _name;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ public class ListSolidFireClustersCmd extends BaseListCmd {
                 sfClusters = _apiSolidFireService2.listSolidFireClusters();
             }
 
-            List<ApiSolidFireClusterResponse> responses = ApiHelper.instance().getApiSolidFireClusterResponse(sfClusters);
+            List<ApiSolidFireClusterResponse> responses = _apiHelper.getApiSolidFireClusterResponse(sfClusters);
 
             ListResponse<ApiSolidFireClusterResponse> listReponse = new ListResponse<>();
 

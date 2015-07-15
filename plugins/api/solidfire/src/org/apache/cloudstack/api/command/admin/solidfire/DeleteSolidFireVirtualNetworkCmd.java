@@ -43,6 +43,7 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
     @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = ApiHelper.VIRTUAL_NETWORK_ID_DESC, required = true)
     private long _id;
 
+    @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
     /////////////////////////////////////////////////////
@@ -72,7 +73,7 @@ public class DeleteSolidFireVirtualNetworkCmd extends BaseCmd {
 
             SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.deleteSolidFireVirtualNetwork(_id);
 
-            ApiSolidFireVirtualNetworkResponse response = ApiHelper.instance().getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
+            ApiSolidFireVirtualNetworkResponse response = _apiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
 
             response.setResponseName(getCommandName());
             response.setObjectName("apideletesolidfirevirtualnetwork");
