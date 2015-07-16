@@ -59,6 +59,28 @@
               title: 'Add Reference to Cluster',
               desc: 'Please fill in the following data to add a new reference to a cluster.',
               fields: {
+                availabilityZone: {
+                  label: 'label.availability.zone',
+                  docID: 'helpVolumeAvailabilityZone',
+                  validation: {
+                    required: true
+                  },
+                  select: function(args) {
+                    $.ajax({
+                      url: createURL("listZones&available=true"),
+                      dataType: "json",
+                      async: true,
+                      success: function(json) {
+                        var zoneObjs = json.listzonesresponse.zone;
+
+                        args.response.success({
+                          descriptionField: 'name',
+                          data: zoneObjs
+                        });
+                      }
+                    });
+                  }
+                },
                 mvip: {
                   label: 'MVIP',
                   validation: {
@@ -107,41 +129,19 @@
                     required: true,
                     number: true
                   }
-                },
-                availabilityZone: {
-                  label: 'label.availability.zone',
-                  docID: 'helpVolumeAvailabilityZone',
-                  validation: {
-                    required: true
-                  },
-                  select: function(args) {
-                    $.ajax({
-                      url: createURL("listZones&available=true"),
-                      dataType: "json",
-                      async: true,
-                      success: function(json) {
-                        var zoneObjs = json.listzonesresponse.zone;
-
-                        args.response.success({
-                          descriptionField: 'name',
-                          data: zoneObjs
-                        });
-                      }
-                    });
-                  }
                 }
               }
             },
             action: function(args) {
               var data = {
+               availabilityzone: args.data.availabilityzone,
                 mvip: args.data.mvip,
                 username: args.data.username,
                 password: args.data.password,
                 totalcapacity: args.data.totalcapacity,
                 totalminiops: args.data.totalminiops,
                 totalmaxiops: args.data.totalmaxiops,
-                totalburstiops: args.data.totalburstiops,
-                availabilityzone: args.data.availabilityzone
+                totalburstiops: args.data.totalburstiops
               };
 
               $.ajax({
@@ -234,6 +234,9 @@
                   uuid: {
                     label: 'label.id'
                   },
+                  zonename: {
+                    label: 'label.zone'
+                  },
                   mvip: {
                     label: 'MVIP'
                   },
@@ -255,9 +258,6 @@
                   totalburstiops: {
                     label: 'Total Burst IOPS',
                     isEditable: true
-                  },
-                  zonename: {
-                    label: 'label.zone'
                   }
                 }
               ],
