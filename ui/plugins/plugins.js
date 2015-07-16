@@ -17,6 +17,7 @@
 (function($, cloudStack) {
   cloudStack.plugins = [
     // 'testPlugin',
-    // 'sfSharedVolume'
+    // 'sfSharedVolume',
+    // 'sfAdministration'
   ];
 }(jQuery, cloudStack));
