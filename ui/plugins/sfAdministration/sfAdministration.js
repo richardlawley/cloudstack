@@ -134,14 +134,14 @@
             },
             action: function(args) {
               var data = {
-               availabilityzone: args.data.availabilityzone,
+                zoneid: args.data.availabilityZone,
                 mvip: args.data.mvip,
                 username: args.data.username,
                 password: args.data.password,
-                totalcapacity: args.data.totalcapacity,
-                totalminiops: args.data.totalminiops,
-                totalmaxiops: args.data.totalmaxiops,
-                totalburstiops: args.data.totalburstiops
+                totalcapacity: args.data.totalCapacity,
+                totalminiops: args.data.totalMinIops,
+                totalmaxiops: args.data.totalMaxIops,
+                totalburstiops: args.data.totalBurstIops
               };
 
               $.ajax({
