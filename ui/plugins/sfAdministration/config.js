@@ -1,5 +1,5 @@
 (function (cloudStack) {
-  cloudStack.plugins.sfSharedVolume.config = {
+  cloudStack.plugins.sfAdministration.config = {
     title: 'SolidFire Administration',
     desc: 'SolidFire Administration',
     externalLink: 'http://www.solidfire.com/',

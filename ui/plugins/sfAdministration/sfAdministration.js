@@ -10,9 +10,9 @@
         id: 'sfAdministration',
         fields: {
           name: { label: 'label.name' },
-          iqn: { label: 'MVIP' },
-          size: { label: 'Username' },
-          miniops: { label: 'label.zone' }
+          mvip: { label: 'MVIP' },
+          username: { label: 'Username' },
+          zonename: { label: 'label.zone' }
         },
         dataProvider: function(args) {
           plugin.ui.apiCall('listSolidFireClusters', {
