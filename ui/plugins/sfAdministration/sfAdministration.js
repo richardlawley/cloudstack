@@ -2,7 +2,7 @@
   cloudStack.plugins.sfAdministration = function(plugin) {
     plugin.ui.addSection({
       id: 'sfAdministration',
-      title: 'sfAdministration',
+      title: 'SolidFire Administration',
       preFilter: function(args) {
         return isAdmin();
       },
@@ -244,26 +244,26 @@
                     label: 'Total Capacity',
                     isEditable: true
                   },
-                  miniops: {
+                  totalminiops: {
                     label: 'Total Min IOPS',
                     isEditable: true
                   },
-                  maxiops: {
+                  totalmaxiops: {
                     label: 'Total Max IOPS',
                     isEditable: true
                   },
-                  burstiops: {
+                  totalburstiops: {
                     label: 'Total Burst IOPS',
                     isEditable: true
                   },
-                  zone: {
-                    label: 'Zone'
+                  zonename: {
+                    label: 'label.zone'
                   }
                 }
               ],
               dataProvider: function(args) {
                 $.ajax({
-                  url: createURL("listSolidFireClusters&name=" + args.context.sfClusters[0].name),
+                  url: createURL("listSolidFireClusters&name=" + args.context.sfAdministration[0].name),
                   dataType: "json",
                   async: true,
                   success: function(json) {
