@@ -207,7 +207,7 @@
               },
               action: function(args) {
                 $.ajax({
-                  url: createURL('deleteReferenceToSolidFireCluster&name=' + args.context.sfSharedVolumes[0].name),
+                  url: createURL('deleteReferenceToSolidFireCluster&name=' + args.context.sfAdministration[0].name),
                   success: function(json) {
                     args.response.success();
                   },
