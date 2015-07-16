@@ -174,7 +174,7 @@
               action: function (args) {
                 var params = [];
 
-                params.push("&name=" + args.context.sfClusters[0].name);
+                params.push("&name=" + args.context.sfAdministration[0].name);
                 params.push("&totalcapacity=" + args.data.totalcapacity);
                 params.push("&totalminiops=" + args.data.totalminiops);
                 params.push("&totalmaxiops=" + args.data.totalmaxiops);
