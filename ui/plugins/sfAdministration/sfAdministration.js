@@ -310,9 +310,9 @@
               account: { label: 'label.account' }
             },
             dataProvider: function(args) {
-              var virtualnetworkid = args.context.virtualnetwork[0].id;
+              var clustername = args.context.sfAdministration[0].name;
 
-              plugin.ui.apiCall('listSolidFireVirtualNetworks&' + virtualnetworkid, {
+              plugin.ui.apiCall('listSolidFireVirtualNetworks&clustername=' + clustername, {
                 success: function(json) {
                   var sfvirtualnetworksfiltered = [];
                   var sfvirtualnetworks = json.listsolidfirevirtualnetworksresponse.sfvirtualnetwork;

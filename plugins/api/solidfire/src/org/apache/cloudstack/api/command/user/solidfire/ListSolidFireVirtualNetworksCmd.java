@@ -49,6 +49,9 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
     @Parameter(name = ApiConstants.ID, type = CommandType.UUID, entityType = ApiSolidFireVirtualNetworkResponse.class, description = ApiHelper.VIRTUAL_NETWORK_ID_DESC)
     private Long _id;
 
+    @Parameter(name = ApiHelper.CLUSTER_NAME, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_CLUSTER_NAME_DESC, required = true)
+    private String _clusterName;
+
     @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, description = ApiHelper.ZONE_ID_DESC)
     private Long _zoneId;
 
@@ -76,11 +79,14 @@ public class ListSolidFireVirtualNetworksCmd extends BaseListCmd {
             if (_id != null) {
                 sfVirtualNetworks = new ArrayList<>();
 
-                SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.listSolidFireVirtualNetwork(_id);
+                SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.listSolidFireVirtualNetworkById(_id);
 
                 if (sfVirtualNetwork != null) {
                     sfVirtualNetworks.add(sfVirtualNetwork);
                 }
+            }
+            else if (_clusterName != null) {
+                sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworkByClusterName(_clusterName);
             }
             else {
                 sfVirtualNetworks = _apiSolidFireService2.listSolidFireVirtualNetworks(_zoneId, _accountId);

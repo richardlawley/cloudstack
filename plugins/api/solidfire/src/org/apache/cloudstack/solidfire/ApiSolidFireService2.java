@@ -42,7 +42,9 @@ public interface ApiSolidFireService2 extends PluggableService, Configurable {
 
     // ********** VLAN-related commands **********
 
-    SfVirtualNetwork listSolidFireVirtualNetwork(long id);
+    SfVirtualNetwork listSolidFireVirtualNetworkById(long id);
+
+    List<SfVirtualNetwork> listSolidFireVirtualNetworkByClusterName(String clusterName);
 
     // Long (instead of long) for both zoneId and accountId because they're optional and null is used to indicate that they're not present
     // zoneId and accountId are not dependent upon one another (i.e. either one can be null, both can be null, or both can be not be null)

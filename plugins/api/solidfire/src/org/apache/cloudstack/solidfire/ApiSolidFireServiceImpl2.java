@@ -244,14 +244,25 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     @Override
-    public SfVirtualNetwork listSolidFireVirtualNetwork(long id) {
-        s_logger.info("listSolidFireVirtualNetwork invoked");
+    public SfVirtualNetwork listSolidFireVirtualNetworkById(long id) {
+        s_logger.info("listSolidFireVirtualNetworkById invoked");
 
         SfVirtualNetwork sfVirtualNetwork = getSfVirtualNetwork(id);
 
         verifyPermissionsForAccount(sfVirtualNetwork.getAccountId());
 
         return getSfVirtualNetwork(id);
+    }
+
+    @Override
+    public List<SfVirtualNetwork> listSolidFireVirtualNetworkByClusterName(String clusterName) {
+        s_logger.info("listSolidFireVirtualNetworkByClusterName invoked");
+
+        verifyRootAdmin();
+
+        SfCluster sfCluster = getSfCluster(clusterName);
+
+        return filterVirtualNetworksByCluster(_sfVirtualNetworkDao.listAll(), sfCluster.getId());
     }
 
     @Override
@@ -977,6 +988,22 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
                 sfAccount.getTargetSecret());
 
         _accountDetailsDao.persist(accountDetail);
+    }
+
+    private List<SfVirtualNetwork> filterVirtualNetworksByCluster(List<SfVirtualNetworkVO> sfVirtualNetworkVOs, long clusterId) {
+        List<SfVirtualNetwork> sfVirtualNetworkVOsToReturn = new ArrayList<>();
+
+        if (sfVirtualNetworkVOs != null) {
+            for (SfVirtualNetworkVO sfVirtualNetworkVO : sfVirtualNetworkVOs) {
+                long sfClusterId = sfVirtualNetworkVO.getSfClusterId();
+
+                if (sfClusterId == clusterId) {
+                    sfVirtualNetworkVOsToReturn.add(sfVirtualNetworkVO);
+                }
+            }
+        }
+
+        return sfVirtualNetworkVOsToReturn;
     }
 
     private List<SfVirtualNetworkVO> filterVirtualNetworksByZone(List<SfVirtualNetworkVO> sfVirtualNetworkVOs, long zoneId) {
