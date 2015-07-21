@@ -127,6 +127,7 @@ public class ApiHelper {
         Account account = _accountDao.findById(sfVirtualNetwork.getAccountId());
 
         sfResponse.setAccountUuid(account.getUuid());
+        sfResponse.setAccountName(account.getAccountName());
 
         SfCluster sfCluster = _sfClusterDao.findById(sfVirtualNetwork.getSfClusterId());
 
@@ -135,6 +136,7 @@ public class ApiHelper {
         DataCenterVO dataCenterVO = _zoneDao.findById(sfCluster.getZoneId());
 
         sfResponse.setZoneUuid(dataCenterVO.getUuid());
+        sfResponse.setZoneName(dataCenterVO.getName());
 
         if (ResponseView.Full.equals(responseView)) {
             sfResponse.setTag(sfVirtualNetwork.getTag());

@@ -67,6 +67,10 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
     @Param(description = "UUID of the account the VLAN is associated with")
     private String _accountUuid;
 
+    @SerializedName("accountname")
+    @Param(description = "Name of the account the volume is associated with")
+    private String _accountName;
+
     @SerializedName("zoneid")
     @Param(description = "ID of the zone the VLAN is associated with")
     private long _zoneId;
@@ -74,6 +78,10 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
     @SerializedName("zoneuuid")
     @Param(description = "UUID of the zone the VLAN is associated with")
     private String _zoneUuid;
+
+    @SerializedName("zonename")
+    @Param(description = "Name of the zone the volume is associated with")
+    private String _zoneName;
 
     @SerializedName("clustername")
     @Param(description = "Name of cluster the VLAN belongs to")
@@ -159,6 +167,14 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
         return _accountUuid;
     }
 
+    public void setAccountName(String accountName) {
+        _accountName = accountName;
+    }
+
+    public String getAccountName() {
+        return _accountName;
+    }
+
     public void setZoneId(long zoneId) {
         _zoneId = zoneId;
     }
@@ -173,6 +189,14 @@ public class ApiSolidFireVirtualNetworkResponse extends BaseResponse {
 
     public String getZoneUuid() {
         return _zoneUuid;
+    }
+
+    public void setZoneName(String zoneName) {
+        _zoneName = zoneName;
+    }
+
+    public String getZoneName() {
+        return _zoneName;
     }
 
     public void setClusterName(String clusterName) {

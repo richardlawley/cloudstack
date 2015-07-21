@@ -307,7 +307,7 @@
               name: { label: 'label.name' },
               tag: { label: 'Tag' },
               svip: { label: 'SVIP' },
-              account: { label: 'label.account' }
+              accountname: { label: 'label.account' }
             },
             dataProvider: function(args) {
               var clustername = args.context.sfAdministration[0].name;
