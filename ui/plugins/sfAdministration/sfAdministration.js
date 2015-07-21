@@ -468,6 +468,160 @@
                       }
                     }
                   }
+                },
+                action: function(args) {
+                  var data = {
+                    clustername: args.context.sfAdministration[0].name,
+                    name: args.data.name,
+                    tag: args.data.tag,
+                    startip: args.data.startip,
+                    size: 10, // Mike T. args.data.size,
+                    netmask: args.data.netmask,
+                    svip: args.data.svip,
+                    accountid: args.data.account
+                  };
+
+                  $.ajax({
+                    url: createURL('createSolidFireVirtualNetwork'),
+                    data: data,
+                    success: function(json) {
+                      var sfVirtualNetworkObj = json.createsolidfirevirtualnetworkresponse.apicreatesolidfirevirtualnetwork;
+
+                      args.response.success({
+                        data: sfVirtualNetworkObj
+                      });
+                    },
+                    error: function(json) {
+                      args.response.error(parseXMLHttpResponse(json));
+                    }
+                  });
+                }
+              }
+            },
+            detailView: {
+              name: 'label.details',
+              actions: {
+                edit: {
+                  label: 'label.edit',
+                  messages: {
+                    notification: function(args) {
+                      return 'Edit Virtual Network';
+                    }
+                  },
+                  action: function (args) {
+                    var params = [];
+
+                    params.push("&name=" + args.context.name);
+                    params.push("&tag=" + args.data.tag);
+                    params.push("&startip=" + args.data.startip);
+                    params.push("&size=" + "10"); // Mike T. args.data.size);
+                    params.push("&netmask=" + args.data.netmask);
+                    params.push("&svip=" + args.data.svip);
+
+                    $.ajax({
+                      url: createURL('updateSolidFireVirtualNetwork' + params.join("")),
+                      success: function(json) {
+                        var sfVirtualNetworkObj = json.updatesolidfirevirtualnetworkresponse.apiupdatesolidfirevirtualnetwork;
+
+                        args.response.success({
+                          data: sfVirtualNetworkObj
+                        });
+                      },
+                      error: function(json) {
+                        args.response.error(parseXMLHttpResponse(json));
+                      }
+                    });
+                  }
+                },
+                remove: {
+                  label: 'Delete Virtual Network',
+                  messages: {
+                    confirm: function(args) {
+                      return 'Are you sure you would like to delete this virtual network?';
+                    },
+                    notification: function(args) {
+                      return 'Delete Virtual Network';
+                    }
+                  },
+                  action: function(args) {
+                    $.ajax({
+                      url: createURL('deleteSolidFireVirtualNetwork&id=' + args.context.sfVirtualNetwork[0].id),
+                      success: function(json) {
+                        args.response.success();
+                      },
+                      error: function(json) {
+                        args.response.error(parseXMLHttpResponse(json));
+                      }
+                    });
+                  }
+                }
+              },
+              tabs: {
+                details: {
+                  title: 'label.details',
+                  preFilter: function(args) {
+                    return [];
+                  },
+                  fields: [
+                    {
+                      name: {
+                        label: 'label.name',
+                        isEditable: true
+                      }
+                    },
+                    {
+                      uuid: {
+                        label: 'label.id'
+                      },
+                      accountname: {
+                        label: 'label.account'
+                      },
+                      tag: {
+                        label: 'Tag',
+                        isEditable: true
+                      },
+                      physicalnetwork: {
+                        label: 'Physical Network'
+                      },
+                      networkoffering: {
+                        label: 'Network Offering'
+                      },
+                      gateway: {
+                        label: 'Gateway',
+                        isEditable: true
+                      },
+                      netmask: {
+                        label: 'Netmask',
+                        isEditable: true
+                      },
+                      startip: {
+                        label: 'Start IP',
+                        isEditable: true
+                      },
+                      endip: {
+                        label: 'End IP',
+                        isEditable: true
+                      },
+                      svip: {
+                        label: 'SVIP',
+                        isEditable: true
+                      }
+                    }
+                  ],
+                  dataProvider: function(args) {
+                    $.ajax({
+                      url: createURL("listSolidFireVirtualNetworks&id=" + args.context.sfVirtualNetwork[0].id),
+                      dataType: "json",
+                      async: true,
+                      success: function(json) {
+                        var jsonObj = json.listsolidfirevirtualnetworksresponse.sfvirtualnetwork[0];
+
+                        args.response.success({
+                          data: jsonObj
+                        });
+                      }
+                    });
+                  }
                 }
               }
             }
