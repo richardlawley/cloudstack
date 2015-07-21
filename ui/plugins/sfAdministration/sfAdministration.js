@@ -61,7 +61,7 @@
                 },
                 messages: {
                   confirm: function(args) {
-                    return 'Please fill in the following data to add a new reference to a cluster.';
+                    return 'Please fill in the following data to add a reference to a cluster.';
                   },
                   notification: function(args) {
                     return 'Add Reference to Cluster';
@@ -69,7 +69,7 @@
                 },
                 createForm: {
                   title: 'Add Reference to Cluster',
-                  desc: 'Please fill in the following data to add a new reference to a cluster.',
+                  desc: 'Please fill in the following data to add a reference to a cluster.',
                   fields: {
                     availabilityZone: {
                       label: 'label.availability.zone',
@@ -337,6 +337,139 @@
                   args.response.error(errorMessage);
                 }
               });
+            },
+            actions: {
+              add: {
+                label: 'Add Virtual Network',
+                preFilter: function(args) {
+                  return true;
+                },
+                messages: {
+                  confirm: function(args) {
+                    return 'Please fill in the following data to add a virtual network.';
+                  },
+                  notification: function(args) {
+                    return 'Add Virtual Network';
+                  }
+                },
+                createForm: {
+                  title: 'Add Virtual Network',
+                  desc: 'Please fill in the following data to add a virtual network.',
+                  fields: {
+                    account: {
+                      label: 'Account',
+                      validation: {
+                        required: true
+                      },
+                      select: function(args) {
+                        $.ajax({
+                          url: createURL("listAccounts&listAll=true"),
+                          dataType: "json",
+                          async: true,
+                          success: function(json) {
+                            var accountObjs = json.listaccountsresponse.account;
+
+                            args.response.success({
+                              descriptionField: 'name',
+                              data: accountObjs
+                            });
+                          }
+                        });
+                      }
+                    },
+                    name: {
+                      label: 'Name',
+                      validation: {
+                        required: true
+                      }
+                    },
+                    description: {
+                      label: 'Description',
+                      validation: {
+                        required: true
+                      }
+                    },
+                    tag: {
+                      label: 'Tag',
+                      validation: {
+                        required: true
+                      }
+                    },
+                    physicalnetwork: {
+                      label: 'Physical Network',
+                      validation: {
+                        required: true
+                      },
+                      select: function(args) {
+                        $.ajax({
+                          url: createURL("listAccounts&listAll=true"),
+                          dataType: "json",
+                          async: true,
+                          success: function(json) {
+                            var accountObjs = json.listaccountsresponse.account;
+
+                            args.response.success({
+                              descriptionField: 'name',
+                              data: accountObjs
+                            });
+                          }
+                        });
+                      }
+                    },
+                    networkoffering: {
+                      label: 'Network Offering',
+                      validation: {
+                        required: true
+                      },
+                      select: function(args) {
+                        $.ajax({
+                          url: createURL("listAccounts&listAll=true"),
+                          dataType: "json",
+                          async: true,
+                          success: function(json) {
+                            var accountObjs = json.listaccountsresponse.account;
+
+                            args.response.success({
+                              descriptionField: 'name',
+                              data: accountObjs
+                            });
+                          }
+                        });
+                      }
+                    },
+                    gateway: {
+                      label: 'Gateway',
+                      validation: {
+                        required: true
+                      }
+                    },
+                    netmask: {
+                      label: 'Netmask',
+                      validation: {
+                        required: true
+                      }
+                    },
+                    startip: {
+                      label: 'Start IP',
+                      validation: {
+                        required: true
+                      }
+                    },
+                    endip: {
+                      label: 'End IP',
+                      validation: {
+                        required: true
+                      }
+                    },
+                    svip: {
+                      label: 'SVIP',
+                      validation: {
+                        required: true
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
