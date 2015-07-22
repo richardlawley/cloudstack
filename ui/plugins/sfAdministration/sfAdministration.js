@@ -511,7 +511,8 @@
                   action: function (args) {
                     var params = [];
 
-                    params.push("&name=" + args.context.name);
+                    params.push("&id=" + args.context.sfVirtualNetworks[0].id);
+                    params.push("&name=" + args.data.name);
                     params.push("&tag=" + args.data.tag);
                     params.push("&startip=" + args.data.startip);
                     params.push("&size=" + "10"); // Mike T. args.data.size);
