@@ -545,7 +545,7 @@
                   },
                   action: function(args) {
                     $.ajax({
-                      url: createURL('deleteSolidFireVirtualNetwork&id=' + args.context.sfVirtualNetwork[0].id),
+                      url: createURL('deleteSolidFireVirtualNetwork&id=' + args.context.sfVirtualNetworks[0].id),
                       success: function(json) {
                         args.response.success();
                       },
@@ -610,7 +610,7 @@
                   ],
                   dataProvider: function(args) {
                     $.ajax({
-                      url: createURL("listSolidFireVirtualNetworks&id=" + args.context.sfVirtualNetwork[0].id),
+                      url: createURL("listSolidFireVirtualNetworks&id=" + args.context.sfVirtualNetworks[0].id),
                       dataType: "json",
                       async: true,
                       success: function(json) {
