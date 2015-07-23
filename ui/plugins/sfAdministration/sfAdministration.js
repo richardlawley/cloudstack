@@ -115,7 +115,7 @@
                       }
                     },
                     totalCapacity: {
-                      label: 'Total Capacity',
+                      label: 'Total Capacity (in GB)',
                       validation: {
                         required: true,
                         number: true
@@ -260,7 +260,7 @@
                         label: 'Username'
                       },
                       totalcapacity: {
-                        label: 'Total Capacity',
+                        label: 'Total Capacity (in GB)',
                         isEditable: true
                       },
                       totalminiops: {
