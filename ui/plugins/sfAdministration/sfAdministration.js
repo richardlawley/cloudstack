@@ -383,62 +383,8 @@
                         required: true
                       }
                     },
-                    description: {
-                      label: 'Description',
-                      validation: {
-                        required: true
-                      }
-                    },
                     tag: {
                       label: 'Tag',
-                      validation: {
-                        required: true
-                      }
-                    },
-                    physicalnetwork: {
-                      label: 'Physical Network',
-                      validation: {
-                        required: true
-                      },
-                      select: function(args) {
-                        $.ajax({
-                          url: createURL("listAccounts&listAll=true"),
-                          dataType: "json",
-                          async: true,
-                          success: function(json) {
-                            var accountObjs = json.listaccountsresponse.account;
-
-                            args.response.success({
-                              descriptionField: 'name',
-                              data: accountObjs
-                            });
-                          }
-                        });
-                      }
-                    },
-                    networkoffering: {
-                      label: 'Network Offering',
-                      validation: {
-                        required: true
-                      },
-                      select: function(args) {
-                        $.ajax({
-                          url: createURL("listAccounts&listAll=true"),
-                          dataType: "json",
-                          async: true,
-                          success: function(json) {
-                            var accountObjs = json.listaccountsresponse.account;
-
-                            args.response.success({
-                              descriptionField: 'name',
-                              data: accountObjs
-                            });
-                          }
-                        });
-                      }
-                    },
-                    gateway: {
-                      label: 'Gateway',
                       validation: {
                         required: true
                       }
@@ -455,10 +401,11 @@
                         required: true
                       }
                     },
-                    endip: {
-                      label: 'End IP',
+                    size: {
+                      label: 'Size',
                       validation: {
-                        required: true
+                        required: true,
+                        number: true
                       }
                     },
                     svip: {
@@ -472,13 +419,13 @@
                 action: function(args) {
                   var data = {
                     clustername: args.context.sfAdministration[0].name,
+                    accountid: args.data.account,
                     name: args.data.name,
                     tag: args.data.tag,
-                    startip: args.data.startip,
-                    size: 10, // Mike T. args.data.size,
                     netmask: args.data.netmask,
-                    svip: args.data.svip,
-                    accountid: args.data.account
+                    startip: args.data.startip,
+                    size: args.data.size,
+                    svip: args.data.svip
                   };
 
                   $.ajax({
@@ -514,9 +461,9 @@
                     params.push("&id=" + args.context.sfVirtualNetworks[0].id);
                     params.push("&name=" + args.data.name);
                     params.push("&tag=" + args.data.tag);
-                    params.push("&startip=" + args.data.startip);
-                    params.push("&size=" + "10"); // Mike T. args.data.size);
                     params.push("&netmask=" + args.data.netmask);
+                    params.push("&startip=" + args.data.startip);
+                    params.push("&size=" + args.data.size);
                     params.push("&svip=" + args.data.svip);
 
                     $.ajax({
@@ -581,16 +528,6 @@
                         label: 'Tag',
                         isEditable: true
                       },
-                      physicalnetwork: {
-                        label: 'Physical Network'
-                      },
-                      networkoffering: {
-                        label: 'Network Offering'
-                      },
-                      gateway: {
-                        label: 'Gateway',
-                        isEditable: true
-                      },
                       netmask: {
                         label: 'Netmask',
                         isEditable: true
@@ -599,8 +536,9 @@
                         label: 'Start IP',
                         isEditable: true
                       },
-                      endip: {
-                        label: 'End IP',
+                      size: {
+                        label: 'Size',
+                        number: true,
                         isEditable: true
                       },
                       svip: {
