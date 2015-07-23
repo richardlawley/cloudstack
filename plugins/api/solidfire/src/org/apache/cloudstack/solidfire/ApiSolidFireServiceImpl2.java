@@ -233,7 +233,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         List<SfVirtualNetworkVO> sfVirtualNetworks = _sfVirtualNetworkDao.findByClusterId(sfCluster.getId());
 
         if (sfVirtualNetworks != null && sfVirtualNetworks.size() > 0) {
-            throw new CloudRuntimeException("Unable to delete a cluster that has one or more virtual networks");
+            throw new CloudRuntimeException("Unable to delete a reference to a cluster that has one or more virtual networks");
         }
 
         if (!_sfClusterDao.remove(sfCluster.getId())) {
