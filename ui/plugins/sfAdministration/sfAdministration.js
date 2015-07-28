@@ -460,7 +460,6 @@
 
                     params.push("&id=" + args.context.sfVirtualNetworks[0].id);
                     params.push("&name=" + args.data.name);
-                    params.push("&tag=" + args.data.tag);
                     params.push("&netmask=" + args.data.netmask);
                     params.push("&startip=" + args.data.startip);
                     params.push("&size=" + args.data.size);
@@ -525,8 +524,7 @@
                         label: 'label.account'
                       },
                       tag: {
-                        label: 'Tag',
-                        isEditable: true
+                        label: 'Tag'
                       },
                       netmask: {
                         label: 'Netmask',

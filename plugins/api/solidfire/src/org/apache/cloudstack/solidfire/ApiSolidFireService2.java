@@ -53,8 +53,7 @@ public interface ApiSolidFireService2 extends PluggableService, Configurable {
     SfVirtualNetwork createSolidFireVirtualNetwork(String clusterName, String name, String tag, String startIp, int size,
             String netmask, String svip, long accountId);
 
-    SfVirtualNetwork updateSolidFireVirtualNetwork(long id, String name, String tag, String startIp, int size,
-            String netmask, String svip);
+    SfVirtualNetwork updateSolidFireVirtualNetwork(long id, String name, String startIp, int size, String netmask, String svip);
 
     SfVirtualNetwork deleteSolidFireVirtualNetwork(long id);
 

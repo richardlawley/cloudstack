@@ -95,10 +95,10 @@ public class SolidFireConnection {
         return virtualNetworkAddResult.result.virtualNetworkID;
     }
 
-    public void modifyVirtualNetwork(long id, String name, String tag, String startIp, int size, String netmask, String svip) {
+    public void modifyVirtualNetwork(String name, String tag, String startIp, int size, String netmask, String svip) {
         final Gson gson = new GsonBuilder().create();
 
-        VirtualNetworkToModify virtualNetworkToModify = new VirtualNetworkToModify(id, name, tag, startIp, size, netmask, svip);
+        VirtualNetworkToModify virtualNetworkToModify = new VirtualNetworkToModify(name, tag, startIp, size, netmask, svip);
 
         String strVirtualNetworkToModifyJson = gson.toJson(virtualNetworkToModify);
 
@@ -428,20 +428,18 @@ public class SolidFireConnection {
         private final String method = "ModifyVirtualNetwork";
         private final VirtualNetworkToModifyParams params;
 
-        public VirtualNetworkToModify(long id, String name, String tag, String startIp, int size, String netmask, String svip) {
-            params = new VirtualNetworkToModifyParams(id, name, tag, startIp, size, netmask, svip);
+        public VirtualNetworkToModify(String name, String tag, String startIp, int size, String netmask, String svip) {
+            params = new VirtualNetworkToModifyParams(name, tag, startIp, size, netmask, svip);
         }
 
         private static final class VirtualNetworkToModifyParams {
-            private final long virtualNetworkID;
             private final String name;
             private final String virtualNetworkTag;
             private final AddressBlock[] addressBlocks = new AddressBlock[1];
             private final String netmask;
             private final String svip;
 
-            public VirtualNetworkToModifyParams(long id, String name, String tag, String startIp, int size, String netmask, String svip) {
-                this.virtualNetworkID = id;
+            public VirtualNetworkToModifyParams(String name, String tag, String startIp, int size, String netmask, String svip) {
                 this.name = name;
                 this.virtualNetworkTag = tag;
 
