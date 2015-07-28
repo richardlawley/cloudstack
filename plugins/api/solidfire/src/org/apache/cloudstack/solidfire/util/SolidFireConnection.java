@@ -95,10 +95,10 @@ public class SolidFireConnection {
         return virtualNetworkAddResult.result.virtualNetworkID;
     }
 
-    public void modifyVirtualNetwork(String name, String tag, String startIp, int size, String netmask, String svip) {
+    public void modifyVirtualNetwork(String name, String tag, String startIp, int size, String netmask) {
         final Gson gson = new GsonBuilder().create();
 
-        VirtualNetworkToModify virtualNetworkToModify = new VirtualNetworkToModify(name, tag, startIp, size, netmask, svip);
+        VirtualNetworkToModify virtualNetworkToModify = new VirtualNetworkToModify(name, tag, startIp, size, netmask);
 
         String strVirtualNetworkToModifyJson = gson.toJson(virtualNetworkToModify);
 
@@ -428,8 +428,8 @@ public class SolidFireConnection {
         private final String method = "ModifyVirtualNetwork";
         private final VirtualNetworkToModifyParams params;
 
-        public VirtualNetworkToModify(String name, String tag, String startIp, int size, String netmask, String svip) {
-            params = new VirtualNetworkToModifyParams(name, tag, startIp, size, netmask, svip);
+        public VirtualNetworkToModify(String name, String tag, String startIp, int size, String netmask) {
+            params = new VirtualNetworkToModifyParams(name, tag, startIp, size, netmask);
         }
 
         private static final class VirtualNetworkToModifyParams {
@@ -437,16 +437,14 @@ public class SolidFireConnection {
             private final String virtualNetworkTag;
             private final AddressBlock[] addressBlocks = new AddressBlock[1];
             private final String netmask;
-            private final String svip;
 
-            public VirtualNetworkToModifyParams(String name, String tag, String startIp, int size, String netmask, String svip) {
+            public VirtualNetworkToModifyParams(String name, String tag, String startIp, int size, String netmask) {
                 this.name = name;
                 this.virtualNetworkTag = tag;
 
                 this.addressBlocks[0] = new AddressBlock(startIp, size);
 
                 this.netmask = netmask;
-                this.svip = svip;
             }
 
             private static final class AddressBlock {

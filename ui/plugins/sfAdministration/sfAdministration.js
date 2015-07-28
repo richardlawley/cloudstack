@@ -463,7 +463,6 @@
                     params.push("&netmask=" + args.data.netmask);
                     params.push("&startip=" + args.data.startip);
                     params.push("&size=" + args.data.size);
-                    params.push("&svip=" + args.data.svip);
 
                     $.ajax({
                       url: createURL('updateSolidFireVirtualNetwork' + params.join("")),
@@ -540,8 +539,7 @@
                         isEditable: true
                       },
                       svip: {
-                        label: 'SVIP',
-                        isEditable: true
+                        label: 'SVIP'
                       }
                     }
                   ],

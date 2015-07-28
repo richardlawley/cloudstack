@@ -332,7 +332,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
     }
 
     @Override
-    public SfVirtualNetwork updateSolidFireVirtualNetwork(long id, String name, String startIp, int size, String netmask, String svip) {
+    public SfVirtualNetwork updateSolidFireVirtualNetwork(long id, String name, String startIp, int size, String netmask) {
         s_logger.info("updateSolidFireVirtualNetwork invoked");
 
         verifyRootAdmin();
@@ -345,14 +345,12 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         SolidFireConnection sfConnection = new SolidFireConnection(sfClusterVO.getMvip(), sfClusterVO.getUsername(), sfClusterVO.getPassword());
 
-        sfConnection.modifyVirtualNetwork(name, sfVirtualNetworkVO.getTag(), startIp, size, netmask, svip);
+        sfConnection.modifyVirtualNetwork(name, sfVirtualNetworkVO.getTag(), startIp, size, netmask);
 
         sfVirtualNetworkVO.setName(name);
-        sfVirtualNetworkVO.setTag(sfVirtualNetworkVO.getTag());
         sfVirtualNetworkVO.setStartIp(startIp);
         sfVirtualNetworkVO.setSize(size);
         sfVirtualNetworkVO.setNetmask(netmask);
-        sfVirtualNetworkVO.setSvip(svip);
 
         if (_sfVirtualNetworkDao.update(sfVirtualNetworkVO.getId(), sfVirtualNetworkVO)) {
             return sfVirtualNetworkVO;

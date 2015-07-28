@@ -56,9 +56,6 @@ public class UpdateSolidFireVirtualNetworkCmd extends BaseCmd {
     @Parameter(name = ApiHelper.NETMASK, type = CommandType.STRING, description = ApiHelper.NETMASK, required = true)
     private String _netmask;
 
-    @Parameter(name = ApiHelper.SVIP, type = CommandType.STRING, description = ApiHelper.SOLIDFIRE_SVIP_DESC, required = true)
-    private String _svip;
-
     @Inject private ApiHelper _apiHelper;
     @Inject private ApiSolidFireService2 _apiSolidFireService2;
 
@@ -87,7 +84,7 @@ public class UpdateSolidFireVirtualNetworkCmd extends BaseCmd {
         try {
             s_logger.info(UpdateSolidFireVirtualNetworkCmd.class.getName() + ".execute invoked");
 
-            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.updateSolidFireVirtualNetwork(_id, _name, _startIp, _size, _netmask, _svip);
+            SfVirtualNetwork sfVirtualNetwork = _apiSolidFireService2.updateSolidFireVirtualNetwork(_id, _name, _startIp, _size, _netmask);
 
             ApiSolidFireVirtualNetworkResponse response = _apiHelper.getApiSolidFireVirtualNetworkResponse(sfVirtualNetwork, ResponseView.Full);
 
