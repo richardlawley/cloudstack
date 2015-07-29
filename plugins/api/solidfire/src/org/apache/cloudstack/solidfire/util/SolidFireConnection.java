@@ -95,10 +95,10 @@ public class SolidFireConnection {
         return virtualNetworkAddResult.result.virtualNetworkID;
     }
 
-    public void modifyVirtualNetwork(String name, String tag, String startIp, int size, String netmask) {
+    public void modifyVirtualNetwork(long id, String name, String startIp, int size, String netmask) {
         final Gson gson = new GsonBuilder().create();
 
-        VirtualNetworkToModify virtualNetworkToModify = new VirtualNetworkToModify(name, tag, startIp, size, netmask);
+        VirtualNetworkToModify virtualNetworkToModify = new VirtualNetworkToModify(id, name, startIp, size, netmask);
 
         String strVirtualNetworkToModifyJson = gson.toJson(virtualNetworkToModify);
 
@@ -428,19 +428,19 @@ public class SolidFireConnection {
         private final String method = "ModifyVirtualNetwork";
         private final VirtualNetworkToModifyParams params;
 
-        public VirtualNetworkToModify(String name, String tag, String startIp, int size, String netmask) {
-            params = new VirtualNetworkToModifyParams(name, tag, startIp, size, netmask);
+        public VirtualNetworkToModify(long id, String name, String startIp, int size, String netmask) {
+            params = new VirtualNetworkToModifyParams(id, name, startIp, size, netmask);
         }
 
         private static final class VirtualNetworkToModifyParams {
+            private final long virtualNetworkID;
             private final String name;
-            private final String virtualNetworkTag;
             private final AddressBlock[] addressBlocks = new AddressBlock[1];
             private final String netmask;
 
-            public VirtualNetworkToModifyParams(String name, String tag, String startIp, int size, String netmask) {
+            public VirtualNetworkToModifyParams(long id, String name, String startIp, int size, String netmask) {
+                this.virtualNetworkID = id;
                 this.name = name;
-                this.virtualNetworkTag = tag;
 
                 this.addressBlocks[0] = new AddressBlock(startIp, size);
 
@@ -470,7 +470,7 @@ public class SolidFireConnection {
         }
 
         private static final class VirtualNetworkToDeleteParams {
-            private long virtualNetworkID;
+            private final long virtualNetworkID;
 
             private VirtualNetworkToDeleteParams(long id) {
                 virtualNetworkID = id;

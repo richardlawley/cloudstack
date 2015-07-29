@@ -345,7 +345,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
 
         SolidFireConnection sfConnection = new SolidFireConnection(sfClusterVO.getMvip(), sfClusterVO.getUsername(), sfClusterVO.getPassword());
 
-        sfConnection.modifyVirtualNetwork(name, sfVirtualNetworkVO.getTag(), startIp, size, netmask);
+        sfConnection.modifyVirtualNetwork(sfVirtualNetworkVO.getSfId(), name, startIp, size, netmask);
 
         sfVirtualNetworkVO.setName(name);
         sfVirtualNetworkVO.setStartIp(startIp);
