@@ -374,7 +374,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         }
 
         if (!_sfVirtualNetworkDao.remove(id)) {
-            throw new CloudRuntimeException("Unable to remove the following virtual network:" + id);
+            throw new CloudRuntimeException("Unable to remove the following virtual network: " + id);
         }
 
         SfCluster sfCluster = getSfCluster(sfVirtualNetwork.getSfClusterId());
@@ -476,7 +476,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
         verifyPermissionsForAccount(sfVirtualNetwork.getAccountId());
 
         if (!_sfVolumeDao.remove(id)) {
-            throw new CloudRuntimeException("Unable to remove the following volume:" + id);
+            throw new CloudRuntimeException("Unable to remove the following volume: " + id);
         }
 
         SfCluster sfCluster = getSfCluster(sfVirtualNetwork.getSfClusterId());
