@@ -502,7 +502,7 @@ public class ApiSolidFireServiceImpl2 extends AdapterBase implements APIChecker,
             return true;
         }
 
-        return false;
+        throw new PermissionDeniedException("User " + user.getFirstname() + " " + user.getLastname() + " cannot access the following command: " + apiCommandName);
     }
 
     @Override
