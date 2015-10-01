@@ -54,6 +54,8 @@ then
        exit 1
 fi
 
+exit 2
+
 set -e
 (cd "$DISTDIR/xmldoc"
  cp "$thisdir"/*.java .
