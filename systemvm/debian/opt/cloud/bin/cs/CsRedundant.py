@@ -351,6 +351,12 @@ class CsRedundant(object):
 
         interfaces = [interface for interface in self.address.get_interfaces() if interface.is_public()]
         CsHelper.reconfigure_interfaces(self.cl, interfaces)
+
+        # The first public interface has a static MAC address between VRs.  Subsequent ones don't, 
+        # so an ARP announcement is needed on failover
+        for interface in interfaces[1:]:
+            CsHelper.execute("arping -I %s -U %s -c 1" % (interface.get_device(), interface.get_ip()))
+
         logging.info("Router switched to master mode")
 
     def _collect_ignore_ips(self):
