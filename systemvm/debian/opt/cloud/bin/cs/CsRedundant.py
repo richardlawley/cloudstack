@@ -352,10 +352,19 @@ class CsRedundant(object):
         interfaces = [interface for interface in self.address.get_interfaces() if interface.is_public()]
         CsHelper.reconfigure_interfaces(self.cl, interfaces)
 
-        # The first public interface has a static MAC address between VRs.  Subsequent ones don't, 
-        # so an ARP announcement is needed on failover
-        for interface in interfaces[1:]:
-            CsHelper.execute("arping -I %s -U %s -c 1" % (interface.get_device(), interface.get_ip()))
+        public_devices = list(set([ interface.get_device() for interface in interfaces ]))
+        if len(public_devices) > 1:
+            # Handle specific failures when multiple public interfaces
+
+            public_devices.sort()
+
+            # The first public interface has a static MAC address between VRs.  Subsequent ones don't, 
+            # so an ARP announcement is needed on failover
+            for device in public_devices[1:]:
+                logging.info("Sending garp messages for IPs on %s" % device)
+                for interface in interfaces:
+                    if interface.get_device() == device:
+                        CsHelper.execute("arping -I %s -U %s -c 1" % (device, interface.get_ip()))
 
         logging.info("Router switched to master mode")
 
