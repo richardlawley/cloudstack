@@ -41,7 +41,7 @@ then
 
                 if [ "$toDateVal" -gt "$reqDateVal" ]
                 then
-                    alerts="$line\n$alerts"
+                    alerts=`printf "$line\n$alerts"`
                 else
                     break
                 fi
