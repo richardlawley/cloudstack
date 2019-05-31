@@ -34,10 +34,15 @@ STATE_COMMANDS = {"router": "ip addr | grep eth0 | grep inet | wc -l | xargs bas
 
 
 def reconfigure_interfaces(router_config, interfaces):
+    dev = ""
     for interface in interfaces:
-        cmd = "ip link show %s | grep 'state DOWN'" % interface.get_device()
+        if dev == interface.get_device():
+            continue
+        dev = interface.get_device()
+
+        cmd = "ip link show %s | head -n 1" % interface.get_device()
         for device in execute(cmd):
-            if " DOWN " in device:
+            if " state DOWN " in device:
                 cmd = "ip link set %s up" % interface.get_device()
                 # If redundant only bring up public interfaces that are not eth1.
                 # Reason: private gateways are public interfaces.
