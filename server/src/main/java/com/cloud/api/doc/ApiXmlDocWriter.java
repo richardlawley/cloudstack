@@ -40,8 +40,6 @@ import org.apache.cloudstack.api.response.VolumeResponse;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -49,19 +47,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 public class ApiXmlDocWriter {
     public static final Logger s_logger = Logger.getLogger(ApiXmlDocWriter.class.getName());
@@ -297,7 +290,7 @@ public class ApiXmlDocWriter {
                 boolean hasChildren = false;
                 if (paramAnnotation != null && paramAnnotation.includeInApiDoc()) {
                     String description = paramAnnotation.description();
-                    Class fieldClass = paramAnnotation.responseObject();
+                    Class<?> fieldClass = paramAnnotation.responseObject();
                     if (description != null && !description.isEmpty()) {
                         respArg.setDescription(description);
                     }
@@ -360,49 +353,6 @@ public class ApiXmlDocWriter {
         return arguments;
     }
 
-    private static void zipDir(String zipFileName, String dir) throws Exception {
-        File dirObj = new File(dir);
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
-        addDir(dirObj, out);
-        out.close();
-    }
-
-    static void addDir(File dirObj, ZipOutputStream out) throws IOException {
-        File[] files = dirObj.listFiles();
-        byte[] tmpBuf = new byte[1024];
-        String pathToDir = s_dirName;
-
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].isDirectory()) {
-                addDir(files[i], out);
-                continue;
-            }
-            try(FileInputStream in = new FileInputStream(files[i].getPath());) {
-                out.putNextEntry(new ZipEntry(files[i].getPath().substring(pathToDir.length())));
-                int len;
-                while ((len = in.read(tmpBuf)) > 0) {
-                    out.write(tmpBuf, 0, len);
-                }
-                out.closeEntry();
-            }catch(IOException ex)
-            {
-                s_logger.error("addDir:Exception:"+ ex.getMessage(),ex);
-            }
-        }
-    }
-
-    private static void deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            if (children != null) {
-                for (int i = 0; i < children.length; i++) {
-                    deleteDir(new File(dir, children[i]));
-                }
-            }
-        }
-        dir.delete();
-    }
-
     private static void writeAlertTypes(String dirName) {
         XStream xs = new XStream();
         xs.alias("alert", Alert.class);
@@ -418,22 +368,6 @@ public class ApiXmlDocWriter {
             s_logger.error("Failed to create output stream to write an alert types ", e);
         } catch (IllegalAccessException e) {
             s_logger.error("Failed to read alert fields ", e);
-        }
-    }
-
-    private static class LinkedProperties extends Properties {
-        private final LinkedList<Object> keys = new LinkedList<Object>();
-
-        @Override
-        public Enumeration<Object> keys() {
-            return Collections.<Object> enumeration(keys);
-        }
-
-        @Override
-        public Object put(Object key, Object value) {
-            // System.out.println("Adding key" + key);
-            keys.add(key);
-            return super.put(key, value);
         }
     }
 }
