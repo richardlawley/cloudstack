@@ -29,14 +29,6 @@ import org.apache.cloudstack.api.BaseCmd;
 import org.apache.cloudstack.api.BaseResponse;
 import org.apache.cloudstack.api.Parameter;
 import org.apache.cloudstack.api.response.AsyncJobResponse;
-import org.apache.cloudstack.api.response.HostResponse;
-import org.apache.cloudstack.api.response.IPAddressResponse;
-import org.apache.cloudstack.api.response.SecurityGroupResponse;
-import org.apache.cloudstack.api.response.SnapshotResponse;
-import org.apache.cloudstack.api.response.StoragePoolResponse;
-import org.apache.cloudstack.api.response.TemplateResponse;
-import org.apache.cloudstack.api.response.UserVmResponse;
-import org.apache.cloudstack.api.response.VolumeResponse;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -47,131 +39,63 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
-public class ApiXmlDocWriter {
+public class ApiXmlDocWriter extends ApiProcessor {
     public static final Logger s_logger = Logger.getLogger(ApiXmlDocWriter.class.getName());
 
-    private static String s_dirName = "";
-    private static Map<String, Class<?>> s_apiNameCmdClassMap = new HashMap<String, Class<?>>();
-    private static LinkedHashMap<Object, String> s_allApiCommands = new LinkedHashMap<Object, String>();
-    private static TreeMap<Object, String> s_allApiCommandsSorted = new TreeMap<Object, String>();
-    private static final List<String> AsyncResponses = setAsyncResponses();
+    private String _dirName = "";
 
-    private static List<String> setAsyncResponses() {
-        List<String> asyncResponses = new ArrayList<String>();
-        asyncResponses.add(TemplateResponse.class.getName());
-        asyncResponses.add(VolumeResponse.class.getName());
-        //asyncResponses.add(LoadBalancerResponse.class.getName());
-        asyncResponses.add(HostResponse.class.getName());
-        asyncResponses.add(IPAddressResponse.class.getName());
-        asyncResponses.add(StoragePoolResponse.class.getName());
-        asyncResponses.add(UserVmResponse.class.getName());
-        asyncResponses.add(SecurityGroupResponse.class.getName());
-        //asyncResponses.add(ExternalLoadBalancerResponse.class.getName());
-        asyncResponses.add(SnapshotResponse.class.getName());
-
-        return asyncResponses;
+    public ApiXmlDocWriter(String dirName) {
+        _dirName = dirName;
     }
 
-    public static void main(String[] args) {
-        Set<Class<?>> cmdClasses = ReflectUtil.getClassesWithAnnotation(APICommand.class, new String[] {"org.apache.cloudstack.api", "com.cloud.api",
-                "com.cloud.api.commands", "com.globo.globodns.cloudstack.api", "org.apache.cloudstack.network.opendaylight.api",
-                "org.apache.cloudstack.api.command.admin.zone", "org.apache.cloudstack.network.contrail.api.command"});
+    @Override
+    public void ProcessApiCommands() throws IOException, ClassNotFoundException {
+        // Create object writer
+        XStream xs = new XStream();
+        xs.alias("command", Command.class);
+        xs.alias("arg", Argument.class);
+        String xmlDocDir = _dirName + "/xmldoc";
+        String rootAdminDirName = xmlDocDir + "/apis";
+        (new File(rootAdminDirName)).mkdirs();
 
-        for (Class<?> cmdClass : cmdClasses) {
-            if(cmdClass.getAnnotation(APICommand.class)==null){
-               System.out.println("Warning, API Cmd class " + cmdClass.getName() + " has no APICommand annotation ");
-               continue;
-            }
-            String apiName = cmdClass.getAnnotation(APICommand.class).name();
-            if (s_apiNameCmdClassMap.containsKey(apiName)) {
-                // handle API cmd separation into admin cmd and user cmd with the common api name
-                Class<?> curCmd = s_apiNameCmdClassMap.get(apiName);
-                if (curCmd.isAssignableFrom(cmdClass)) {
-                    // api_cmd map always keep the admin cmd class to get full response and parameters
-                    s_apiNameCmdClassMap.put(apiName, cmdClass);
-                } else if (cmdClass.isAssignableFrom(curCmd)) {
-                    // just skip this one without warning
-                    continue;
-                } else {
-                    System.out.println("Warning, API Cmd class " + cmdClass.getName() + " has non-unique apiname " + apiName);
-                    continue;
-                }
-            } else {
-                s_apiNameCmdClassMap.put(apiName, cmdClass);
-            }
-        }
-        System.out.printf("Scanned and found %d APIs\n", s_apiNameCmdClassMap.size());
-        List<String> argsList = Arrays.asList(args);
-        Iterator<String> iter = argsList.iterator();
-        while (iter.hasNext()) {
-            String arg = iter.next();
-            if (arg.equals("-d")) {
-                s_dirName = iter.next();
-            }
+        ObjectOutputStream out = xs.createObjectOutputStream(new FileWriter(_dirName + "/commands.xml"), "commands");
+        ObjectOutputStream rootAdmin = xs.createObjectOutputStream(new FileWriter(rootAdminDirName + "/" + "apiSummary.xml"), "commands");
+        ObjectOutputStream rootAdminSorted = xs.createObjectOutputStream(new FileWriter(rootAdminDirName + "/" + "apiSummarySorted.xml"), "commands");
+
+        Iterator<?> it = _allApiCommands.keySet().iterator();
+        while (it.hasNext()) {
+            String key = (String)it.next();
+            // Write admin commands
+            writeCommand(out, key);
+            writeCommand(rootAdmin, key);
+            // Write single commands to separate xml files
+            ObjectOutputStream singleRootAdminCommandOs = xs.createObjectOutputStream(new FileWriter(rootAdminDirName + "/" + key + ".xml"), "command");
+            writeCommand(singleRootAdminCommandOs, key);
+            singleRootAdminCommandOs.close();
         }
 
-        for (Map.Entry<String, Class<?>> entry: s_apiNameCmdClassMap.entrySet()) {
-            Class<?> cls = entry.getValue();
-            s_allApiCommands.put(entry.getKey(), cls.getName());
+        // Write sorted commands
+        it = _allApiCommandsSorted.keySet().iterator();
+        while (it.hasNext()) {
+            String key = (String)it.next();
+            writeCommand(rootAdminSorted, key);
         }
 
-        s_allApiCommandsSorted.putAll(s_allApiCommands);
+        out.close();
+        rootAdmin.close();
+        rootAdminSorted.close();
 
-        try {
-            // Create object writer
-            XStream xs = new XStream();
-            xs.alias("command", Command.class);
-            xs.alias("arg", Argument.class);
-            String xmlDocDir = s_dirName + "/xmldoc";
-            String rootAdminDirName = xmlDocDir + "/apis";
-            (new File(rootAdminDirName)).mkdirs();
-
-            ObjectOutputStream out = xs.createObjectOutputStream(new FileWriter(s_dirName + "/commands.xml"), "commands");
-            ObjectOutputStream rootAdmin = xs.createObjectOutputStream(new FileWriter(rootAdminDirName + "/" + "apiSummary.xml"), "commands");
-            ObjectOutputStream rootAdminSorted = xs.createObjectOutputStream(new FileWriter(rootAdminDirName + "/" + "apiSummarySorted.xml"), "commands");
-
-            Iterator<?> it = s_allApiCommands.keySet().iterator();
-            while (it.hasNext()) {
-                String key = (String)it.next();
-                // Write admin commands
-                writeCommand(out, key);
-                writeCommand(rootAdmin, key);
-                // Write single commands to separate xml files
-                ObjectOutputStream singleRootAdminCommandOs = xs.createObjectOutputStream(new FileWriter(rootAdminDirName + "/" + key + ".xml"), "command");
-                writeCommand(singleRootAdminCommandOs, key);
-                singleRootAdminCommandOs.close();
-            }
-
-            // Write sorted commands
-            it = s_allApiCommandsSorted.keySet().iterator();
-            while (it.hasNext()) {
-                String key = (String)it.next();
-                writeCommand(rootAdminSorted, key);
-            }
-
-            out.close();
-            rootAdmin.close();
-            rootAdminSorted.close();
-
-            // write alerttypes to xml
-            writeAlertTypes(xmlDocDir);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(2);
-        }
+        // write alerttypes to xml
+        writeAlertTypes(xmlDocDir);
     }
 
-    private static void writeCommand(ObjectOutputStream out, String command) throws ClassNotFoundException, IOException {
-        Class<?> clas = Class.forName(s_allApiCommands.get(command));
+    private void writeCommand(ObjectOutputStream out, String command) throws ClassNotFoundException, IOException {
+        Class<?> clas = Class.forName(_allApiCommands.get(command));
         ArrayList<Argument> request = new ArrayList<Argument>();
         ArrayList<Argument> response = new ArrayList<Argument>();
 
@@ -228,7 +152,7 @@ public class ApiXmlDocWriter {
         }
     }
 
-    private static ArrayList<Argument> setRequestFields(Set<Field> fields) {
+    private ArrayList<Argument> setRequestFields(Set<Field> fields) {
         ArrayList<Argument> arguments = new ArrayList<Argument>();
         Set<Argument> requiredArguments = new HashSet<Argument>();
         Set<Argument> optionalArguments = new HashSet<Argument>();
@@ -274,7 +198,7 @@ public class ApiXmlDocWriter {
         return arguments;
     }
 
-    private static ArrayList<Argument> setResponseFields(Field[] responseFields, Class<?> responseClas) {
+    private ArrayList<Argument> setResponseFields(Field[] responseFields, Class<?> responseClas) {
         ArrayList<Argument> arguments = new ArrayList<Argument>();
         ArrayList<Argument> sortedChildlessArguments = new ArrayList<Argument>();
         ArrayList<Argument> sortedArguments = new ArrayList<Argument>();
@@ -368,6 +292,26 @@ public class ApiXmlDocWriter {
             s_logger.error("Failed to create output stream to write an alert types ", e);
         } catch (IllegalAccessException e) {
             s_logger.error("Failed to read alert fields ", e);
+        }
+    }
+
+    public static void main(String[] args) {
+        String dirName = "";
+        List<String> argsList = Arrays.asList(args);
+        Iterator<String> iter = argsList.iterator();
+        while (iter.hasNext()) {
+            String arg = iter.next();
+            if (arg.equals("-d")) {
+                dirName = iter.next();
+            }
+        }
+
+        try {
+            ApiXmlDocWriter processor = new ApiXmlDocWriter(dirName);
+            processor.ProcessApiCommands();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(2);
         }
     }
 }
