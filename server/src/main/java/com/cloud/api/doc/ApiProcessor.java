@@ -28,32 +28,45 @@ import java.util.TreeMap;
 import com.cloud.utils.ReflectUtil;
 
 import org.apache.cloudstack.api.APICommand;
-import org.apache.cloudstack.api.response.HostResponse;
-import org.apache.cloudstack.api.response.IPAddressResponse;
-import org.apache.cloudstack.api.response.SecurityGroupResponse;
-import org.apache.cloudstack.api.response.SnapshotResponse;
-import org.apache.cloudstack.api.response.StoragePoolResponse;
-import org.apache.cloudstack.api.response.TemplateResponse;
-import org.apache.cloudstack.api.response.UserVmResponse;
-import org.apache.cloudstack.api.response.VolumeResponse;
 
 public abstract class ApiProcessor {
     protected Map<String, Class<?>> _apiNameCmdClassMap = new HashMap<String, Class<?>>();
     protected LinkedHashMap<Object, String> _allApiCommands = new LinkedHashMap<Object, String>();
     protected TreeMap<Object, String> _allApiCommandsSorted = new TreeMap<Object, String>();
-    protected final List<String> AsyncResponses = setAsyncResponses();
 
     public ApiProcessor() {
 
-        Set<Class<?>> cmdClasses = ReflectUtil.getClassesWithAnnotation(APICommand.class,
-                new String[] { "org.apache.cloudstack.api", "com.cloud.api", "com.cloud.api.commands",
-                        "com.globo.globodns.cloudstack.api", "org.apache.cloudstack.network.opendaylight.api",
-                        "org.apache.cloudstack.api.command.admin.zone",
-                        "org.apache.cloudstack.network.contrail.api.command" });
+        // Namespaces to search for API commands
+        List<String> namespaces = new ArrayList<String>();
+        namespaces.add("org.apache.cloudstack.api");
+        namespaces.add("com.cloud.api");
+        namespaces.add("com.cloud.api.commands");
+        namespaces.add("com.globo.globodns.cloudstack.api");
+        namespaces.add("org.apache.cloudstack.network.opendaylight.api");
+        namespaces.add("org.apache.cloudstack.api.command.admin.zone");
+        namespaces.add("org.apache.cloudstack.network.contrail.api.command");
 
+        // Use reflection to find classes annotated with APICommand
+        Set<Class<?>> cmdClasses = ReflectUtil.getClassesWithAnnotation(APICommand.class,
+                namespaces.toArray(new String[namespaces.size()]));
+        AddClasses(cmdClasses);
+
+        System.out.println(String.format("Scanned and found %d APIs\n", _apiNameCmdClassMap.size()));
+
+        for (Map.Entry<String, Class<?>> entry : _apiNameCmdClassMap.entrySet()) {
+            Class<?> cls = entry.getValue();
+            _allApiCommands.put(entry.getKey(), cls.getName());
+        }
+
+        _allApiCommandsSorted.putAll(_allApiCommands);
+    }
+
+    private void AddClasses(Set<Class<?>> cmdClasses) {
         for (Class<?> cmdClass : cmdClasses) {
             if (cmdClass.getAnnotation(APICommand.class) == null) {
-                System.out.println(String.format("Warning, API Cmd class %s has no APICommand annotation ", cmdClass.getName()));
+                // Possibly an inherited command without its own @ApiCommand attribute
+                System.out.println(
+                        String.format("Warning, API Cmd class %s has no APICommand annotation ", cmdClass.getName()));
                 continue;
             }
             String apiName = cmdClass.getAnnotation(APICommand.class).name();
@@ -69,39 +82,16 @@ public abstract class ApiProcessor {
                     // just skip this one without warning
                     continue;
                 } else {
-                    System.out.println(String.format("Warning, API Cmd class %s has non-unique apiname %s", cmdClass.getName(), apiName));
+                    System.out.println(String.format("Warning, API Cmd class %s has non-unique apiname %s",
+                            cmdClass.getName(), apiName));
                     continue;
                 }
             } else {
                 _apiNameCmdClassMap.put(apiName, cmdClass);
             }
         }
-
-        System.out.println(String.format("Scanned and found %d APIs\n", _apiNameCmdClassMap.size()));
-
-        for (Map.Entry<String, Class<?>> entry: _apiNameCmdClassMap.entrySet()) {
-            Class<?> cls = entry.getValue();
-            _allApiCommands.put(entry.getKey(), cls.getName());
-        }
-
-        _allApiCommandsSorted.putAll(_allApiCommands);
     }
 
     public abstract void ProcessApiCommands() throws IOException, ClassNotFoundException;
 
-    private List<String> setAsyncResponses() {
-        List<String> asyncResponses = new ArrayList<String>();
-        asyncResponses.add(TemplateResponse.class.getName());
-        asyncResponses.add(VolumeResponse.class.getName());
-        //asyncResponses.add(LoadBalancerResponse.class.getName());
-        asyncResponses.add(HostResponse.class.getName());
-        asyncResponses.add(IPAddressResponse.class.getName());
-        asyncResponses.add(StoragePoolResponse.class.getName());
-        asyncResponses.add(UserVmResponse.class.getName());
-        asyncResponses.add(SecurityGroupResponse.class.getName());
-        //asyncResponses.add(ExternalLoadBalancerResponse.class.getName());
-        asyncResponses.add(SnapshotResponse.class.getName());
-
-        return asyncResponses;
-    }
 }
